@@ -18,6 +18,8 @@ bool run_all_tests() {
     bool success = true;
 
     run_test(system_basic, "system_basic", success_string, success);
+    run_test(player_basic, "player_basic", success_string, success);
+    run_test(team_basic, "team_basic", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -44,5 +46,19 @@ void run_test(std::function<bool()> test, std::string test_name, std::string& su
 
 bool system_basic()
 {
+    return true;
+}
+
+bool player_basic()
+{
+    permutation_t per;
+    Player player1(1, 1, per, 1, 1, 1, false);
+    return true;
+
+}
+
+bool team_basic()
+{
+    Team team(1);
     return true;
 }

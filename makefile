@@ -6,10 +6,13 @@ G_FLAG = -g
 MAIN = main
 WORLD_CUP= src/worldcup23a2
 UTIL= src/wet2util
+PLAYER = src/Player
+TEAM = src/Team
+
 TESTS = tests/developer_tests
 
-ALL_SRC_FILES = $(WORLD_CUP).h $(UTIL).h
-ALL_SRC_OBJ = $(WORLD_CUP).o
+ALL_SRC_FILES = $(WORLD_CUP).h $(PLAYER).h $(TEAM).h $(UTIL).h
+ALL_SRC_OBJ = $(WORLD_CUP).o $(PLAYER).o $(TEAM).o
 ALL_TEST_FILES = $(TESTS).h
 ALL_TEST_OBJ = $(TESTS).o
 
@@ -29,7 +32,13 @@ $(MAIN).o: $(MAIN).cpp  $(ALL_SRC_FILES) $(ALL_TEST_FILES)
 $(WORLD_CUP).o: $(WORLD_CUP).cpp $(WORLD_CUP).h $(UTIL).h
 	$(COMPILER) $(FLAGS) $(G_FLAG) -c $(WORLD_CUP).cpp -o $(WORLD_CUP).o
 
-$(TESTS).o: $(TESTS).cpp $(TESTS).h $(UTIL).h $(WORLD_CUP).h
+$(PLAYER).o: $(PLAYER).cpp $(PLAYER).h $(TEAM).h $(UTIL).h
+	$(COMPILER) $(FLAGS) $(G_FLAG) -c $(PLAYER).cpp -o $(PLAYER).o
+
+$(TEAM).o: $(TEAM).cpp $(TEAM).h $(PLAYER).h $(UTIL).h
+	$(COMPILER) $(FLAGS) $(G_FLAG) -c $(TEAM).cpp -o $(TEAM).o
+
+$(TESTS).o: $(TESTS).cpp $(TESTS).h $(UTIL).h $(WORLD_CUP).h $(PLAYER).h $(TEAM).h
 	$(COMPILER) $(FLAGS) $(G_FLAG) -c $(TESTS).cpp -o $(TESTS).o
 
 

@@ -16,6 +16,8 @@
 
 #include "../src/worldcup23a2.h"
 #include "../src/wet2util.h"
+#include "../src/Player.h"
+#include "../src/Team.h"
 
 
 
@@ -25,6 +27,12 @@ void run_test(std::function<bool()> test, std::string test_name, std::string& su
 
 // SYSTEM TESTS
 bool system_basic();
+
+// PLAYER
+bool player_basic();
+
+// TEAM
+bool team_basic();
 
 // HASH TESTS
 
