@@ -14,7 +14,7 @@ HASH = src/Hash
 TESTS = tests/developer_tests
 
 ALL_SRC_FILES = $(WORLD_CUP).h $(PLAYER).h $(TEAM).h $(NODELIST).h $(HASH).h $(UTIL).h
-ALL_SRC_OBJ = $(WORLD_CUP).o $(PLAYER).o $(TEAM).o $(HASH).o
+ALL_SRC_OBJ = $(WORLD_CUP).o $(PLAYER).o $(TEAM).o
 ALL_TEST_FILES = $(TESTS).h
 ALL_TEST_OBJ = $(TESTS).o
 
@@ -39,11 +39,6 @@ $(PLAYER).o: $(PLAYER).cpp $(PLAYER).h $(TEAM).h $(UTIL).h
 
 $(TEAM).o: $(TEAM).cpp $(TEAM).h $(PLAYER).h $(UTIL).h
 	$(COMPILER) $(FLAGS) $(G_FLAG) -c $(TEAM).cpp -o $(TEAM).o
-
-
-
-$(HASH).o: $(HASH).cpp $(HASH).h  $(NODELIST).h $(PLAYER).h $(UTIL).h
-	$(COMPILER) $(FLAGS) $(G_FLAG) -c $(HASH).cpp -o $(HASH).o
 
 $(TESTS).o: $(TESTS).cpp $(TESTS).h $(UTIL).h $(WORLD_CUP).h $(PLAYER).h $(TEAM).h $(NODELIST).h $(HASH).h
 	$(COMPILER) $(FLAGS) $(G_FLAG) -c $(TESTS).cpp -o $(TESTS).o

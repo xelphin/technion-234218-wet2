@@ -152,15 +152,15 @@ bool nodeList_popStart()
 
 bool hash_basic()
 {
-    Hash hash1;
-    Hash hash2(10);
+    Hash<Player> hash1;
+    Hash<Player> hash2(10);
 
     return true;
 }
 
 bool hash_add()
 {
-    Hash hash(3);
+    Hash<Player> hash(3);
 
     permutation_t per;
     std::shared_ptr<Player> player1(new Player(1, 1, per, 1, 1, 1, false));
@@ -195,7 +195,7 @@ bool hash_add()
 bool hash_find()
 {
     int tests = 0;
-    Hash hash(3);
+    Hash<Player> hash(3);
 
     permutation_t per;
     std::shared_ptr<Player> player1(new Player(1, 1, per, 1, 1, 1, false));
