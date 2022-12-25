@@ -19,6 +19,7 @@
 #include "../src/Player.h"
 #include "../src/Team.h"
 #include "../src/NodeList_Players.h"
+#include "../src/Hash.h"
 
 
 bool run_all_tests();
@@ -41,7 +42,7 @@ bool nodeListPlayers_popStart();
 
 // HASH TESTS
 
-
+bool hash_basic();
 
 
 #endif

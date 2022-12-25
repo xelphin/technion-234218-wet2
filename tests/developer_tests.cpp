@@ -23,6 +23,7 @@ bool run_all_tests() {
     run_test(nodeListPlayers_basic, "nodeListPlayers_basic", success_string, success);
     run_test(nodeListPlayers_find, "nodeListPlayers_find", success_string, success);
     run_test(nodeListPlayers_popStart, "nodeListPlayers_popStart", success_string, success);
+    run_test(hash_basic, "hash_basic", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -145,4 +146,12 @@ bool nodeListPlayers_popStart()
     tests += (lst.strList().compare("4 5 ") == 0);
 
     return tests == 7;
+}
+
+bool hash_basic()
+{
+    Hash hash1;
+    Hash hash2(10);
+
+    return true;
 }
