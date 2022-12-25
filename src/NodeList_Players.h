@@ -19,12 +19,15 @@ public:
     std::shared_ptr<Player> find(int playerId) const;
     std::shared_ptr<Player> popStart();
 
+    int getAmount() const;
+
     // DEBUGGING
     std::string strList() const;
 
 private:
     NodeList_Players::Node *start;
     NodeList_Players::Node *end;
+    int amount;
 };
 //
 class NodeList_Players::Node{

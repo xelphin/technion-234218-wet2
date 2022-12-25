@@ -1,6 +1,6 @@
 #include "NodeList_Players.h"
 
-NodeList_Players::NodeList_Players() : start(nullptr), end(nullptr)
+NodeList_Players::NodeList_Players() : start(nullptr), end(nullptr), amount(0)
 {}
 
 NodeList_Players::~NodeList_Players() {
@@ -15,6 +15,8 @@ NodeList_Players::~NodeList_Players() {
 
 void NodeList_Players::add(std::shared_ptr<Player> player)
 {
+    if (player == nullptr)
+        return;
     // O(1)
     NodeList_Players::Node* newNode = new NodeList_Players::Node(player);
     // List is empty:
@@ -29,6 +31,7 @@ void NodeList_Players::add(std::shared_ptr<Player> player)
         newNode->prev = end;
         end = newNode; // update end to point at most recent node addition
     }
+    this->amount++;
 }
 
 std::shared_ptr<Player> NodeList_Players::find(int playerId) const // O(n[amount of nodes in this list])
@@ -57,8 +60,13 @@ std::shared_ptr<Player> NodeList_Players::popStart()
     if (secondNode != nullptr)
         secondNode->prev = nullptr;
     delete startNode;
-
+    this->amount--;
     return startPlayer;
+}
+
+int NodeList_Players::getAmount() const
+{
+    return this->amount;
 }
 
 std::string NodeList_Players::strList() const

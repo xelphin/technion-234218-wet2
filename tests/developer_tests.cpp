@@ -24,6 +24,7 @@ bool run_all_tests() {
     run_test(nodeListPlayers_find, "nodeListPlayers_find", success_string, success);
     run_test(nodeListPlayers_popStart, "nodeListPlayers_popStart", success_string, success);
     run_test(hash_basic, "hash_basic", success_string, success);
+    run_test(hash_add, "hash_add", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -152,6 +153,40 @@ bool hash_basic()
 {
     Hash hash1;
     Hash hash2(10);
+
+    return true;
+}
+
+bool hash_add()
+{
+    Hash hash(3);
+
+    permutation_t per;
+    std::shared_ptr<Player> player1(new Player(1, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player3(new Player(3, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player4(new Player(4, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player5(new Player(5, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player6(new Player(6, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player8(new Player(8, 1, per, 1, 1, 1, false));
+
+    hash.add(player1);
+    std::cout << hash.allLists();
+
+    hash.add(player3);
+
+    std::cout << hash.allLists();
+    hash.add(player4);
+
+    std::cout << hash.allLists();
+    hash.add(player5);
+
+    std::cout << hash.allLists();
+    hash.add(player6);
+
+    std::cout << hash.allLists();
+    hash.add(player8);
+
+    std::cout << hash.allLists();
 
     return true;
 }

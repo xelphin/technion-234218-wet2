@@ -43,6 +43,7 @@ bool nodeListPlayers_popStart();
 // HASH TESTS
 
 bool hash_basic();
+bool hash_add();
 
 
 #endif
