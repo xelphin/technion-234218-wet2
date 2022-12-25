@@ -18,7 +18,8 @@ public:
     // Add (inorder) the valid teams
     void add(std::shared_ptr<Player> player);
     int get_closest(Node* node) const;
-    std::shared_ptr<Player> find(int playerId); // TODO
+    std::shared_ptr<Player> find(int playerId) const;
+    std::shared_ptr<Player> popStart();
     void remove(Node* node);
 
     // DEBUGGING

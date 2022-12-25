@@ -37,6 +37,7 @@ bool team_basic();
 // NODELIST_PLAYERS
 bool nodeListPlayers_basic();
 bool nodeListPlayers_find();
+bool nodeListPlayers_popStart();
 
 // HASH TESTS
 

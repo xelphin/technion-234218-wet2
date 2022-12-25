@@ -1,7 +1,3 @@
-////
-//// Created by Administrator on 04/12/2022.
-////
-
 #include "NodeList_Players.h"
 
 NodeList_Players::NodeList_Players() : start(nullptr), end(nullptr)
@@ -35,7 +31,7 @@ void NodeList_Players::add(std::shared_ptr<Player> player)
     }
 }
 
-std::shared_ptr<Player> NodeList_Players::find(int playerId) // O(n[amount of nodes in this list])
+std::shared_ptr<Player> NodeList_Players::find(int playerId) const // O(n[amount of nodes in this list])
 {
     // Go one by one and check
     NodeList_Players::Node* currentNode = this->start; // initialize current node to start
@@ -47,6 +43,22 @@ std::shared_ptr<Player> NodeList_Players::find(int playerId) // O(n[amount of no
         currentNode = nextNode;
     }
     return nullptr;
+}
+
+std::shared_ptr<Player> NodeList_Players::popStart()
+{
+    if (start == nullptr){
+        return nullptr;
+    }
+    NodeList_Players::Node* startNode = this->start;
+    std::shared_ptr<Player> startPlayer = startNode->player;
+    NodeList_Players::Node* secondNode = start->next;
+    start = secondNode;
+    if (secondNode != nullptr)
+        secondNode->prev = nullptr;
+    delete startNode;
+
+    return startPlayer;
 }
 
 // TODO: Remove this function, most likely unnecessary
