@@ -35,6 +35,20 @@ void NodeList_Players::add(std::shared_ptr<Player> player)
     }
 }
 
+std::shared_ptr<Player> NodeList_Players::find(int playerId) // O(n[amount of nodes in this list])
+{
+    // Go one by one and check
+    NodeList_Players::Node* currentNode = this->start; // initialize current node to start
+    while (currentNode)
+    {
+        NodeList_Players::Node* nextNode = currentNode->next;
+        if (currentNode->get_id() == playerId)
+            return currentNode->player;
+        currentNode = nextNode;
+    }
+    return nullptr;
+}
+
 // TODO: Remove this function, most likely unnecessary
 void NodeList_Players::remove(Node* node)
 {

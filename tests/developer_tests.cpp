@@ -21,6 +21,7 @@ bool run_all_tests() {
     run_test(player_basic, "player_basic", success_string, success);
     run_test(team_basic, "team_basic", success_string, success);
     run_test(nodeListPlayers_basic, "nodeListPlayers_basic", success_string, success);
+    run_test(nodeListPlayers_find, "nodeListPlayers_find", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -84,4 +85,32 @@ bool nodeListPlayers_basic()
     //
 
     return (lst.strList().compare("1 2 3 4"));
+}
+
+bool nodeListPlayers_find()
+{
+    int tests = 0;
+    permutation_t per;
+    std::shared_ptr<Player> player1(new Player(1, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player2(new Player(2, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player3(new Player(3, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player4(new Player(4, 1, per, 1, 1, 1, false));
+
+    NodeList_Players lst;
+
+    //
+
+    lst.add(player1);
+    lst.add(player2);
+    lst.add(player3);
+    lst.add(player4);
+
+    //
+
+    tests += (lst.find(2) == player2);
+    tests += (lst.find(5) == nullptr);
+    tests += (lst.find(1) == player1);
+    tests += (lst.find(4) == player4);
+
+    return tests == 4;
 }
