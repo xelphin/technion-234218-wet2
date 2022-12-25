@@ -61,54 +61,6 @@ std::shared_ptr<Player> NodeList_Players::popStart()
     return startPlayer;
 }
 
-// TODO: Remove this function, most likely unnecessary
-void NodeList_Players::remove(Node* node)
-{
-    if (node == nullptr)
-        return;
-    NodeList_Players::Node* prevNode = node->prev;
-    NodeList_Players::Node* nextNode = node->next;
-    // ONE NODE
-    if (prevNode == nullptr && nextNode == nullptr) {
-        if (start != end && start != nullptr) {
-            std::cout << "ERROR!" << std::endl;
-            return;
-        }
-        delete node;
-        start = nullptr;
-        end = nullptr;
-        return;
-    }
-    // node == start
-    if (prevNode == nullptr) {
-        if (start != node) {
-            std::cout << "ERROR!" << std::endl;
-            return;
-        }
-        start = nextNode;
-        if (start == nullptr)
-            std::cout << "ERROR!" << std::endl;
-        nextNode->prev = nullptr;
-        delete node;
-        return;
-    }
-    // node == end
-    if (nextNode == nullptr) {
-        if (end != node) {
-            std::cout << "ERROR2!" << std::endl;
-            return;
-        }
-        end = prevNode;
-        prevNode->next = nullptr;
-        delete node;
-        return;
-    }
-    // node is in middle
-    prevNode->next = nextNode;
-    nextNode->prev = prevNode;
-    delete node;
-}
-
 std::string NodeList_Players::strList() const
 {
     std::string str = "";

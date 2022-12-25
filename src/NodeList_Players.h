@@ -20,7 +20,6 @@ public:
     int get_closest(Node* node) const;
     std::shared_ptr<Player> find(int playerId) const;
     std::shared_ptr<Player> popStart();
-    void remove(Node* node);
 
     // DEBUGGING
     std::string strList() const;
