@@ -44,6 +44,7 @@ bool nodeListPlayers_popStart();
 
 bool hash_basic();
 bool hash_add();
+bool hash_find();
 
 
 #endif

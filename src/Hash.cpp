@@ -52,6 +52,15 @@ void Hash::rehash()
     size = newSize;
 }
 
+std::shared_ptr<Player> Hash::find(int playerId) const
+{
+    if (playerId <= 0) {
+        return nullptr;
+    }
+    int index = playerId%size;
+    return arr[index].find(playerId);
+}
+
 std::string Hash::allLists() const
 {
     std::string str = "Hash with size: " + std::to_string(size) + " contains: \n";
