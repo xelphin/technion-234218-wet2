@@ -20,9 +20,9 @@ bool run_all_tests() {
     run_test(system_basic, "system_basic", success_string, success);
     run_test(player_basic, "player_basic", success_string, success);
     run_test(team_basic, "team_basic", success_string, success);
-    run_test(nodeListPlayers_basic, "nodeListPlayers_basic", success_string, success);
-    run_test(nodeListPlayers_find, "nodeListPlayers_find", success_string, success);
-    run_test(nodeListPlayers_popStart, "nodeListPlayers_popStart", success_string, success);
+    run_test(nodeList_basic, "nodeList_basic", success_string, success);
+    run_test(nodeList_find, "nodeList_find", success_string, success);
+    run_test(nodeList_popStart, "nodeList_popStart", success_string, success);
     run_test(hash_basic, "hash_basic", success_string, success);
     run_test(hash_add, "hash_add", success_string, success);
     run_test(hash_find, "hash_find", success_string, success);
@@ -69,7 +69,7 @@ bool team_basic()
     return true;
 }
 
-bool nodeListPlayers_basic()
+bool nodeList_basic()
 {
     permutation_t per;
     std::shared_ptr<Player> player1(new Player(1, 1, per, 1, 1, 1, false));
@@ -77,7 +77,7 @@ bool nodeListPlayers_basic()
     std::shared_ptr<Player> player3(new Player(3, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player4(new Player(4, 1, per, 1, 1, 1, false));
 
-    NodeList_Players lst;
+    NodeList<Player> lst;
 
     //
 
@@ -91,7 +91,7 @@ bool nodeListPlayers_basic()
     return (lst.strList().compare("1 2 3 4"));
 }
 
-bool nodeListPlayers_find()
+bool nodeList_find()
 {
     int tests = 0;
     permutation_t per;
@@ -100,7 +100,7 @@ bool nodeListPlayers_find()
     std::shared_ptr<Player> player3(new Player(3, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player4(new Player(4, 1, per, 1, 1, 1, false));
 
-    NodeList_Players lst;
+    NodeList<Player> lst;
 
     //
 
@@ -119,7 +119,7 @@ bool nodeListPlayers_find()
     return tests == 4;
 }
 
-bool nodeListPlayers_popStart()
+bool nodeList_popStart()
 {
 
     int tests = 0;
@@ -130,7 +130,7 @@ bool nodeListPlayers_popStart()
     std::shared_ptr<Player> player4(new Player(4, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player5(new Player(5, 1, per, 1, 1, 1, false));
 
-    NodeList_Players lst;
+    NodeList<Player> lst;
 
     //
 

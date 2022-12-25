@@ -5,7 +5,7 @@
 #include <memory>
 #include "wet2util.h"
 #include "Player.h"
-#include "NodeList_Players.h"
+#include "NodeList.h"
 #include <math.h>  
 
 // TODO: possibly make Hash (+NodeList) generic -> template
@@ -29,7 +29,7 @@ public:
     std::string allLists() const;
 
 private:
-    NodeList_Players* arr;
+    NodeList<Player>* arr;
     int total_elem;
     int size;
 

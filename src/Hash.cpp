@@ -1,11 +1,11 @@
 #include "Hash.h"
 
-Hash::Hash(int size) : arr(new NodeList_Players[size]), total_elem(0), size(size)
+Hash::Hash(int size) : arr(new NodeList<Player>[size]), total_elem(0), size(size)
 {
     if (size < 1)
         throw;
  }
-// TODO: Find a way to have instead: Hash(int exp) and then arr(new NodeList_Players[2^exp -1]) without having bugs
+// TODO: Find a way to have instead: Hash(int exp) and then arr(new NodeList[2^exp -1]) without having bugs
 
 Hash::~Hash()
 {
@@ -27,10 +27,10 @@ void Hash::add(std::shared_ptr<Player> player)
 
 void Hash::rehash()
 {
-    NodeList_Players* newArr;
+    NodeList<Player>* newArr;
     int newSize = size*2 + 1; // TODO: correct?
     try {
-        newArr = new NodeList_Players[newSize];
+        newArr = new NodeList<Player>[newSize];
     } catch (const std::bad_alloc& e) {
         throw e;
     }
