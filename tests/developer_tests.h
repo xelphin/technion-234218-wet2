@@ -18,7 +18,7 @@
 #include "../src/wet2util.h"
 #include "../src/Player.h"
 #include "../src/Team.h"
-
+#include "../src/NodeList_Players.h"
 
 
 bool run_all_tests();
@@ -33,6 +33,9 @@ bool player_basic();
 
 // TEAM
 bool team_basic();
+
+// NODELIST_PLAYERS
+bool nodeListPlayers_basic();
 
 // HASH TESTS
 
