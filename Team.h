@@ -2,6 +2,7 @@
 #define TEAM_H
 
 #include "Player.h"
+#include "AVL_tree.h"
 #include "wet2util.h"
 #include <memory>
 
@@ -19,6 +20,10 @@ public:
     * @return value of our team - team2
     */
     int compare(const Team& team2) const;
+    int compare(const Team& team2, bool sort_by_score) const;
+
+    int operator ID() const;
+    int operator SCORE(const Team& other) const;
 
 
     // DEBUGGING

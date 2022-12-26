@@ -4,6 +4,7 @@
 #include "Team.h"
 #include "wet2util.h"
 #include <memory>
+#include "AVL_tree.h"
 
 
 class Team;
@@ -27,6 +28,10 @@ public:
     * @return value of our player - player2
     */
     int compare(const Player& player2) const;
+    int compare(const Player& player2, bool sort_by_score) const;
+
+    int operator SCORE(const Player&) const;
+    int operator ID() const;
 
     // DEBUGGING FUNCTIONS
     friend std::ostream& operator<<(std::ostream& os, const Player& player);

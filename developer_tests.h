@@ -20,10 +20,12 @@
 #include "Team.h"
 #include "NodeList.h"
 #include "Hash.h"
+#include "AVL_tree.h"
 
 
 bool run_all_tests();
 void run_test(std::function<bool()> test, std::string test_name, std::string& success_string, bool& success);
+bool treeCompare(const std::string& tree, const std::string& wantedTree);
 
 
 // SYSTEM TESTS
@@ -45,6 +47,15 @@ bool nodeList_popStart();
 bool hash_basic();
 bool hash_add();
 bool hash_find();
+
+// AVL TESTS
+bool createAVL();
+bool balanceAVL_LL();
+bool balanceAVL_RR();
+bool balanceAVL_LR();
+bool balanceAVL_RL();
+bool find_test();
+bool remove_test();
 
 
 #endif
