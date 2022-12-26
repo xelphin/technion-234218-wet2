@@ -18,7 +18,8 @@
 #include "../src/wet2util.h"
 #include "../src/Player.h"
 #include "../src/Team.h"
-
+#include "../src/NodeList.h"
+#include "../src/Hash.h"
 
 
 bool run_all_tests();
@@ -34,9 +35,16 @@ bool player_basic();
 // TEAM
 bool team_basic();
 
+// NODELIST
+bool nodeList_basic();
+bool nodeList_find();
+bool nodeList_popStart();
+
 // HASH TESTS
 
-
+bool hash_basic();
+bool hash_add();
+bool hash_find();
 
 
 #endif
