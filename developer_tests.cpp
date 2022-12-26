@@ -1,4 +1,4 @@
-#include "./developer_tests.h"
+#include "developer_tests.h"
 
 #ifdef NDEBUG // I DONT want to debug
 void printFail ();

@@ -1,7 +1,7 @@
 
 
-#include "./src/worldcup23a2.h"
-#include "./tests/developer_tests.h" 
+#include "worldcup23a2.h"
+#include "developer_tests.h" 
 #include <string>
 #include <iostream>
 

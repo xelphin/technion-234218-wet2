@@ -14,12 +14,12 @@
 #include <functional>
 #include <cmath>
 
-#include "../src/worldcup23a2.h"
-#include "../src/wet2util.h"
-#include "../src/Player.h"
-#include "../src/Team.h"
-#include "../src/NodeList.h"
-#include "../src/Hash.h"
+#include "worldcup23a2.h"
+#include "wet2util.h"
+#include "Player.h"
+#include "Team.h"
+#include "NodeList.h"
+#include "Hash.h"
 
 
 bool run_all_tests();

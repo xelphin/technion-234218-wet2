@@ -4,14 +4,14 @@ FLAGS = -std=c++14 -Wall -Werror -pedantic-errors
 G_FLAG = -g
 
 MAIN = main
-WORLD_CUP= src/worldcup23a2
-UTIL= src/wet2util
-PLAYER = src/Player
-TEAM = src/Team
-NODELIST = src/NodeList
-HASH = src/Hash
+WORLD_CUP= worldcup23a2
+UTIL= wet2util
+PLAYER = Player
+TEAM = Team
+NODELIST = NodeList
+HASH = Hash
 
-TESTS = tests/developer_tests
+TESTS = developer_tests
 
 ALL_SRC_FILES = $(WORLD_CUP).h $(PLAYER).h $(TEAM).h $(NODELIST).h $(HASH).h $(UTIL).h
 ALL_SRC_OBJ = $(WORLD_CUP).o $(PLAYER).o $(TEAM).o
