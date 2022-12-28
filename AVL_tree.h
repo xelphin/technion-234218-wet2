@@ -47,8 +47,9 @@ public:
     AVL_tree<T>::Node* find(const T& item);
     AVL_tree<T>::Node* find_id(int id);
     AVL_tree<T>::Node* find_rightmost(AVL_tree<T>::Node* node);
+    int find_ith_rank_id(int i);
 
-    // CLOSEST functions
+        // CLOSEST functions
     AVL_tree<T>::Node* find_closest_left(AVL_tree<T>::Node* node);
     AVL_tree<T>::Node* find_closest_right(AVL_tree<T>::Node* node);
     AVL_tree<T>::Node* find_a_closest(AVL_tree<T>::Node* node);
@@ -77,8 +78,10 @@ private:
     void post_order_delete();
     AVL_tree<T>::Node* find_next_in_order(AVL_tree<T>::Node* node);
     void replace_nodes(AVL_tree<T>::Node* node, AVL_tree<T>::Node* replacement);
+    static int get_w(AVL_tree<T>::Node* node);
+    int select(Node *sub_tree_root, int i);
 
-    template<class F>
+        template<class F>
     void in_order_traversal(AVL_tree<T>::Node* node, F* functor);
 
 
@@ -117,7 +120,6 @@ public:
     int set_balance_factor();
     int set_height();
     int get_height(AVL_tree<T>::Node* node);
-    int get_w(AVL_tree<T>::Node* node);
     void choose_roll();
 
     void update_parent(AVL_tree<T>::Node* replacement);
@@ -674,9 +676,9 @@ int AVL_tree<T>::get_amount() {
 
 
 template<class T>
-int AVL_tree<T>::Node::get_w(AVL_tree<T>::Node *node) {
+int AVL_tree<T>::get_w(AVL_tree<T>::Node *node) {
     if (node == nullptr){
-        return 0; //leaf child is 0, non-existent child is -1
+        return 0;
     }
     else{
         return node->w;
@@ -928,6 +930,41 @@ void AVL_tree<T>::print_node(AVL_tree<T>::Node* node){
     if (node->left){
         if ((node->left && node->left->parent != node) || (node->right && node->right->parent != node)){
             throw std::invalid_argument("parent and child dont point at each other");
+        }
+    }
+}
+
+template<class T>
+int AVL_tree<T>::find_ith_rank_id(int i) {
+    if (i >= amount || i < 0){
+        return -1;
+    }
+    return select(root, i);
+}
+
+template<class T>
+int AVL_tree<T>::select(Node* node, int i) {
+    if (sort_by_score != SORT_BY_SCORE){
+        throw std::logic_error("getting rank from the id tree. wrong tree.");
+    }
+    if (node == nullptr){
+        throw std::logic_error("nullptr in rank finding. rank outside of tree range or tree not sorted well");
+    }
+    if (i < 0){
+        throw std::logic_error("looking for negative rank");
+    }
+
+    //code copied from find()
+    while(true){ //while true loop ok because in every case we either return or go down tree.
+        int difference = get_w(node->left) - (i - 1);
+        if (difference == 0){
+            return node->content->get_id();
+        }
+        if (difference > 0)  { //proceed to left branch.
+            return find_ith_rank_id(node->left, i);
+        }
+        else{ //proceed to right branch
+            return find_ith_rank_id(node->right, i - get_w(node->left) - 1);
         }
     }
 }
