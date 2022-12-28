@@ -1,6 +1,6 @@
 #include "worldcup23a2.h"
 
-world_cup_t::world_cup_t()
+world_cup_t::world_cup_t() : teams_AVL(SORT_BY_ID), teams_ability_AVL(SORT_BY_SCORE)
 {
 	// TODO: Your code goes here
 }
@@ -10,9 +10,30 @@ world_cup_t::~world_cup_t()
 	// TODO: Your code goes here
 }
 
-StatusType world_cup_t::add_team(int teamId)
+StatusType world_cup_t::add_team(int teamId) // O(log(k))
 {
-	// TODO: Your code goes here
+	std::cout << "------Starting new test:--------" << std::endl;
+
+	if (teamId <= 0){
+        return StatusType::INVALID_INPUT;
+	}
+    try {
+        std::shared_ptr<Team> team(new Team(teamId));
+        if (team == nullptr){
+            throw;
+        }
+		std::cout << teams_AVL.debugging_printTree_new();
+		std::cout << teams_ability_AVL.debugging_printTree_new();
+        teams_AVL.add(team);
+		// BUG: throws error if two teams have same ability score, shouldn't, only for same ID
+		// teams_ability_AVL.add(team); //  TODO: Notice that the .compare compares ability, and that if two teams have equal ability to not throw error
+    } catch (std::bad_alloc const&){
+        return StatusType::ALLOCATION_ERROR;
+    } catch (const ID_ALREADY_EXISTS& e) {
+		std::cout << "Id "<< (teamId) << " already exists" << std::endl;
+		
+        return StatusType::FAILURE;
+    }
 	return StatusType::SUCCESS;
 }
 

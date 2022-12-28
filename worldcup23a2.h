@@ -16,12 +16,23 @@
 #define WORLDCUP23A2_H_
 
 #include "wet2util.h"
+#include "AVL_tree.h"
+#include "Hash.h"
+#include "NodeList.h"
+#include "Player.h"
+#include "Team.h"
+#include "Exception.h"
+
+#include <iostream>
+#include <memory>
 
 class world_cup_t {
 private:
 	//
 	// Here you may add anything you want
 	//
+	AVL_tree<std::shared_ptr<Team>> teams_AVL;
+	AVL_tree<std::shared_ptr<Team>> teams_ability_AVL;
 	
 public:
 	// <DO-NOT-MODIFY> {

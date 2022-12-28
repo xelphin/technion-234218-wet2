@@ -3,6 +3,7 @@
 
 #include "stdexcept"
 #include "iostream"
+#include "Exception.h"
 
 #define SORT_BY_SCORE true
 #define SORT_BY_ID false
@@ -174,7 +175,7 @@ typename AVL_tree<T>::Node* AVL_tree<T>::add(T item) {
             parent->left = leaf;
         } else {
             delete leaf;
-            throw; // TODO: Make a throw that you can catch
+            throw ID_ALREADY_EXISTS();
         }
         leaf->parent = parent;
         leaf->tree=this;

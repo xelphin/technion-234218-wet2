@@ -33,6 +33,8 @@ public:
 private:
     int teamId;
     int total_players;
+
+    // TODO: Add -> UnionFind players;
 };
 
 #endif // TEAM_H

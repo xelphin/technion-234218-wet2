@@ -21,7 +21,7 @@
 #include "NodeList.h"
 #include "Hash.h"
 #include "AVL_tree.h"
-
+#include "Exception.h"
 
 bool run_all_tests();
 void run_test(std::function<bool()> test, std::string test_name, std::string& success_string, bool& success);
@@ -57,5 +57,8 @@ bool balanceAVL_RL();
 bool find_test();
 bool remove_test();
 
+// WORLCUP TESTS
+bool worldcup_basic();
+bool worldcup_addTeam();
 
 #endif
