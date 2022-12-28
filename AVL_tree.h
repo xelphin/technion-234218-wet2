@@ -162,7 +162,7 @@ AVL_tree<T>::Node::Node(T new_item)
   content(nullptr),
   balance_factor(0),
   height(0),
-  weight(0)
+  weight(1)
 {
     content = new_item;
 }
