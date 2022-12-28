@@ -6,12 +6,6 @@
  *
  * in our code, AVL trees appear at:
  * all teams AVL.
- * valid teams AVL.
- * all players_id AVL.
- * all players_score AVL.
- * players AVL (for every team).
- * players score AVL (for every team).
- *
  */
 
 #ifndef TECHNION_234218_DATA_STRUCTURES_WET_1_AVL_TREE_H
@@ -53,7 +47,6 @@ public:
     AVL_tree<T>::Node* find(const T& item);
     AVL_tree<T>::Node* find_id(int id);
     AVL_tree<T>::Node* find_rightmost(AVL_tree<T>::Node* node);
-    AVL_tree<T>::Node* find_leftmost(AVL_tree<T>::Node* node);
 
     // CLOSEST functions
     AVL_tree<T>::Node* find_closest_left(AVL_tree<T>::Node* node);
@@ -63,20 +56,10 @@ public:
     T get_content(int id);
     T get_biggest_in_tree();
 
-
-    AVL_tree<T>::Node* make_AVL_tree_from_array(T arr[], int start, int end);
-    static void merge_sort(T newArr[], T arr1[], int size1, T arr2[], int size2, bool sort_by_score);
-    static void fill_array(T newArr[], T oldArr[], int size, int& indexNew, int& indexOld);
-
-    template<class F>
-    explicit AVL_tree(AVL_tree<T>& tree1, AVL_tree<T>& tree2, bool sort_by_score, F functor);
-
     template<class F>
     void in_order_traversal_wrapper(F functor); // used to iterate on all the nodes.
 
     // KNOCKOUT function
-    void add_to_list(NodeList& list, int minId, int maxId);
-    void add_to_list_aux(AVL_tree<T>::Node* root, bool& passedMin, bool& passedMax, NodeList& list, int minId, int maxId);
 
 
     // TESTS AND DEBUGGING FUNCTIONS
@@ -121,6 +104,7 @@ public:
     T content; //T is always a type of pointer.
     int balance_factor; //to manage the sorting of the AVL tree.
     int height;
+    int w;
 
     explicit Node(T);
     Node(const AVL_tree &) = delete; //cant copy nodes. make new ones.
@@ -133,6 +117,7 @@ public:
     int set_balance_factor();
     int set_height();
     int get_height(AVL_tree<T>::Node* node);
+    int get_w(AVL_tree<T>::Node* node);
     void choose_roll();
 
     void update_parent(AVL_tree<T>::Node* replacement);
@@ -173,7 +158,8 @@ left(nullptr),
 right(nullptr),
 content(nullptr),
 balance_factor(0),
-height(0)
+height(0),
+w(0)
 {
     content = new_item;
 }
@@ -534,179 +520,6 @@ void AVL_tree<T>::in_order_traversal_wrapper(F functor) {
     in_order_traversal(root, &functor);
 }
 
-
-template <class T, class F>
-class ArrayFillerFunctor{
-private:
-    int size;
-    int currIndex;
-    F functor;
-    T* arr;
-public:
-    ArrayFillerFunctor(T* arr, int size, F func) : size(size), currIndex(0), functor(func), arr(arr) {}
-
-    // call is: functor(node->content);
-    void operator() (T node_content) {
-        if (currIndex > size - 1){
-            throw std::exception();
-        }
-        functor(node_content);
-        arr[currIndex] = node_content;
-        currIndex++;
-    }
-    //typename AVL_tree<T>::Node* node, T arr[], int size, int& currIndex, F functor)
-};
-
-template <class T>
-class ArrayFillerFunctor_ID{
-private:
-    int size;
-    int currIndex;
-    int* arr;
-public:
-    ArrayFillerFunctor_ID(int* arr, int size) : size(size), currIndex(0), arr(arr) {}
-
-    // call is: functor(node->content);
-    void operator() (T node_content) {
-        if (currIndex > size - 1){
-            throw std::exception();
-        }
-        arr[currIndex] = node_content.get()->get_id();
-        currIndex++;
-    }
-};
-
-//this constructor is used to merge 2 trees together.
-template<class T>
-template <class F>
-AVL_tree<T>::AVL_tree(AVL_tree<T>& tree1, AVL_tree<T>& tree2, bool sort_by_score, F functor)
-        : sort_by_score(sort_by_score), root(nullptr), amount(0)
-{
-    // Complexity: O( sizeTree1 + sizeTree2)
-    int sizeTree1 = tree1.get_amount();
-    int sizeTree2 = tree2.get_amount();
-    T *arrTree1 = new T [sizeTree1];
-    T *arrTree2;
-    try
-    {
-        arrTree2 = new T [sizeTree2];
-    }
-    catch (...){
-        delete[] arrTree1;
-        throw;
-    }
-
-    try {
-        // Fill an inorder array for each tree
-        tree1.in_order_traversal_wrapper(ArrayFillerFunctor<T, F>(arrTree1, sizeTree1, functor));
-        tree2.in_order_traversal_wrapper(ArrayFillerFunctor<T, F>(arrTree2, sizeTree2, functor));
-    }
-    catch (...){
-        delete[] arrTree1;
-        delete[] arrTree2;
-        throw;
-    }
-    // Create new array
-    T *arrTree = new T [sizeTree1 + sizeTree2];
-
-    try{
-        AVL_tree<T>::merge_sort(arrTree, arrTree1, sizeTree1, arrTree2, sizeTree2, sort_by_score);
-    }
-    catch (...){
-        delete[] arrTree1;
-        delete[] arrTree2;
-        delete[] arrTree;
-        throw;
-    }
-
-    // Create tree
-    this->root = this->AVL_tree<T>::make_AVL_tree_from_array(arrTree, 0, (sizeTree1 + sizeTree2) -1);
-    this->amount = sizeTree1 + sizeTree2;
-
-    // Free arrays
-    delete[] arrTree1;
-    delete[] arrTree2;
-    delete[] arrTree;
-}
-
-template<class T>
-typename AVL_tree<T>::Node *AVL_tree<T>::make_AVL_tree_from_array(T arr[], int start, int end)
-{
-    int diff = end-start;
-    if (diff < 0)
-        return nullptr;
-    int midIndex = start + diff/2;
-    if (arr[midIndex] == nullptr)
-        throw;
-
-
-    AVL_tree<T>::Node *node = new Node(arr[midIndex]); //in case of bad_alloc, memory is freed from the tree destructor.
-
-    try {
-        node->tree = this;
-        node->left = this->AVL_tree<T>::make_AVL_tree_from_array(arr, start, midIndex - 1);
-        node->right = this->AVL_tree<T>::make_AVL_tree_from_array(arr, midIndex + 1, end);
-        node->set_height();
-    }
-    catch (...){
-        delete node;
-        throw;
-    }
-    if (node->left != nullptr)
-        node->left->parent = node;
-    if (node->right != nullptr)
-        node->right->parent = node;
-    return node;
-}
-
-template<class T>
-void AVL_tree<T>::merge_sort(T newArr[], T arr1[], int size1, T arr2[], int size2, bool sort_by_score)
-{
-    int index1 = 0;
-    int index2 = 0;
-    int index = 0;
-    // size of newArr[] MUST BE == size1+size2 !!!!!
-    if (size1 < 0 || size2 < 0)
-            throw;
-
-    while(index1 < size1 && index2 < size2) {
-        if (arr1[index1] == nullptr || arr2[index2] == nullptr)
-            throw;
-        int comparison = (*arr1[index1]).compare(*(arr2[index2]), sort_by_score);
-        if (comparison < 0) {
-            newArr[index] = arr1[index1];
-            index1++;
-        } else if (comparison > 0) {
-            newArr[index] = arr2[index2];
-            index2++;
-        } else {
-            throw;
-        }
-        index++;
-    }
-
-    if (index1 != size1) { // fill the rest of newArr with the remainder of arr1
-        fill_array(newArr, arr1, size1, index, index1);
-        return;
-    }
-    if (index2 != size2) { // fill the rest of newArr with the remainder of arr2
-        fill_array(newArr, arr2, size2, index, index2);
-        return;
-    }
-
-}
-
-template<class T>
-void AVL_tree<T>::fill_array(T newArr[], T oldArr[], int size, int& indexNew, int& indexOld)
-{
-    for (int i=indexOld; i<size; i++) {
-        if (oldArr[i] == nullptr)
-                throw;
-        newArr[indexNew] = oldArr[i];
-        indexNew++;
-    }
-}
-
 //-----------------------------PRIVATE TREE FUNCTIONS-----------------------------//
 
 template<class T>
@@ -861,11 +674,25 @@ int AVL_tree<T>::get_amount() {
 
 
 template<class T>
+int AVL_tree<T>::Node::get_w(AVL_tree<T>::Node *node) {
+    if (node == nullptr){
+        return 0; //leaf child is 0, non-existent child is -1
+    }
+    else{
+        return node->w;
+    }
+}
+
+
+template<class T>
 int AVL_tree<T>::Node::set_height() {
 
     int left_height = get_height(left);
     int right_height = get_height(right);
     height = left_height > right_height ? left_height + 1 : right_height + 1; //max
+
+    w = get_w(left) + get_w(right) + 1;
+
     return height;
 }
 
@@ -875,7 +702,7 @@ int AVL_tree<T>::Node::get_height(AVL_tree<T>::Node *node) {
         return -1; //leaf child is 0, non-existent child is -1
     }
     else{
-        return node->set_height();
+        return node->height;
     }
 }
 
@@ -1010,51 +837,6 @@ template<class T>
 void AVL_tree<T>::Node::RL_roll() {
     right->roll_right();
     roll_left();
-}
-
-
-
-
-
-//------------------------------------------KNOCKOUT FUNCTIONS-----------------//
-
-template<class T>
-void AVL_tree<T>::add_to_list(NodeList& list, int minId, int maxId)
-{
-    bool passedMin = false;
-    bool passedMax = false;
-    add_to_list_aux(root, passedMin, passedMax, list, minId, maxId);
-}
-
-template<class T>
-void AVL_tree<T>::add_to_list_aux(AVL_tree::Node* node, bool& passedMin, bool& passedMax, NodeList& list, int minId, int maxId)
-{
-    if (node == nullptr)
-        return;
-    if (node->content == nullptr)
-        return;
-    // CHECK LEFT of tree
-    if ((*(node->content)).get_id() > minId) {
-        add_to_list_aux(node->left, passedMin, passedMax, list, minId, maxId);
-    }
-
-    // ADD Team to list and UPDATE passed arguments
-    if ((*(node->content)).get_id() >= minId && (*(node->content)).get_id() <= maxId) {
-        list.add((*(node->content)).get_id(),
-                 (*(node->content)).get_total_points(),
-                 (*(node->content)).get_goals(),
-                 (*(node->content)).get_cards());
-        if ((*(node->content)).get_id() == minId)
-            passedMin = true;
-        if ((*(node->content)).get_id() == maxId)
-            passedMax = true;
-    }
-
-    // CHECK RIGHT of tree
-    if ((*(node->content)).get_id() < maxId) {
-        add_to_list_aux(node->right, passedMin, passedMax, list, minId, maxId);
-    }
-
 }
 
 //------------------------------------------OLD DEBUG FUNCTIONS FOR TESTS TO WORK-----------------//
