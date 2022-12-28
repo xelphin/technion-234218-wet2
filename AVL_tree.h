@@ -1,8 +1,26 @@
-#ifndef AVL_TREE_H
-#define AVL_TREE_H
+/*
+ * template for an AVL_tree, uses Nodes.
+ * the Nodes ALWAYS hold a ---POINTER--- to the item. it may be a unique_ptr or a shared_ptr or a regular one,
+ * but it's always a pointer.
+ * comparison should be between nodes, not content, since the nodes know which comparison function to call.
+ *
+ * in our code, AVL trees appear at:
+ * all teams AVL.
+ * valid teams AVL.
+ * all players_id AVL.
+ * all players_score AVL.
+ * players AVL (for every team).
+ * players score AVL (for every team).
+ *
+ */
+
+#ifndef TECHNION_234218_DATA_STRUCTURES_WET_1_AVL_TREE_H
+#define TECHNION_234218_DATA_STRUCTURES_WET_1_AVL_TREE_H
 
 #include "stdexcept"
 #include "iostream"
+#include "Exception.h"
+#include "NodeList.h"
 
 #define SORT_BY_SCORE true
 #define SORT_BY_ID false
@@ -37,18 +55,28 @@ public:
     AVL_tree<T>::Node* find_rightmost(AVL_tree<T>::Node* node);
     AVL_tree<T>::Node* find_leftmost(AVL_tree<T>::Node* node);
 
+    // CLOSEST functions
+    AVL_tree<T>::Node* find_closest_left(AVL_tree<T>::Node* node);
+    AVL_tree<T>::Node* find_closest_right(AVL_tree<T>::Node* node);
+    AVL_tree<T>::Node* find_a_closest(AVL_tree<T>::Node* node);
 
     T get_content(int id);
     T get_biggest_in_tree();
 
 
-
+    AVL_tree<T>::Node* make_AVL_tree_from_array(T arr[], int start, int end);
+    static void merge_sort(T newArr[], T arr1[], int size1, T arr2[], int size2, bool sort_by_score);
+    static void fill_array(T newArr[], T oldArr[], int size, int& indexNew, int& indexOld);
 
     template<class F>
     explicit AVL_tree(AVL_tree<T>& tree1, AVL_tree<T>& tree2, bool sort_by_score, F functor);
 
     template<class F>
     void in_order_traversal_wrapper(F functor); // used to iterate on all the nodes.
+
+    // KNOCKOUT function
+    void add_to_list(NodeList& list, int minId, int maxId);
+    void add_to_list_aux(AVL_tree<T>::Node* root, bool& passedMin, bool& passedMax, NodeList& list, int minId, int maxId);
 
 
     // TESTS AND DEBUGGING FUNCTIONS
@@ -72,6 +100,7 @@ private:
 
 
     // TESTS AND DEBUGGING FUNCTIONS
+    //TODO: comment out
     void debugging_printTree(const std::string& prefix, const AVL_tree::Node* node, bool isLeft, std::string& str);
     void debugging_printTree(const AVL_tree::Node* node, std::string& str);
     void debugging_printTree_new(const std::string& prefix, const AVL_tree::Node* node, bool isLeft, std::string& str);
@@ -167,17 +196,16 @@ typename AVL_tree<T>::Node* AVL_tree<T>::add(T item) {
             this->amount++;
             return leaf;
         } 
-
         if ((*leaf).get_comparison(*parent) > 0) {
             parent->right = leaf;
         } else if ((*leaf).get_comparison(*parent) < 0) {
             parent->left = leaf;
         } else {
             delete leaf;
-            throw; // TODO: Make a throw that you can catch
+            throw ID_ALREADY_EXISTS();
         }
         leaf->parent = parent;
-        leaf->tree=this;
+        leaf->tree = this;
         climb_up_and_rebalance_tree(leaf);
         this->amount++;
     }
@@ -185,8 +213,10 @@ typename AVL_tree<T>::Node* AVL_tree<T>::add(T item) {
         delete leaf;
         throw std::bad_alloc();
     }
+//
+//    std::cout << "added " << leaf->content->get_id() << ". sort by score: " << sort_by_score << " \n";
+//    std::cout << debugging_printTree_new();
     return leaf;
-
 }
 
 
@@ -266,6 +296,107 @@ typename AVL_tree<T>::Node *AVL_tree<T>::find_rightmost(AVL_tree<T>::Node* node)
 }
 
 template<class T>
+typename AVL_tree<T>::Node *AVL_tree<T>::find_closest_left(AVL_tree<T>::Node* node)
+{
+    // Called after add_player() -> log(n)
+    // Called before remove_player() -> log(n)
+    // ((*leaf).get_comparison(*parent) > 0)
+    if (node == nullptr)
+        return nullptr;
+    if (root == nullptr)
+        return nullptr;
+    Node* node_immediate_left = node->left;
+
+    // Has no left child -> search through ancestors
+    if (node_immediate_left == nullptr) {
+        Node* top = root;
+        while (top != nullptr && top != node) {
+            if (top->get_comparison(*node) < 0) { // top > node
+                if (top->right == nullptr)
+                    return nullptr;
+                if (top->right->get_comparison(*node) >= 0) // top->right >= node
+                    return top;
+                top = top->right;
+            } else {
+                top = top->left;
+                if (top == node) // smallest
+                    return nullptr;
+            }
+        }
+    }
+
+    // Has left child -> search through children
+    Node* current = node_immediate_left->right;
+    if (current == nullptr)
+        return node_immediate_left;
+    // Get the rightmost from node_immediate_left
+    while(current) {
+        if (current->right == nullptr)
+            return current;
+        current = current->right;
+    }
+    return current;
+}
+
+template<class T>
+typename AVL_tree<T>::Node *AVL_tree<T>::find_closest_right(AVL_tree<T>::Node* node)
+{
+    // Called after add_player() -> log(n)
+    // Called before remove_player() -> log(n)
+    // ((*leaf).get_comparison(*parent) > 0)
+    if (node == nullptr)
+        return nullptr;
+    if (root == nullptr)
+        return nullptr;
+
+    Node* node_immediate_right = node->right;
+
+    // Has no right child -> search through ancestors
+    if (node_immediate_right == nullptr) {
+        Node* top = root;
+        while (top != nullptr && top != node) {
+            if (top->get_comparison(*node) > 0) { // top < node
+                if (top->left == nullptr)
+                    return nullptr;
+                if (top->left->get_comparison(*node) <= 0) // top->right >= node
+                    return top;
+                top = top->left;
+            } else {
+                top = top->right;
+                if (top == node) // smallest
+                    return nullptr;
+            }
+        }
+    }
+
+    // Has right child -> search through children
+    Node* current = node_immediate_right->left;
+    if (current == nullptr)
+        return node_immediate_right;
+    // Get the rightmost from node_immediate_right
+    while(current) {
+        if (current->left == nullptr)
+            return current;
+        current = current->left;
+    }
+    return current;
+}
+
+template<class T>
+typename AVL_tree<T>::Node *AVL_tree<T>::find_a_closest(AVL_tree<T>::Node* node)
+{
+    if (node == nullptr || node->content == nullptr)
+        return nullptr;
+    if (this->amount == 1) {
+        return nullptr;
+    }
+    Node* closest_right = this->find_closest_right(node);
+    if (closest_right != nullptr)
+        return closest_right;
+    return this->find_closest_left(node);
+}
+
+template<class T>
 bool AVL_tree<T>::remove(int id) {
     // true if the node was removed. false otherwise.
     // time complexity: O(log(nodes))
@@ -287,8 +418,8 @@ bool AVL_tree<T>::remove_internal(AVL_tree<T>::Node* node) {
     // updates parent and children before deletion
     if (node->left == nullptr && node->right == nullptr) //if leaf
     {
-        node->update_parent(nullptr);
         next_unbalanced_node = node->parent;
+        node->update_parent(nullptr);
     }
     else if (node->left != nullptr && node->right == nullptr){ // only left child
         next_unbalanced_node = node->left;
@@ -329,11 +460,10 @@ bool AVL_tree<T>::remove_internal(AVL_tree<T>::Node* node) {
     }
 
     // found next unbalanced, replaced if necessary.
-    if (next_unbalanced_node != nullptr) //if not removed root and now empty tree
-    {
-        climb_up_and_rebalance_tree(next_unbalanced_node);
-    }
+    climb_up_and_rebalance_tree(next_unbalanced_node);
 
+//    std::cout << "removed " << node->content->get_id() << " sort by score: " << sort_by_score << "\n";
+//    std::cout << debugging_printTree_new();
     delete node;
     this->amount--;
     return true;
@@ -342,7 +472,7 @@ bool AVL_tree<T>::remove_internal(AVL_tree<T>::Node* node) {
 template<class T>
 typename AVL_tree<T>::Node *AVL_tree<T>::find_id(int id) {
     AVL_tree<T>::Node* current = root;
-    if (!current){
+    if (current == nullptr){
         return nullptr;
     }
 
@@ -499,7 +629,83 @@ AVL_tree<T>::AVL_tree(AVL_tree<T>& tree1, AVL_tree<T>& tree2, bool sort_by_score
     delete[] arrTree;
 }
 
+template<class T>
+typename AVL_tree<T>::Node *AVL_tree<T>::make_AVL_tree_from_array(T arr[], int start, int end)
+{
+    int diff = end-start;
+    if (diff < 0)
+        return nullptr;
+    int midIndex = start + diff/2;
+    if (arr[midIndex] == nullptr)
+        throw;
 
+
+    AVL_tree<T>::Node *node = new Node(arr[midIndex]); //in case of bad_alloc, memory is freed from the tree destructor.
+
+    try {
+        node->tree = this;
+        node->left = this->AVL_tree<T>::make_AVL_tree_from_array(arr, start, midIndex - 1);
+        node->right = this->AVL_tree<T>::make_AVL_tree_from_array(arr, midIndex + 1, end);
+        node->set_height();
+    }
+    catch (...){
+        delete node;
+        throw;
+    }
+    if (node->left != nullptr)
+        node->left->parent = node;
+    if (node->right != nullptr)
+        node->right->parent = node;
+    return node;
+}
+
+template<class T>
+void AVL_tree<T>::merge_sort(T newArr[], T arr1[], int size1, T arr2[], int size2, bool sort_by_score)
+{
+    int index1 = 0;
+    int index2 = 0;
+    int index = 0;
+    // size of newArr[] MUST BE == size1+size2 !!!!!
+    if (size1 < 0 || size2 < 0)
+            throw;
+
+    while(index1 < size1 && index2 < size2) {
+        if (arr1[index1] == nullptr || arr2[index2] == nullptr)
+            throw;
+        int comparison = (*arr1[index1]).compare(*(arr2[index2]), sort_by_score);
+        if (comparison < 0) {
+            newArr[index] = arr1[index1];
+            index1++;
+        } else if (comparison > 0) {
+            newArr[index] = arr2[index2];
+            index2++;
+        } else {
+            throw;
+        }
+        index++;
+    }
+
+    if (index1 != size1) { // fill the rest of newArr with the remainder of arr1
+        fill_array(newArr, arr1, size1, index, index1);
+        return;
+    }
+    if (index2 != size2) { // fill the rest of newArr with the remainder of arr2
+        fill_array(newArr, arr2, size2, index, index2);
+        return;
+    }
+
+}
+
+template<class T>
+void AVL_tree<T>::fill_array(T newArr[], T oldArr[], int size, int& indexNew, int& indexOld)
+{
+    for (int i=indexOld; i<size; i++) {
+        if (oldArr[i] == nullptr)
+                throw;
+        newArr[indexNew] = oldArr[i];
+        indexNew++;
+    }
+}
 
 //-----------------------------PRIVATE TREE FUNCTIONS-----------------------------//
 
@@ -600,6 +806,9 @@ typename AVL_tree<T>::Node* AVL_tree<T>::find_designated_parent(AVL_tree::Node* 
     
     while(true){ //while true loop ok because in every case we either return or go down tree.
 
+        if (new_leaf->content->get_id() == current->content->get_id()){
+            return current;}
+
         if (new_leaf->get_comparison(*current)>0)  { //proceed to right branch.
             if (current->right != nullptr){
                 current = current->right;
@@ -653,6 +862,7 @@ int AVL_tree<T>::get_amount() {
 
 template<class T>
 int AVL_tree<T>::Node::set_height() {
+
     int left_height = get_height(left);
     int right_height = get_height(right);
     height = left_height > right_height ? left_height + 1 : right_height + 1; //max
@@ -665,12 +875,19 @@ int AVL_tree<T>::Node::get_height(AVL_tree<T>::Node *node) {
         return -1; //leaf child is 0, non-existent child is -1
     }
     else{
-        return node->height;
+        return node->set_height();
     }
 }
 
 template<class T>
 int AVL_tree<T>::Node::set_balance_factor() {
+    if(left != nullptr){
+        left->set_height();
+    }
+    if(right != nullptr){
+        right->set_height();
+    }
+    set_height();
     int height_difference = get_height(left) - get_height(right);
     balance_factor = height_difference;
     return height_difference;
@@ -681,8 +898,6 @@ void AVL_tree<T>::climb_up_and_rebalance_tree(AVL_tree<T>::Node *leaf) {
     AVL_tree<T>::Node* current = leaf; //not node.parent, so it also updates the height of the node to 0 if it's a leaf.
 
     while (current != nullptr){ //climbs up tree. stops after iterating on root.
-        current->set_height();
-
         current->set_balance_factor();
         if (abs(current->balance_factor) == UNBALANCED){
             current->choose_roll(); //because roll switches parent and child, we will still get to the new parent.
@@ -690,7 +905,6 @@ void AVL_tree<T>::climb_up_and_rebalance_tree(AVL_tree<T>::Node *leaf) {
         current->set_height();
         current = current->parent;
     }
-    
 }
 
 template<class T>
@@ -727,7 +941,10 @@ void AVL_tree<T>::Node::choose_roll() {
             //std::cout << "roll: LR" << std::endl;
             this->LR_roll();
         }
-        else throw std::invalid_argument("bad balance factor");
+        else {
+            std::cout << this->tree->debugging_printTree_new();
+            throw std::invalid_argument("bad balance factor");
+        }
     }
     else if (balance_factor == -2){
         if (right->set_balance_factor() <= 0){
@@ -738,9 +955,15 @@ void AVL_tree<T>::Node::choose_roll() {
             //std::cout << "roll: RL" << std::endl;
             this->RL_roll();
         }
-        else throw std::invalid_argument("bad balance factor");
+        else {
+            std::cout << this->tree->debugging_printTree_new();
+            throw std::invalid_argument("bad balance factor");
+        }
     }
-    else throw std::invalid_argument("bad balance factor");
+    else {
+        std::cout << this->tree->debugging_printTree_new();
+//        throw std::invalid_argument("bad balance factor");
+    }
 }
 
 template<class T>
@@ -791,101 +1014,144 @@ void AVL_tree<T>::Node::RL_roll() {
 
 
 
+
+
+//------------------------------------------KNOCKOUT FUNCTIONS-----------------//
+
+template<class T>
+void AVL_tree<T>::add_to_list(NodeList& list, int minId, int maxId)
+{
+    bool passedMin = false;
+    bool passedMax = false;
+    add_to_list_aux(root, passedMin, passedMax, list, minId, maxId);
+}
+
+template<class T>
+void AVL_tree<T>::add_to_list_aux(AVL_tree::Node* node, bool& passedMin, bool& passedMax, NodeList& list, int minId, int maxId)
+{
+    if (node == nullptr)
+        return;
+    if (node->content == nullptr)
+        return;
+    // CHECK LEFT of tree
+    if ((*(node->content)).get_id() > minId) {
+        add_to_list_aux(node->left, passedMin, passedMax, list, minId, maxId);
+    }
+
+    // ADD Team to list and UPDATE passed arguments
+    if ((*(node->content)).get_id() >= minId && (*(node->content)).get_id() <= maxId) {
+        list.add((*(node->content)).get_id(),
+                 (*(node->content)).get_total_points(),
+                 (*(node->content)).get_goals(),
+                 (*(node->content)).get_cards());
+        if ((*(node->content)).get_id() == minId)
+            passedMin = true;
+        if ((*(node->content)).get_id() == maxId)
+            passedMax = true;
+    }
+
+    // CHECK RIGHT of tree
+    if ((*(node->content)).get_id() < maxId) {
+        add_to_list_aux(node->right, passedMin, passedMax, list, minId, maxId);
+    }
+
+}
+
 //------------------------------------------OLD DEBUG FUNCTIONS FOR TESTS TO WORK-----------------//
-////-------------------------------------------DEBUGGING-------------------------------------------//
+//-------------------------------------------DEBUGGING-------------------------------------------//
 // ONLY FOR DEBUGGING - ERASE LATER
 template<class T>
 void AVL_tree<T>::debugging_printTree_new(const std::string& prefix, const AVL_tree::Node* node, bool isLeft, std::string& str)
 {
-   if( node != nullptr )
-   {
-       str += prefix;
+    if( node != nullptr )
+    {
+        str += prefix;
 
-       str += (isLeft ? "└──" : "├──" );
+        str += (isLeft ? "└──" : "├──" );
 
-       // print the value of the node
-       str += std::to_string((*(node->content)).get_id());
-       str += "\n";
+        // print the value of the node
+        str += std::to_string((*(node->content)).get_id());
+        str += "\n";
 
-       // enter the next tree level - left and right branch
-       AVL_tree<T>::debugging_printTree_new( prefix + (isLeft ? "    " : "│   "), node->right, false, str);
-       AVL_tree<T>::debugging_printTree_new( prefix + (isLeft ? "    " : "│   "), node->left, true, str);
-   }
+        // enter the next tree level - left and right branch
+        AVL_tree<T>::debugging_printTree_new( prefix + (isLeft ? "    " : "│   "), node->right, false, str);
+        AVL_tree<T>::debugging_printTree_new( prefix + (isLeft ? "    " : "│   "), node->left, true, str);
+    }
 }
 
 template<class T>
 void AVL_tree<T>::debugging_printTree_new(const AVL_tree::Node* node, std::string& str)
 {
-   debugging_printTree_new("", node, true, str);
+    debugging_printTree_new("", node, true, str);
 }
 
 template<class T>
 std::string AVL_tree<T>::debugging_printTree_new()
 {
-   std::string tree = "";
-   debugging_printTree_new(root, tree);
-   return tree;
+    std::string tree = "";
+    debugging_printTree_new(root, tree);
+    return tree;
 }
 template<class T>
 void AVL_tree<T>::debugging_printTree(const std::string& prefix, const AVL_tree::Node* node, bool isLeft, std::string& str)
 {
-   if( node != nullptr )
-   {
-       str += prefix;
+    if( node != nullptr )
+    {
+        str += prefix;
 
-       str += (isLeft ? "├──" : "└──" );
+        str += (isLeft ? "├──" : "└──" );
 
-       // print the value of the node
-       str += std::to_string((*(node->content)).get_id());
-       str += "\n";
+        // print the value of the node
+        str += std::to_string((*(node->content)).get_id());
+        str += "\n";
 
-       // enter the next tree level - left and right branch
-       AVL_tree<T>::debugging_printTree( prefix + (isLeft ? "│   " : "    "), node->left, true, str);
-       AVL_tree<T>::debugging_printTree( prefix + (isLeft ? "│   " : "    "), node->right, false, str);
-   }
+        // enter the next tree level - left and right branch
+        AVL_tree<T>::debugging_printTree( prefix + (isLeft ? "│   " : "    "), node->left, true, str);
+        AVL_tree<T>::debugging_printTree( prefix + (isLeft ? "│   " : "    "), node->right, false, str);
+    }
 }
 
 template<class T>
 void AVL_tree<T>::debugging_printTree(const AVL_tree::Node* node, std::string& str)
 {
-   debugging_printTree("", node, false, str);
+    debugging_printTree("", node, false, str);
 }
 
 template<class T>
 std::string AVL_tree<T>::debugging_printTree()
 {
-   std::string tree = "";
-   debugging_printTree(root, tree);
-   return tree;
+    std::string tree = "";
+    debugging_printTree(root, tree);
+    return tree;
 }
 
 
 
 template<class T>
 void AVL_tree<T>::find_test_wrapper(int id) {
-   print_node(find_id(id));
+    print_node(find_id(id));
 }
 
 template<class T>
 void AVL_tree<T>::print_node(AVL_tree<T>::Node* node){
-   //the format is: self, parent, left, right
-   if (node == nullptr){
+    //the format is: self, parent, left, right
+    if (node == nullptr){
 //        std::cout << "NULL\n";
-       return;
-   }
-   //std::cout << (*(node->content)).get_id() << " " <<
-   //        ((node->parent) ? (*(node->parent->content)).get_id() : 0 ) << " " <<
-   //        ((node->left) ? (*(node->left->content)).get_id() : 0 ) << " " <<
-   //        ((node->right) ? (*(node->right->content)).get_id() : 0 ) <<std::endl;
-   if (node->left){
-       if ((node->left && node->left->parent != node) || (node->right && node->right->parent != node)){
-           throw std::invalid_argument("parent and child dont point at each other");
-       }
-   }
+        return;
+    }
+    //std::cout << (*(node->content)).get_id() << " " <<
+    //        ((node->parent) ? (*(node->parent->content)).get_id() : 0 ) << " " <<
+    //        ((node->left) ? (*(node->left->content)).get_id() : 0 ) << " " <<
+    //        ((node->right) ? (*(node->right->content)).get_id() : 0 ) <<std::endl;
+    if (node->left){
+        if ((node->left && node->left->parent != node) || (node->right && node->right->parent != node)){
+            throw std::invalid_argument("parent and child dont point at each other");
+        }
+    }
 }
 
 // ----------------------------------
 
 
 
-#endif // AVL_TREE_H
+#endif //TECHNION_234218_DATA_STRUCTURES_WET_1_AVL_TREE_H
