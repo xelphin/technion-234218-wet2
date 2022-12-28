@@ -21,6 +21,7 @@
 #define UNBALANCED 2
 #define SCORE >>=
 #define ID ~
+#define I_OUT_OF_RANGE -1
 
 template<class T>
 class AVL_testing;
@@ -78,7 +79,7 @@ private:
     void post_order_delete();
     AVL_tree<T>::Node* find_next_in_order(AVL_tree<T>::Node* node);
     void replace_nodes(AVL_tree<T>::Node* node, AVL_tree<T>::Node* replacement);
-    static int get_w(AVL_tree<T>::Node* node);
+    static int get_weight(AVL_tree<T>::Node* node);
     int select(Node *sub_tree_root, int i);
 
         template<class F>
@@ -107,7 +108,7 @@ public:
     T content; //T is always a type of pointer.
     int balance_factor; //to manage the sorting of the AVL tree.
     int height;
-    int w;
+    int weight;
 
     explicit Node(T);
     Node(const AVL_tree &) = delete; //cant copy nodes. make new ones.
@@ -155,13 +156,13 @@ AVL_tree<T>::~AVL_tree() {
 template<class T>
 AVL_tree<T>::Node::Node(T new_item) 
 : tree(nullptr),
-parent(nullptr),
-left(nullptr),
-right(nullptr),
-content(nullptr),
-balance_factor(0),
-height(0),
-w(0)
+  parent(nullptr),
+  left(nullptr),
+  right(nullptr),
+  content(nullptr),
+  balance_factor(0),
+  height(0),
+  weight(0)
 {
     content = new_item;
 }
@@ -676,12 +677,12 @@ int AVL_tree<T>::get_amount() {
 
 
 template<class T>
-int AVL_tree<T>::get_w(AVL_tree<T>::Node *node) {
+int AVL_tree<T>::get_weight(AVL_tree<T>::Node *node) {
     if (node == nullptr){
         return 0;
     }
     else{
-        return node->w;
+        return node->weight;
     }
 }
 
@@ -693,7 +694,7 @@ int AVL_tree<T>::Node::set_height() {
     int right_height = get_height(right);
     height = left_height > right_height ? left_height + 1 : right_height + 1; //max
 
-    w = get_w(left) + get_w(right) + 1;
+    weight = get_weight(left) + get_weight(right) + 1;
 
     return height;
 }
@@ -936,10 +937,10 @@ void AVL_tree<T>::print_node(AVL_tree<T>::Node* node){
 
 template<class T>
 int AVL_tree<T>::find_ith_rank_id(int i) {
-    if (i >= amount || i < 0){
-        return -1;
+    if (i < 1 || i > get_amount()){ //e.g. tree has 1 node ⇒ amount = 1, node's rank is 1. so i=1 is the only valid number.
+        return I_OUT_OF_RANGE;
     }
-    return select(root, i);
+    return select(root, i) - 1; //segel asked for index, starting from 0. while rank starts from 1. so we subtract 1.
 }
 
 template<class T>
@@ -950,13 +951,13 @@ int AVL_tree<T>::select(Node* node, int i) {
     if (node == nullptr){
         throw std::logic_error("nullptr in rank finding. rank outside of tree range or tree not sorted well");
     }
-    if (i < 0){
-        throw std::logic_error("looking for negative rank");
+    if (i < 1){
+        throw std::logic_error("looking for too small rank");
     }
 
     //code copied from find()
     while(true){ //while true loop ok because in every case we either return or go down tree.
-        int difference = get_w(node->left) - (i - 1);
+        int difference = get_weight(node->left) - (i - 1);
         if (difference == 0){
             return node->content->get_id();
         }
@@ -964,7 +965,7 @@ int AVL_tree<T>::select(Node* node, int i) {
             return find_ith_rank_id(node->left, i);
         }
         else{ //proceed to right branch
-            return find_ith_rank_id(node->right, i - get_w(node->left) - 1);
+            return find_ith_rank_id(node->right, i - get_weight(node->left) - 1);
         }
     }
 }
