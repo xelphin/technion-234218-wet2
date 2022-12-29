@@ -21,6 +21,7 @@
 #include "NodeList.h"
 #include "Hash.h"
 #include "AVL_tree.h"
+#include "Exception.h"
 
 
 bool run_all_tests();
