@@ -3,12 +3,14 @@
 
 #include "stdexcept"
 #include "iostream"
+#include "Exception.h"
 
 #define SORT_BY_SCORE true
 #define SORT_BY_ID false
 #define UNBALANCED 2
 #define SCORE >>=
 #define ID ~
+#define I_OUT_OF_RANGE -1
 
 template<class T>
 class AVL_testing;
@@ -35,23 +37,17 @@ public:
     AVL_tree<T>::Node* find(const T& item);
     AVL_tree<T>::Node* find_id(int id);
     AVL_tree<T>::Node* find_rightmost(AVL_tree<T>::Node* node);
-    AVL_tree<T>::Node* find_leftmost(AVL_tree<T>::Node* node);
-
+    int find_ith_rank_id(int i);
 
     T get_content(int id);
     T get_biggest_in_tree();
-
-
-
-
-    template<class F>
-    explicit AVL_tree(AVL_tree<T>& tree1, AVL_tree<T>& tree2, bool sort_by_score, F functor);
 
     template<class F>
     void in_order_traversal_wrapper(F functor); // used to iterate on all the nodes.
 
 
     // TESTS AND DEBUGGING FUNCTIONS
+    //TODO: comment out
     std::string debugging_printTree();
     std::string debugging_printTree_new();
     static void print_node(AVL_tree<T>::Node* node);
@@ -66,12 +62,15 @@ private:
     void post_order_delete();
     AVL_tree<T>::Node* find_next_in_order(AVL_tree<T>::Node* node);
     void replace_nodes(AVL_tree<T>::Node* node, AVL_tree<T>::Node* replacement);
+    static int get_weight(AVL_tree<T>::Node* node);
+    int select(Node *sub_tree_root, int i);
 
     template<class F>
     void in_order_traversal(AVL_tree<T>::Node* node, F* functor);
 
 
     // TESTS AND DEBUGGING FUNCTIONS
+    //TODO: comment out
     void debugging_printTree(const std::string& prefix, const AVL_tree::Node* node, bool isLeft, std::string& str);
     void debugging_printTree(const AVL_tree::Node* node, std::string& str);
     void debugging_printTree_new(const std::string& prefix, const AVL_tree::Node* node, bool isLeft, std::string& str);
@@ -92,6 +91,7 @@ public:
     T content; //T is always a type of pointer.
     int balance_factor; //to manage the sorting of the AVL tree.
     int height;
+    int weight;
 
     explicit Node(T);
     Node(const AVL_tree &) = delete; //cant copy nodes. make new ones.
@@ -139,12 +139,13 @@ AVL_tree<T>::~AVL_tree() {
 template<class T>
 AVL_tree<T>::Node::Node(T new_item) 
 : tree(nullptr),
-parent(nullptr),
-left(nullptr),
-right(nullptr),
-content(nullptr),
-balance_factor(0),
-height(0)
+  parent(nullptr),
+  left(nullptr),
+  right(nullptr),
+  content(nullptr),
+  balance_factor(0),
+  height(0),
+  weight(1)
 {
     content = new_item;
 }
@@ -166,18 +167,17 @@ typename AVL_tree<T>::Node* AVL_tree<T>::add(T item) {
             leaf->tree = this;
             this->amount++;
             return leaf;
-        } 
-
+        }
         if ((*leaf).get_comparison(*parent) > 0) {
             parent->right = leaf;
         } else if ((*leaf).get_comparison(*parent) < 0) {
             parent->left = leaf;
         } else {
             delete leaf;
-            throw; // TODO: Make a throw that you can catch
+            throw ID_ALREADY_EXISTS();
         }
         leaf->parent = parent;
-        leaf->tree=this;
+        leaf->tree = this;
         climb_up_and_rebalance_tree(leaf);
         this->amount++;
     }
@@ -186,7 +186,6 @@ typename AVL_tree<T>::Node* AVL_tree<T>::add(T item) {
         throw std::bad_alloc();
     }
     return leaf;
-
 }
 
 
@@ -287,8 +286,8 @@ bool AVL_tree<T>::remove_internal(AVL_tree<T>::Node* node) {
     // updates parent and children before deletion
     if (node->left == nullptr && node->right == nullptr) //if leaf
     {
-        node->update_parent(nullptr);
         next_unbalanced_node = node->parent;
+        node->update_parent(nullptr);
     }
     else if (node->left != nullptr && node->right == nullptr){ // only left child
         next_unbalanced_node = node->left;
@@ -329,10 +328,7 @@ bool AVL_tree<T>::remove_internal(AVL_tree<T>::Node* node) {
     }
 
     // found next unbalanced, replaced if necessary.
-    if (next_unbalanced_node != nullptr) //if not removed root and now empty tree
-    {
-        climb_up_and_rebalance_tree(next_unbalanced_node);
-    }
+    climb_up_and_rebalance_tree(next_unbalanced_node);
 
     delete node;
     this->amount--;
@@ -342,7 +338,7 @@ bool AVL_tree<T>::remove_internal(AVL_tree<T>::Node* node) {
 template<class T>
 typename AVL_tree<T>::Node *AVL_tree<T>::find_id(int id) {
     AVL_tree<T>::Node* current = root;
-    if (!current){
+    if (current == nullptr){
         return nullptr;
     }
 
@@ -403,103 +399,6 @@ template<class F>
 void AVL_tree<T>::in_order_traversal_wrapper(F functor) {
     in_order_traversal(root, &functor);
 }
-
-
-template <class T, class F>
-class ArrayFillerFunctor{
-private:
-    int size;
-    int currIndex;
-    F functor;
-    T* arr;
-public:
-    ArrayFillerFunctor(T* arr, int size, F func) : size(size), currIndex(0), functor(func), arr(arr) {}
-
-    // call is: functor(node->content);
-    void operator() (T node_content) {
-        if (currIndex > size - 1){
-            throw std::exception();
-        }
-        functor(node_content);
-        arr[currIndex] = node_content;
-        currIndex++;
-    }
-    //typename AVL_tree<T>::Node* node, T arr[], int size, int& currIndex, F functor)
-};
-
-template <class T>
-class ArrayFillerFunctor_ID{
-private:
-    int size;
-    int currIndex;
-    int* arr;
-public:
-    ArrayFillerFunctor_ID(int* arr, int size) : size(size), currIndex(0), arr(arr) {}
-
-    // call is: functor(node->content);
-    void operator() (T node_content) {
-        if (currIndex > size - 1){
-            throw std::exception();
-        }
-        arr[currIndex] = node_content.get()->get_id();
-        currIndex++;
-    }
-};
-
-//this constructor is used to merge 2 trees together.
-template<class T>
-template <class F>
-AVL_tree<T>::AVL_tree(AVL_tree<T>& tree1, AVL_tree<T>& tree2, bool sort_by_score, F functor)
-        : sort_by_score(sort_by_score), root(nullptr), amount(0)
-{
-    // Complexity: O( sizeTree1 + sizeTree2)
-    int sizeTree1 = tree1.get_amount();
-    int sizeTree2 = tree2.get_amount();
-    T *arrTree1 = new T [sizeTree1];
-    T *arrTree2;
-    try
-    {
-        arrTree2 = new T [sizeTree2];
-    }
-    catch (...){
-        delete[] arrTree1;
-        throw;
-    }
-
-    try {
-        // Fill an inorder array for each tree
-        tree1.in_order_traversal_wrapper(ArrayFillerFunctor<T, F>(arrTree1, sizeTree1, functor));
-        tree2.in_order_traversal_wrapper(ArrayFillerFunctor<T, F>(arrTree2, sizeTree2, functor));
-    }
-    catch (...){
-        delete[] arrTree1;
-        delete[] arrTree2;
-        throw;
-    }
-    // Create new array
-    T *arrTree = new T [sizeTree1 + sizeTree2];
-
-    try{
-        AVL_tree<T>::merge_sort(arrTree, arrTree1, sizeTree1, arrTree2, sizeTree2, sort_by_score);
-    }
-    catch (...){
-        delete[] arrTree1;
-        delete[] arrTree2;
-        delete[] arrTree;
-        throw;
-    }
-
-    // Create tree
-    this->root = this->AVL_tree<T>::make_AVL_tree_from_array(arrTree, 0, (sizeTree1 + sizeTree2) -1);
-    this->amount = sizeTree1 + sizeTree2;
-
-    // Free arrays
-    delete[] arrTree1;
-    delete[] arrTree2;
-    delete[] arrTree;
-}
-
-
 
 //-----------------------------PRIVATE TREE FUNCTIONS-----------------------------//
 
@@ -600,6 +499,9 @@ typename AVL_tree<T>::Node* AVL_tree<T>::find_designated_parent(AVL_tree::Node* 
     
     while(true){ //while true loop ok because in every case we either return or go down tree.
 
+        if (new_leaf->content->get_id() == current->content->get_id()){
+            return current;}
+
         if (new_leaf->get_comparison(*current)>0)  { //proceed to right branch.
             if (current->right != nullptr){
                 current = current->right;
@@ -652,10 +554,25 @@ int AVL_tree<T>::get_amount() {
 
 
 template<class T>
+int AVL_tree<T>::get_weight(AVL_tree<T>::Node *node) {
+    if (node == nullptr){
+        return 0;
+    }
+    else{
+        return node->weight;
+    }
+}
+
+
+template<class T>
 int AVL_tree<T>::Node::set_height() {
+
     int left_height = get_height(left);
     int right_height = get_height(right);
     height = left_height > right_height ? left_height + 1 : right_height + 1; //max
+
+    weight = get_weight(left) + get_weight(right) + 1;
+
     return height;
 }
 
@@ -671,6 +588,13 @@ int AVL_tree<T>::Node::get_height(AVL_tree<T>::Node *node) {
 
 template<class T>
 int AVL_tree<T>::Node::set_balance_factor() {
+    if(left != nullptr){
+        left->set_height();
+    }
+    if(right != nullptr){
+        right->set_height();
+    }
+    set_height();
     int height_difference = get_height(left) - get_height(right);
     balance_factor = height_difference;
     return height_difference;
@@ -681,8 +605,6 @@ void AVL_tree<T>::climb_up_and_rebalance_tree(AVL_tree<T>::Node *leaf) {
     AVL_tree<T>::Node* current = leaf; //not node.parent, so it also updates the height of the node to 0 if it's a leaf.
 
     while (current != nullptr){ //climbs up tree. stops after iterating on root.
-        current->set_height();
-
         current->set_balance_factor();
         if (abs(current->balance_factor) == UNBALANCED){
             current->choose_roll(); //because roll switches parent and child, we will still get to the new parent.
@@ -690,7 +612,6 @@ void AVL_tree<T>::climb_up_and_rebalance_tree(AVL_tree<T>::Node *leaf) {
         current->set_height();
         current = current->parent;
     }
-    
 }
 
 template<class T>
@@ -789,10 +710,8 @@ void AVL_tree<T>::Node::RL_roll() {
     roll_left();
 }
 
-
-
 //------------------------------------------OLD DEBUG FUNCTIONS FOR TESTS TO WORK-----------------//
-////-------------------------------------------DEBUGGING-------------------------------------------//
+//-------------------------------------------DEBUGGING-------------------------------------------//
 // ONLY FOR DEBUGGING - ERASE LATER
 template<class T>
 void AVL_tree<T>::debugging_printTree_new(const std::string& prefix, const AVL_tree::Node* node, bool isLeft, std::string& str)
@@ -882,6 +801,41 @@ void AVL_tree<T>::print_node(AVL_tree<T>::Node* node){
            throw std::invalid_argument("parent and child dont point at each other");
        }
    }
+}
+
+template<class T>
+int AVL_tree<T>::find_ith_rank_id(int i) {
+    if (i < 1 || i > get_amount()){ //e.g. tree has 1 node ⇒ amount = 1, node's rank is 1. so i=1 is the only valid number.
+        return I_OUT_OF_RANGE;
+    }
+    return select(root, i) - 1; //segel asked for index, starting from 0. while rank starts from 1. so we subtract 1.
+}
+
+template<class T>
+int AVL_tree<T>::select(Node* node, int i) {
+    if (sort_by_score != SORT_BY_SCORE){
+        throw std::logic_error("getting rank from the id tree. wrong tree.");
+    }
+    if (node == nullptr){
+        throw std::logic_error("nullptr in rank finding. rank outside of tree range or tree not sorted well");
+    }
+    if (i < 1){
+        throw std::logic_error("looking for too small rank");
+    }
+
+    //code copied from find()
+    while(true){ //while true loop ok because in every case we either return or go down tree.
+        int difference = get_weight(node->left) - (i - 1);
+        if (difference == 0){
+            return node->content->get_id();
+        }
+        if (difference > 0)  { //proceed to left branch.
+            return find_ith_rank_id(node->left, i);
+        }
+        else{ //proceed to right branch
+            return find_ith_rank_id(node->right, i - get_weight(node->left) - 1);
+        }
+    }
 }
 
 // ----------------------------------
