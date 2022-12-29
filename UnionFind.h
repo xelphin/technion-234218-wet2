@@ -1,6 +1,8 @@
 #ifndef UNION_FIND_UNION_FIND_H
 #define UNION_FIND_UNION_FIND_H
 
+#include "Hash.h"
+
 template <class T>
 class UnionFind{
 private:
@@ -13,12 +15,11 @@ private:
     Node* get_root(Node* node);
     void compare_set_sizes(Node* set1, Node* set2, Node** smaller_set, Node** larger_set);
 
-    int dynamic_size_arr[10];
-    Node* dynamic_ptr_arr[10]; //TODO: implement dynamic array
+    Hash<T> T_hash;
 public:
     bool makeset(T new_item);
     bool unite(Node *node1, Node *node2);
-    T* find(int id); //TODO: decide on pointer architecture
+    T find(int id); //TODO: make sure pointer architecture works
 };
 
 template <class T>
@@ -57,9 +58,15 @@ typename UnionFind<T>::Node *UnionFind<T>::get_root(Node *node) {
 
 template<class T>
 bool UnionFind<T>::makeset(T new_item) {
-    int i = new_item.get_id(); //TODO: add to last open index in the dynamic array
-    dynamic_ptr_arr[i] = new Node(new_item); //TODO: return right error message on bad alloc
-    dynamic_size_arr[i] = 1;
+
+    try
+    {
+        T_hash.add(new_item);
+        Node* new_node = new Node(T_hash.find(new_item->get_id())); //node storing a shared ptr to a player that already exists.
+    }
+    catch (std::bad_alloc){
+        throw; //TODO: return right error message?
+    }
 
     return true;
 }
@@ -112,7 +119,7 @@ void UnionFind<T>::set_root_parent(Node *child, Node *parent) {
 
 template<class T>
 typename UnionFind<T>::Node * UnionFind<T>::find_internal(int id) {
-    Node node = dynamic_ptr_arr[id];
+    Node node = T_hash[id];
     return node->get_root();
 }
 

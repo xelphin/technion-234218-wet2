@@ -1,6 +1,6 @@
 #include "worldcup23a2.h"
 
-world_cup_t::world_cup_t() : teams_AVL(SORT_BY_ID), teams_ability_AVL(SORT_BY_SCORE)
+world_cup_t::world_cup_t() : teams_AVL(SORT_BY_ID), teams_ability_AVL(SORT_BY_SCORE), players_UF()
 {
 	// TODO: Your code goes here
 }

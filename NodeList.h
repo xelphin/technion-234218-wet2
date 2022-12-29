@@ -12,7 +12,7 @@ class NodeList {
 public:
     class Node;
 
-    explicit NodeList(); 
+    explicit NodeList();
     ~NodeList();
     NodeList(const NodeList &) = delete; // When re-hashing, the mod changes so current NodeList is not useful
     NodeList &operator=(NodeList &other) = delete;
