@@ -9,6 +9,11 @@
 #include "NodeList.h"
 #include <math.h>  
 
+#include "developer_tests.h" // TODO: Delete this (when done)
+
+template<class T>
+class Hash_Tests;
+
 template<class T>
 class Hash {
 public:
@@ -24,8 +29,10 @@ public:
 
     
 
-    // DEBUGGING
+    // DEBUGGING // TODO: Delete when done
     std::string allLists() const;
+    friend Hash_Tests<T>;
+
 
 private:
     NodeList<T>* arr;
@@ -60,6 +67,8 @@ void Hash<T>::add(std::shared_ptr<T> obj)
     if (total_elem > size) {
         this->rehash();
     }
+
+    Hash_Tests<T>::total_elem_correct(*this);
 }
 
 template<class T>
@@ -72,9 +81,9 @@ void Hash<T>::rehash()
     } catch (const std::bad_alloc& e) {
         throw e;
     }
-    for (int i=0; i< size; i++) {
-        while (arr[i].getAmount() > 0) {
-           std::shared_ptr<T> obj = arr[i].popStart();
+    for (int i=0; i< size; i++) { // Iterate over each block in arr
+        while (arr[i].getAmount() > 0) { // While the NodeList was not completley emptied
+           std::shared_ptr<T> obj = arr[i].popStart(); // Remove from arr
            if (obj == nullptr) {
                 return;
            }
@@ -82,12 +91,16 @@ void Hash<T>::rehash()
            if (newIndex < 0 || newIndex > newSize -1) {
                 return;
            }
-           newArr[newIndex].add(obj);
+           newArr[newIndex].add(obj); // Add to newArr
         }
     }
+
+    // Make newArr our new arr
     delete[] arr;
     arr = newArr;
     size = newSize;
+
+    Hash_Tests<T>::total_elem_correct(*this);
 }
 
 template<class T>
