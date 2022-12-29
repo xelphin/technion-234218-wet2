@@ -23,6 +23,30 @@
 #include "AVL_tree.h"
 #include "Exception.h"
 
+// HASH
+
+template<class T>
+class Hash_Tests{
+public:
+    static bool total_elem_correct(Hash<T>& hash);
+};
+
+template<class T>
+bool Hash_Tests<T>::total_elem_correct(Hash<T>& hash) {
+    int count  = 0;
+    for (int i=0; i < hash.size; i++) {
+        count += hash.arr[i].getAmount();
+    }
+    if (count != hash.total_elem) {
+        throw std::logic_error("Total elem, does not reflect true total elements in array");
+    }
+    return true;
+}
+
+
+
+
+
 bool run_all_tests();
 void run_test(std::function<bool()> test, std::string test_name, std::string& success_string, bool& success);
 bool treeCompare(const std::string& tree, const std::string& wantedTree);
