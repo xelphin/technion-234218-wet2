@@ -2,6 +2,7 @@
 #define UNION_FIND_UNION_FIND_H
 
 #include "Hash.h"
+#include "wet2util.h"
 
 template <class T>
 class UnionFind{
@@ -15,7 +16,7 @@ private:
     Node* get_root(Node* node);
     void compare_set_sizes(Node* set1, Node* set2, Node** smaller_set, Node** larger_set);
 
-    Hash<T> T_hash;
+    Hash<UnionFind<T>::Node> T_hash; //the hash contains UF nodes!
 public:
     bool makeset(T new_item);
     bool unite(Node *node1, Node *node2);
@@ -23,22 +24,29 @@ public:
 };
 
 template <class T>
-class Node{
+class UnionFind<T>::Node{
 private:
     Node* parent;
     T content;
+//    permutation_t permutation; //TODO: permutation functions
 public:
+    explicit Node(T item);
+
     T* get_content();
     int get_id();
 };
 
 template<class T>
-int Node<T>::get_id() {
+UnionFind<T>::Node::Node(T item) : content(item), parent(nullptr)
+{}
+
+template<class T>
+int UnionFind<T>::Node::get_id() {
     return content.get_id();
 }
 
 template<class T>
-T *Node<T>::get_content() {
+T *UnionFind<T>::Node::get_content() {
     return content;
 }
 
@@ -58,16 +66,16 @@ typename UnionFind<T>::Node *UnionFind<T>::get_root(Node *node) {
 
 template<class T>
 bool UnionFind<T>::makeset(T new_item) {
-
+    Node* new_node = nullptr;
     try
     {
-        T_hash.add(new_item);
-        Node* new_node = new Node(T_hash.find(new_item->get_id())); //node storing a shared ptr to a player that already exists.
+        new_node = Node(new_item);
+        T_hash.add(new_node);
     }
     catch (std::bad_alloc){
-        throw; //TODO: return right error message?
+        delete new_node;
+        throw;
     }
-
     return true;
 }
 
