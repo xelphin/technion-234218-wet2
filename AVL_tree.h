@@ -50,11 +50,6 @@ public:
     AVL_tree<T>::Node* find_rightmost(AVL_tree<T>::Node* node);
     int find_ith_rank_id(int i);
 
-        // CLOSEST functions
-    AVL_tree<T>::Node* find_closest_left(AVL_tree<T>::Node* node);
-    AVL_tree<T>::Node* find_closest_right(AVL_tree<T>::Node* node);
-    AVL_tree<T>::Node* find_a_closest(AVL_tree<T>::Node* node);
-
     T get_content(int id);
     T get_biggest_in_tree();
 
@@ -65,6 +60,7 @@ public:
 
 
     // TESTS AND DEBUGGING FUNCTIONS
+    //TODO: comment out
     std::string debugging_printTree();
     std::string debugging_printTree_new();
     static void print_node(AVL_tree<T>::Node* node);
@@ -282,107 +278,6 @@ typename AVL_tree<T>::Node *AVL_tree<T>::find_rightmost(AVL_tree<T>::Node* node)
             return current; //returns when there is no right child
         }
     }
-}
-
-template<class T>
-typename AVL_tree<T>::Node *AVL_tree<T>::find_closest_left(AVL_tree<T>::Node* node)
-{
-    // Called after add_player() -> log(n)
-    // Called before remove_player() -> log(n)
-    // ((*leaf).get_comparison(*parent) > 0)
-    if (node == nullptr)
-        return nullptr;
-    if (root == nullptr)
-        return nullptr;
-    Node* node_immediate_left = node->left;
-
-    // Has no left child -> search through ancestors
-    if (node_immediate_left == nullptr) {
-        Node* top = root;
-        while (top != nullptr && top != node) {
-            if (top->get_comparison(*node) < 0) { // top > node
-                if (top->right == nullptr)
-                    return nullptr;
-                if (top->right->get_comparison(*node) >= 0) // top->right >= node
-                    return top;
-                top = top->right;
-            } else {
-                top = top->left;
-                if (top == node) // smallest
-                    return nullptr;
-            }
-        }
-    }
-
-    // Has left child -> search through children
-    Node* current = node_immediate_left->right;
-    if (current == nullptr)
-        return node_immediate_left;
-    // Get the rightmost from node_immediate_left
-    while(current) {
-        if (current->right == nullptr)
-            return current;
-        current = current->right;
-    }
-    return current;
-}
-
-template<class T>
-typename AVL_tree<T>::Node *AVL_tree<T>::find_closest_right(AVL_tree<T>::Node* node)
-{
-    // Called after add_player() -> log(n)
-    // Called before remove_player() -> log(n)
-    // ((*leaf).get_comparison(*parent) > 0)
-    if (node == nullptr)
-        return nullptr;
-    if (root == nullptr)
-        return nullptr;
-
-    Node* node_immediate_right = node->right;
-
-    // Has no right child -> search through ancestors
-    if (node_immediate_right == nullptr) {
-        Node* top = root;
-        while (top != nullptr && top != node) {
-            if (top->get_comparison(*node) > 0) { // top < node
-                if (top->left == nullptr)
-                    return nullptr;
-                if (top->left->get_comparison(*node) <= 0) // top->right >= node
-                    return top;
-                top = top->left;
-            } else {
-                top = top->right;
-                if (top == node) // smallest
-                    return nullptr;
-            }
-        }
-    }
-
-    // Has right child -> search through children
-    Node* current = node_immediate_right->left;
-    if (current == nullptr)
-        return node_immediate_right;
-    // Get the rightmost from node_immediate_right
-    while(current) {
-        if (current->left == nullptr)
-            return current;
-        current = current->left;
-    }
-    return current;
-}
-
-template<class T>
-typename AVL_tree<T>::Node *AVL_tree<T>::find_a_closest(AVL_tree<T>::Node* node)
-{
-    if (node == nullptr || node->content == nullptr)
-        return nullptr;
-    if (this->amount == 1) {
-        return nullptr;
-    }
-    Node* closest_right = this->find_closest_right(node);
-    if (closest_right != nullptr)
-        return closest_right;
-    return this->find_closest_left(node);
 }
 
 template<class T>
