@@ -33,7 +33,7 @@ private:
 	//
 	AVL_tree<std::shared_ptr<Team>> teams_AVL;
 	AVL_tree<std::shared_ptr<Team>> teams_ability_AVL;
-	
+
 public:
 	// <DO-NOT-MODIFY> {
 	

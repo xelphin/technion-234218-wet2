@@ -31,7 +31,7 @@ StatusType world_cup_t::add_team(int teamId) // O(log(k))
         return StatusType::ALLOCATION_ERROR;
     } catch (const ID_ALREADY_EXISTS& e) {
 		std::cout << "Id "<< (teamId) << " already exists" << std::endl;
-		
+
         return StatusType::FAILURE;
     }
 	return StatusType::SUCCESS;
