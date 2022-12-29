@@ -1,7 +1,7 @@
 #include "Team.h"
 
 Team::Team(int teamId)
-: teamId(teamId), total_players(0)
+: teamId(teamId), total_players(0), sum_player_abilities(0), points(0), current_accumalated_spirit(1)
 {}
 
 int Team::get_id() const
@@ -13,8 +13,11 @@ int Team::operator ID() const {
 }
 
 int Team::operator SCORE(const Team& other) const {
-    // TODO: Check if needed, if yes, then implement, otherwise, erase all SCORE functions here, Player and AVL_tree
-    return 0;
+    int ability_diff = this->sum_player_abilities - other.get_sumPlayerAbilities();
+    if (ability_diff != 0) {
+        return ability_diff;
+    }
+    return teamId - other.get_id(); // TODO: I'm pretty sure this is right, even though it wasn't this way in wet1.
 }
 int Team::compare(const Team& team2) const
 {
@@ -23,16 +26,24 @@ int Team::compare(const Team& team2) const
 int Team::compare(const Team& team2, bool sort_by_score) const
 {
     if (sort_by_score == SORT_BY_SCORE){
-        int score_diff = 0; // TODO: Implement
+        int score_diff = sum_player_abilities - team2.get_sumPlayerAbilities();
         if (score_diff != 0)
             return score_diff;
         else
-            return Team::get_id() - team2.get_id();
+            return Team::get_id() - team2.get_id(); // TODO: Pretty sure this else is useless if you just take the 'return' below out of the else
     }
     else
     {
         return Team::get_id() - team2.get_id();
     }
+}
+int Team::get_totalPlayers() const
+{
+    return this->total_players;
+}
+int Team::get_sumPlayerAbilities() const
+{
+    return this->sum_player_abilities;
 }
 
 // DEBUGGING

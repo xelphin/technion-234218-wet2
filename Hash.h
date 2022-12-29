@@ -18,8 +18,7 @@ template<class T>
 class Hash {
 public:
 
-    explicit Hash(int size = 1023); 
-    explicit Hash(Hash& prevHash); 
+    explicit Hash(int size = 1023);
     ~Hash();
     Hash(const Hash &) = delete;
     Hash &operator=(Hash &other) = delete;
@@ -68,7 +67,7 @@ void Hash<T>::add(std::shared_ptr<T> obj)
         this->rehash();
     }
 
-    Hash_Tests<T>::total_elem_correct(*this);
+    //Hash_Tests<T>::total_elem_correct(*this);
 }
 
 template<class T>
@@ -100,7 +99,7 @@ void Hash<T>::rehash()
     arr = newArr;
     size = newSize;
 
-    Hash_Tests<T>::total_elem_correct(*this);
+    //Hash_Tests<T>::total_elem_correct(*this);
 }
 
 template<class T>

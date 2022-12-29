@@ -11,6 +11,7 @@ class Player;
 class Team{
 public:
     Team(int teamId);
+    // TODO: D'tor might throw logic error if removed when there are players that belong to it
 
     int get_id() const;
 
@@ -25,6 +26,9 @@ public:
     int operator ID() const;
     int operator SCORE(const Team& other) const;
 
+    int get_totalPlayers() const;
+    int get_sumPlayerAbilities() const;
+
 
     // DEBUGGING
     friend std::ostream& operator<<(std::ostream& os, const Team& team);
@@ -33,6 +37,9 @@ public:
 private:
     int teamId;
     int total_players;
+    int sum_player_abilities;
+    int points;
+    int current_accumalated_spirit;
 
     // TODO: Add -> UnionFind players;
 };

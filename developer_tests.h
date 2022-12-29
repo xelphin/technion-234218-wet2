@@ -26,6 +26,9 @@
 // HASH
 
 template<class T>
+class Hash;
+
+template<class T>
 class Hash_Tests{
 public:
     static bool total_elem_correct(Hash<T>& hash);
@@ -84,5 +87,6 @@ bool remove_test();
 // WORLCUP TESTS
 bool worldcup_basic();
 bool worldcup_addTeam();
+bool worldcup_removeTeam_basic(); // TODO: Make one that's more updated when add/remove player gets implemented
 
 #endif
