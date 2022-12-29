@@ -6,3 +6,9 @@
 make
 valgrind --leak-check=full ./WorldCupUnitTester
 ```
+
+### Clean
+
+```
+make clean
+```

@@ -17,10 +17,16 @@ public:
     NodeList(const NodeList &) = delete; // When re-hashing, the mod changes so current NodeList is not useful
     NodeList &operator=(NodeList &other) = delete;
 
+    // Add to end of list
     void add(std::shared_ptr<T> obj);
+
+    // Find using ID
     std::shared_ptr<T> find(int id) const;
+
+    // Remove and return the first node in list
     std::shared_ptr<T> popStart();
 
+    // Get amount of nodes in list (length)
     int getAmount() const;
 
     // DEBUGGING
