@@ -45,7 +45,10 @@ int Team::get_sumPlayerAbilities() const
 {
     return this->sum_player_abilities;
 }
-
+int Team::get_points() const
+{
+    return this->points;
+}
 // DEBUGGING
 
 std::ostream& operator<<(std::ostream& os, const Team& toPrint)

@@ -93,8 +93,17 @@ output_t<int> world_cup_t::get_player_cards(int playerId)
 
 output_t<int> world_cup_t::get_team_points(int teamId)
 {
-	// TODO: Your code goes here
-	return 30003;
+	// TODO: This is a basic implementation, when class becomes more implemented, then maybe revist and check
+    // CHECK INVALID - O(1)
+    if(teamId <= 0)
+        return StatusType::INVALID_INPUT;
+    // FIND TEAM - O(log(k))
+    Team* team = &(*(teams_AVL.get_content(teamId)));
+    // GET TEAM POINTS - O(1)
+    if (team == nullptr) {
+        return StatusType::FAILURE;
+    }
+	return team->get_points();
 }
 
 output_t<int> world_cup_t::get_ith_pointless_ability(int i)

@@ -28,6 +28,7 @@ public:
 
     int get_totalPlayers() const;
     int get_sumPlayerAbilities() const;
+    int get_points() const;
 
 
     // DEBUGGING
