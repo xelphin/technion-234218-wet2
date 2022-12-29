@@ -17,8 +17,9 @@ class Hash_Tests;
 template<class T>
 class Hash {
 public:
+    static const int init_size = 1023;
 
-    explicit Hash(int size = 1023);
+    explicit Hash(int size = init_size);
     ~Hash();
     Hash(const Hash &) = delete;
     Hash &operator=(Hash &other) = delete;
