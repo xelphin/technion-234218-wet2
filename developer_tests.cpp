@@ -42,6 +42,7 @@ bool run_all_tests() {
 
 void run_test(std::function<bool()> test, std::string test_name, std::string& success_string, bool& success)
 {
+    std::cout << test_name << " \n";
     if(!test()){
         printFail();
         std::cout << std::endl;

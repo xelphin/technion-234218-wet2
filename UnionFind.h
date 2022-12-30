@@ -4,6 +4,7 @@
 #include "Hash.h"
 #include "wet2util.h"
 
+
 template <class T>
 class UnionFind{
 public:
@@ -60,15 +61,17 @@ typename UnionFind<T>::Node *UnionFind<T>::get_root(Node *node) {
         throw;
     }
     Node* root;
-    permutation_t multiplier = path_compression_first_traversal_to_root(node, root);
+    permutation_t multiplier = path_compression_first_traversal_to_root(node, &root);
     return path_compression_second_traversal_to_root(node, multiplier, root);
 }
 
 template<class T>
 bool UnionFind<T>::makeset(std::shared_ptr<UnionFind<T>::Node> new_node, UnionFind::Node *parent) {
     hash.add(new_node);
-    if (parent != nullptr);
-    unite(parent, new_node.get());
+    if (parent != nullptr)
+    {
+        unite(parent, new_node.get());
+    }
 //    new_node->set_parent(new_node);
 //    root->set_product(root->get_product() * new_node->get_permutation()); // ABC -> ABC*D = ABCD
 //    new_node->set_permutation(root->get_product()); // D -> ABCD
@@ -81,16 +84,19 @@ bool UnionFind<T>::unite(Node* buyer_node, Node* bought_node) {
     if (buyer_node == nullptr || bought_node == nullptr || buyer_node == bought_node){
         throw;
     }
-    Node* set1 = buyer_node->get_root();
-    Node* set2 = bought_node->get_root();
+    Node* set1 = get_root(buyer_node);
+    Node* set2 = get_root(bought_node);
 
-    Node* smaller_set, larger_set;
-    compare_set_sizes(set1, set2, smaller_set, larger_set);
+    Node* smaller_set;
+    Node* larger_set;
+    compare_set_sizes(set1, set2, &smaller_set, &larger_set);
     set_root_parent(smaller_set, larger_set);
+    permutation_t temp_product = buyer_node->get_product() * bought_node->get_product();
     bought_node->set_parent_product(buyer_node->get_product() * bought_node->get_parent_product()); // node 1 buys node2
     if(buyer_node == smaller_set){
         buyer_node->set_parent_product(buyer_node->get_product().inv() * buyer_node->get_parent_product()); // ABC * C^-1 * DEF
     }
+    larger_set->set_product(temp_product);
 
     return true;
 }
@@ -98,7 +104,7 @@ bool UnionFind<T>::unite(Node* buyer_node, Node* bought_node) {
 
 template<class T>
 void UnionFind<T>::compare_set_sizes(Node *set1, Node *set2, Node **smaller_set, Node **larger_set) {
-    if(get_size(set1) > get_size(set2)){
+    if(set1->get_size() > set2->get_size()){
         *larger_set = set1;
         *smaller_set = set2;
     }
@@ -180,7 +186,7 @@ permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node,
 //---------------------------------------NODE FUNCTIONS---------------------------------//
 template<class T>
 UnionFind<T>::Node::Node(T item, const permutation_t& permutation) : content(item), parent(this), size(1),
-partial_spirit(permutation), product(permutation), parent_product(permutation_t::neutral())  //size immediately becomes 0 becauase we unite this with the parent.
+partial_spirit(permutation), product(permutation), parent_product(permutation)  //size immediately becomes 0 becauase we unite this with the parent.
 {}
 //---------------------------------------GETTERS AND SETTERS=---------------------------//
 template<class T>

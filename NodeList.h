@@ -3,9 +3,6 @@
 
 #include <iostream>
 #include <memory>
-#include "wet2util.h"
-#include "Player.h"
-#include "Team.h"
 
 template <class T>
 class NodeList {

@@ -26,8 +26,8 @@ public:
     int operator ID() const;
     int operator SCORE(const Team& other) const;
 
-    UnionFind<Player>::Node set_captain_node(UnionFind<Player>::Node new_captain_node);
-    UnionFind<Player>::Node get_captain_node();
+    UnionFind<Player>::Node* set_captain_node(UnionFind<Player>::Node* new_captain_node);
+    UnionFind<Player>::Node* get_captain_node();
 
     // DEBUGGING
     friend std::ostream& operator<<(std::ostream& os, const Team& team);
@@ -36,7 +36,7 @@ public:
 private:
     int teamId;
     int total_players;
-    UnionFind<Player>::Node captain_node;
+    UnionFind<Player>::Node* captain_node;
 };
 
 #endif // TEAM_H
