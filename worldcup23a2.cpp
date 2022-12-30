@@ -69,7 +69,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
         return StatusType::INVALID_INPUT;
     }
     std::shared_ptr<Team> team = teams_AVL.get_content(teamId);
-    if (team && !players_UF.exists(playerId))
+    if (team && !players_UF.id_is_in_data(playerId))
     {
         std::shared_ptr<UnionFind<Player>::Node> new_node = std::make_shared<UnionFind<Player>::Node>(
             Player(playerId, teamId, spirit, gamesPlayed, ability, cards, goalKeeper), spirit);
