@@ -2,6 +2,7 @@
 #define UNION_FIND_UNION_FIND_H
 
 #include "Hash.h"
+#include "Exception.h"
 #include "wet2util.h"
 
 
@@ -12,9 +13,8 @@ public:
 private:
 
     typename UnionFind<T>::Node *find_internal(int id);
-    static void set_root_parent(Node* child, Node* parent);
     Node* get_root(Node* node);
-    void compare_set_sizes(Node* set1, Node* set2, Node** smaller_set, Node** larger_set);
+    void compare_set_sizes(Node* buyer_set, Node* bought_set, Node** smaller_set, Node** larger_set);
     permutation_t path_compression_first_traversal_to_root(Node* node, Node** root);
     Node* path_compression_second_traversal_to_root(Node* node, const permutation_t& original_multiplier, Node* root);
 
@@ -32,7 +32,6 @@ class UnionFind<T>::Node{
 private:
     T content;
     int size;
-    permutation_t partial_spirit;
     permutation_t product;
     permutation_t parent_product;
 public:
@@ -46,8 +45,6 @@ public:
     Node* get_parent();
     int set_size(int new_size);
     int get_size();
-    void set_permutation(const permutation_t& new_permutation);
-    permutation_t get_permutation();
     void set_product(const permutation_t& new_permutation);
     permutation_t get_product();
     void set_parent_product(const permutation_t& new_permutation);
@@ -72,7 +69,6 @@ bool UnionFind<T>::makeset(std::shared_ptr<UnionFind<T>::Node> new_node, UnionFi
     {
         unite(parent, new_node.get());
     }
-//    new_node->set_parent(new_node);
 //    root->set_product(root->get_product() * new_node->get_permutation()); // ABC -> ABC*D = ABCD
 //    new_node->set_permutation(root->get_product()); // D -> ABCD
     return true;
@@ -84,47 +80,43 @@ bool UnionFind<T>::unite(Node* buyer_node, Node* bought_node) {
     if (buyer_node == nullptr || bought_node == nullptr || buyer_node == bought_node){
         throw;
     }
-    Node* set1 = get_root(buyer_node);
-    Node* set2 = get_root(bought_node);
+    Node* buyer_set = get_root(buyer_node);
+    Node* bought_set = get_root(bought_node);
 
-    Node* smaller_set;
-    Node* larger_set;
-    compare_set_sizes(set1, set2, &smaller_set, &larger_set);
-    set_root_parent(smaller_set, larger_set);
-    permutation_t temp_product = buyer_node->get_product() * bought_node->get_product();
+    Node* larger_set; //A
+    Node* smaller_set; //B
+    compare_set_sizes(buyer_set, bought_set, &smaller_set, &larger_set);
+    smaller_set->set_parent(larger_set);
+    permutation_t root_final_product = buyer_node->get_product() * bought_node->get_product();
     bought_node->set_parent_product(buyer_node->get_product() * bought_node->get_parent_product()); // node 1 buys node2
     if(buyer_node == smaller_set){
-        buyer_node->set_parent_product(buyer_node->get_product().inv() * buyer_node->get_parent_product()); // ABC * C^-1 * DEF
+        buyer_node->set_parent_product(bought_node->get_parent_product().inv() * buyer_node->get_parent_product());
+        //this effectively makes the buyer node ignore the bought node when calculating partial_spirit.
+        //in get_partial the returned value is parent*child. so having the child hold: child -> parent^-1 * child cancels perfectly.
     }
-    larger_set->set_product(temp_product);
+    larger_set->set_product(root_final_product);
 
     return true;
 }
 
 
 template<class T>
-void UnionFind<T>::compare_set_sizes(Node *set1, Node *set2, Node **smaller_set, Node **larger_set) {
-    if(set1->get_size() > set2->get_size()){
-        *larger_set = set1;
-        *smaller_set = set2;
+void UnionFind<T>::compare_set_sizes(Node *buyer_set, Node *bought_set, Node **smaller_set, Node **larger_set) {
+    if(buyer_set->get_size() >= bought_set->get_size()){
+        *larger_set = buyer_set;
+        *smaller_set = bought_set;
     }
     else{
-        *larger_set = set2;
-        *smaller_set = set1;
+        *larger_set = bought_set;
+        *smaller_set = buyer_set;
     }
 }
 
-template<class T>
-void UnionFind<T>::set_root_parent(Node *child, Node *parent) {
-    child->parent = parent;
-    parent->set_size(parent->get_size() + child->get_size())  ;
-    child->set_size(0);
-}
 
 template<class T>
-typename UnionFind<T>::Node * UnionFind<T>::find_internal(int id) {
-    Node node = hash.find(id);
-    return node->get_root();
+typename UnionFind<T>::Node* UnionFind<T>::find_internal(int id) {
+    Node* node = hash.find(id).get();
+    return get_root(node);
 }
 
 template<class T>
@@ -146,10 +138,13 @@ bool UnionFind<T>::exists(int id) {
 template<class T>
 permutation_t UnionFind<T>::get_partial_spirit(int id) {
     Node* node = find_internal(id); // after this the path is compressed, and we are left only with the node and its parent.
-    // they may both have parent products (e.g. if a small set buys a large set. one's parent_product is the inverse of the other's.
-    permutation_t return_value = node->get_parent_product() * node->get_permutation(); // B*C
-    if (node->parent){
-        return_value = node->parent->get_parent_product() * return_value; // A*BC
+    // they may both have parent products (e.g. if a small set buys a large set. one's parent_product is the inverse of the other's.)
+    if (node == nullptr){
+        throw ID_DOES_NOT_EXIST();
+    }
+    permutation_t return_value = node->get_parent_product(); // BC
+    if (node->get_parent()){
+        return_value = node->get_parent()->get_parent_product() * return_value; // A*BC
     }
     return return_value;
 }
@@ -159,12 +154,12 @@ typename UnionFind<T>::Node *UnionFind<T>::path_compression_second_traversal_to_
                                                                          const permutation_t& original_multiplier, Node* root) {
     permutation_t multiplier = original_multiplier;
     Node* current = node;
-    while (current->parent != nullptr){ //does not iterate on the root!
+    while (current->get_parent() != nullptr){ //does not iterate on the root!
         permutation_t temp = current->get_parent_product();
         current->set_parent_product(multiplier);
         multiplier = multiplier * temp.inv(); // ABCDE * (DE)^-1 = ABCDE * E^-1 * E^-1 = ABC
-        Node* current_parent = current->parent;
-        set_root_parent(current, root);
+        Node* current_parent = current->get_parent();
+        current->set_parent(root);
         current = current_parent;
     }
     return current;
@@ -174,9 +169,9 @@ template<class T>
 permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node, Node** root) {
     Node* current = node;
     permutation_t multiplier = permutation_t::neutral();
-    while (current->parent != nullptr){ //does not multiply by the root's parent_product!
+    while (current->get_parent() != nullptr){ //does not multiply by the root's parent_product!
         multiplier = current->get_parent_product() * multiplier;
-        current = current->parent;
+        current = current->get_parent();
     }
     *root = current;
     return multiplier;
@@ -186,7 +181,7 @@ permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node,
 //---------------------------------------NODE FUNCTIONS---------------------------------//
 template<class T>
 UnionFind<T>::Node::Node(T item, const permutation_t& permutation) : content(item), parent(this), size(1),
-partial_spirit(permutation), product(permutation), parent_product(permutation)  //size immediately becomes 0 becauase we unite this with the parent.
+product(permutation), parent_product(permutation)  //size immediately becomes 0 because we unite this with the parent.
 {}
 //---------------------------------------GETTERS AND SETTERS=---------------------------//
 template<class T>
@@ -202,21 +197,12 @@ T *UnionFind<T>::Node::get_content() {
 template<class T>
 int UnionFind<T>::Node::set_size(int new_size) {
     size = new_size;
+    return size;
 }
 
 template<class T>
 int UnionFind<T>::Node::get_size() {
     return size;
-}
-
-template<class T>
-void UnionFind<T>::Node::set_permutation(const permutation_t& new_permutation) {
-    partial_spirit = new_permutation;
-}
-
-template<class T>
-permutation_t UnionFind<T>::Node::get_permutation() {
-    return partial_spirit;
 }
 
 template<class T>
@@ -241,7 +227,14 @@ permutation_t UnionFind<T>::Node::get_parent_product() {
 
 template<class T>
 typename UnionFind<T>::Node *UnionFind<T>::Node::set_parent(Node* new_parent) {
-    set_root_parent(this, parent);
+    parent = new_parent;
+    parent->set_size(parent->get_size() + get_size())  ;
+    set_size(0);
+    return parent;
+}
+
+template<class T>
+typename UnionFind<T>::Node* UnionFind<T>::Node::get_parent() {
     return parent;
 }
 

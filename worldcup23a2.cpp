@@ -103,8 +103,7 @@ output_t<int> world_cup_t::get_ith_pointless_ability(int i)
 
 output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)
 {
-	// TODO: Your code goes here
-	return permutation_t();
+	return players_UF.get_partial_spirit(playerId);
 }
 
 StatusType world_cup_t::buy_team(int teamId1, int teamId2)
