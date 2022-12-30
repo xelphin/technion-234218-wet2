@@ -28,4 +28,12 @@ public:
     }
 };
 
+class BAD_INPUT : public std::exception {
+public:
+    const char* what() const noexcept override {
+        return "You have given bad input.";
+    }
+};
+
+
 #endif //AVL_TREE_H_EXCEPTION_H
