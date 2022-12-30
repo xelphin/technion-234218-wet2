@@ -79,5 +79,6 @@ bool remove_test();
 // WORLCUP TESTS
 bool worldcup_basic();
 bool worldcup_addTeam();
+bool worldcup_removeTeam_basic(); // TODO: Make one that's more updated when add/remove player gets implemented
 
 #endif

@@ -12,6 +12,7 @@ class Player;
 class Team{
 public:
     Team(int teamId);
+    // TODO: D'tor might throw logic error if removed when there are players that belong to it
 
     int get_id() const;
 
@@ -28,6 +29,10 @@ public:
 
     UnionFind<Player>::Node* set_captain_node(UnionFind<Player>::Node* new_captain_node);
     UnionFind<Player>::Node* get_captain_node();
+    int get_totalPlayers() const;
+    int get_sumPlayerAbilities() const;
+    int get_points() const;
+
 
     // DEBUGGING
     friend std::ostream& operator<<(std::ostream& os, const Team& team);
@@ -36,6 +41,11 @@ public:
 private:
     int teamId;
     int total_players;
+    int sum_player_abilities;
+    int points;
+    int current_accumalated_spirit;
+
+    // TODO: Add -> UnionFind players;
     UnionFind<Player>::Node* captain_node;
 };
 
