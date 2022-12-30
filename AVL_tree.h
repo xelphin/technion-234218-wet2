@@ -1,20 +1,9 @@
-/*
- * template for an AVL_tree, uses Nodes.
- * the Nodes ALWAYS hold a ---POINTER--- to the item. it may be a unique_ptr or a shared_ptr or a regular one,
- * but it's always a pointer.
- * comparison should be between nodes, not content, since the nodes know which comparison function to call.
- *
- * in our code, AVL trees appear at:
- * all teams AVL.
- */
-
-#ifndef TECHNION_234218_DATA_STRUCTURES_WET_1_AVL_TREE_H
-#define TECHNION_234218_DATA_STRUCTURES_WET_1_AVL_TREE_H
+#ifndef AVL_TREE_H
+#define AVL_TREE_H
 
 #include "stdexcept"
 #include "iostream"
 #include "Exception.h"
-#include "NodeList.h"
 
 #define SORT_BY_SCORE true
 #define SORT_BY_ID false
@@ -56,8 +45,6 @@ public:
     template<class F>
     void in_order_traversal_wrapper(F functor); // used to iterate on all the nodes.
 
-    // KNOCKOUT function
-
 
     // TESTS AND DEBUGGING FUNCTIONS
     //TODO: comment out
@@ -78,7 +65,7 @@ private:
     static int get_weight(AVL_tree<T>::Node* node);
     int select(Node *sub_tree_root, int i);
 
-        template<class F>
+    template<class F>
     void in_order_traversal(AVL_tree<T>::Node* node, F* functor);
 
 
@@ -180,7 +167,7 @@ typename AVL_tree<T>::Node* AVL_tree<T>::add(T item) {
             leaf->tree = this;
             this->amount++;
             return leaf;
-        } 
+        }
         if ((*leaf).get_comparison(*parent) > 0) {
             parent->right = leaf;
         } else if ((*leaf).get_comparison(*parent) < 0) {
@@ -198,9 +185,6 @@ typename AVL_tree<T>::Node* AVL_tree<T>::add(T item) {
         delete leaf;
         throw std::bad_alloc();
     }
-//
-//    std::cout << "added " << leaf->content->get_id() << ". sort by score: " << sort_by_score << " \n";
-//    std::cout << debugging_printTree_new();
     return leaf;
 }
 
@@ -346,8 +330,6 @@ bool AVL_tree<T>::remove_internal(AVL_tree<T>::Node* node) {
     // found next unbalanced, replaced if necessary.
     climb_up_and_rebalance_tree(next_unbalanced_node);
 
-//    std::cout << "removed " << node->content->get_id() << " sort by score: " << sort_by_score << "\n";
-//    std::cout << debugging_printTree_new();
     delete node;
     this->amount--;
     return true;
@@ -666,10 +648,7 @@ void AVL_tree<T>::Node::choose_roll() {
             //std::cout << "roll: LR" << std::endl;
             this->LR_roll();
         }
-        else {
-            std::cout << this->tree->debugging_printTree_new();
-            throw std::invalid_argument("bad balance factor");
-        }
+        else throw std::invalid_argument("bad balance factor");
     }
     else if (balance_factor == -2){
         if (right->set_balance_factor() <= 0){
@@ -680,15 +659,9 @@ void AVL_tree<T>::Node::choose_roll() {
             //std::cout << "roll: RL" << std::endl;
             this->RL_roll();
         }
-        else {
-            std::cout << this->tree->debugging_printTree_new();
-            throw std::invalid_argument("bad balance factor");
-        }
+        else throw std::invalid_argument("bad balance factor");
     }
-    else {
-        std::cout << this->tree->debugging_printTree_new();
-//        throw std::invalid_argument("bad balance factor");
-    }
+    else throw std::invalid_argument("bad balance factor");
 }
 
 template<class T>
@@ -743,91 +716,91 @@ void AVL_tree<T>::Node::RL_roll() {
 template<class T>
 void AVL_tree<T>::debugging_printTree_new(const std::string& prefix, const AVL_tree::Node* node, bool isLeft, std::string& str)
 {
-    if( node != nullptr )
-    {
-        str += prefix;
+   if( node != nullptr )
+   {
+       str += prefix;
 
-        str += (isLeft ? "└──" : "├──" );
+       str += (isLeft ? "└──" : "├──" );
 
-        // print the value of the node
-        str += std::to_string((*(node->content)).get_id());
-        str += "\n";
+       // print the value of the node
+       str += std::to_string((*(node->content)).get_id());
+       str += "\n";
 
-        // enter the next tree level - left and right branch
-        AVL_tree<T>::debugging_printTree_new( prefix + (isLeft ? "    " : "│   "), node->right, false, str);
-        AVL_tree<T>::debugging_printTree_new( prefix + (isLeft ? "    " : "│   "), node->left, true, str);
-    }
+       // enter the next tree level - left and right branch
+       AVL_tree<T>::debugging_printTree_new( prefix + (isLeft ? "    " : "│   "), node->right, false, str);
+       AVL_tree<T>::debugging_printTree_new( prefix + (isLeft ? "    " : "│   "), node->left, true, str);
+   }
 }
 
 template<class T>
 void AVL_tree<T>::debugging_printTree_new(const AVL_tree::Node* node, std::string& str)
 {
-    debugging_printTree_new("", node, true, str);
+   debugging_printTree_new("", node, true, str);
 }
 
 template<class T>
 std::string AVL_tree<T>::debugging_printTree_new()
 {
-    std::string tree = "";
-    debugging_printTree_new(root, tree);
-    return tree;
+   std::string tree = "";
+   debugging_printTree_new(root, tree);
+   return tree;
 }
 template<class T>
 void AVL_tree<T>::debugging_printTree(const std::string& prefix, const AVL_tree::Node* node, bool isLeft, std::string& str)
 {
-    if( node != nullptr )
-    {
-        str += prefix;
+   if( node != nullptr )
+   {
+       str += prefix;
 
-        str += (isLeft ? "├──" : "└──" );
+       str += (isLeft ? "├──" : "└──" );
 
-        // print the value of the node
-        str += std::to_string((*(node->content)).get_id());
-        str += "\n";
+       // print the value of the node
+       str += std::to_string((*(node->content)).get_id());
+       str += "\n";
 
-        // enter the next tree level - left and right branch
-        AVL_tree<T>::debugging_printTree( prefix + (isLeft ? "│   " : "    "), node->left, true, str);
-        AVL_tree<T>::debugging_printTree( prefix + (isLeft ? "│   " : "    "), node->right, false, str);
-    }
+       // enter the next tree level - left and right branch
+       AVL_tree<T>::debugging_printTree( prefix + (isLeft ? "│   " : "    "), node->left, true, str);
+       AVL_tree<T>::debugging_printTree( prefix + (isLeft ? "│   " : "    "), node->right, false, str);
+   }
 }
 
 template<class T>
 void AVL_tree<T>::debugging_printTree(const AVL_tree::Node* node, std::string& str)
 {
-    debugging_printTree("", node, false, str);
+   debugging_printTree("", node, false, str);
 }
 
 template<class T>
 std::string AVL_tree<T>::debugging_printTree()
 {
-    std::string tree = "";
-    debugging_printTree(root, tree);
-    return tree;
+   std::string tree = "";
+   debugging_printTree(root, tree);
+   return tree;
 }
 
 
 
 template<class T>
 void AVL_tree<T>::find_test_wrapper(int id) {
-    print_node(find_id(id));
+   print_node(find_id(id));
 }
 
 template<class T>
 void AVL_tree<T>::print_node(AVL_tree<T>::Node* node){
-    //the format is: self, parent, left, right
-    if (node == nullptr){
+   //the format is: self, parent, left, right
+   if (node == nullptr){
 //        std::cout << "NULL\n";
-        return;
-    }
-    //std::cout << (*(node->content)).get_id() << " " <<
-    //        ((node->parent) ? (*(node->parent->content)).get_id() : 0 ) << " " <<
-    //        ((node->left) ? (*(node->left->content)).get_id() : 0 ) << " " <<
-    //        ((node->right) ? (*(node->right->content)).get_id() : 0 ) <<std::endl;
-    if (node->left){
-        if ((node->left && node->left->parent != node) || (node->right && node->right->parent != node)){
-            throw std::invalid_argument("parent and child dont point at each other");
-        }
-    }
+       return;
+   }
+   //std::cout << (*(node->content)).get_id() << " " <<
+   //        ((node->parent) ? (*(node->parent->content)).get_id() : 0 ) << " " <<
+   //        ((node->left) ? (*(node->left->content)).get_id() : 0 ) << " " <<
+   //        ((node->right) ? (*(node->right->content)).get_id() : 0 ) <<std::endl;
+   if (node->left){
+       if ((node->left && node->left->parent != node) || (node->right && node->right->parent != node)){
+           throw std::invalid_argument("parent and child dont point at each other");
+       }
+   }
 }
 
 template<class T>
@@ -869,4 +842,4 @@ int AVL_tree<T>::select(Node* node, int i) {
 
 
 
-#endif //TECHNION_234218_DATA_STRUCTURES_WET_1_AVL_TREE_H
+#endif // AVL_TREE_H

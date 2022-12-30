@@ -32,6 +32,9 @@ bool run_all_tests() {
     run_test(balanceAVL_RL, "balanceAVL_RL", success_string, success);
     run_test(find_test, "find", success_string, success);
     run_test(remove_test, "remove", success_string, success);
+    run_test(worldcup_basic, "worldcup_basic", success_string, success);
+    run_test(worldcup_addTeam, "worldcup_addTeam", success_string, success);
+    run_test(worldcup_removeTeam_basic, "worldcup_removeTeam_basic", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -472,4 +475,48 @@ bool remove_test() {
     std::cout << finalTree;
 
     return tree1.get_amount() == 6;
+}
+
+bool worldcup_basic()
+{
+    world_cup_t worldCup;
+    return true;
+}
+
+bool worldcup_addTeam()
+{
+    int test = 0;
+    world_cup_t worldCup;
+    test += StatusType::SUCCESS == worldCup.add_team(1);
+    test += StatusType::FAILURE == worldCup.add_team(1);
+    test += StatusType::INVALID_INPUT == worldCup.add_team(-1);
+    test += StatusType::SUCCESS == worldCup.add_team(2);
+    return test == 4;
+}
+
+bool worldcup_removeTeam_basic()
+{
+    // AVL tests for remove are assumed to be correct
+    int tests = 0;
+    world_cup_t worldCup;
+    worldCup.add_team(1);
+    worldCup.add_team(2);
+    worldCup.add_team(3);
+    worldCup.add_team(4);
+    worldCup.add_team(5);
+    worldCup.add_team(6);
+    worldCup.add_team(7);
+    worldCup.add_team(8);
+    worldCup.add_team(9);
+    //
+    tests += StatusType::SUCCESS == worldCup.remove_team(3);
+    tests += StatusType::SUCCESS == worldCup.remove_team(2);
+    tests += StatusType::FAILURE == worldCup.remove_team(3);
+    tests += StatusType::INVALID_INPUT == worldCup.remove_team(-2);
+    //
+    worldCup.add_team(3);
+    tests += StatusType::SUCCESS == worldCup.remove_team(3);
+    tests += StatusType::SUCCESS == worldCup.remove_team(4);
+    tests += StatusType::FAILURE == worldCup.remove_team(3);
+    return tests == 7;
 }

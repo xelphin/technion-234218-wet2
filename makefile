@@ -33,7 +33,7 @@ $(MAIN).o: $(MAIN).cpp  $(ALL_SRC_FILES) $(ALL_TEST_FILES)
 
 
 
-$(WORLD_CUP).o: $(WORLD_CUP).cpp $(WORLD_CUP).h $(UTIL).h
+$(WORLD_CUP).o: $(WORLD_CUP).cpp $(WORLD_CUP).h $(PLAYER).h $(TEAM).h $(AVL_TREE).h $(EXCEPTION).h $(NODELIST).h $(UTIL).h
 	$(COMPILER) $(FLAGS) $(G_FLAG) -c $(WORLD_CUP).cpp -o $(WORLD_CUP).o
 
 $(PLAYER).o: $(PLAYER).cpp $(PLAYER).h $(TEAM).h $(UTIL).h $(AVL_TREE).h
