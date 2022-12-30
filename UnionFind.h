@@ -22,7 +22,7 @@ private:
 public:
     bool makeset(std::shared_ptr<UnionFind<T>::Node> new_node, Node *parent);
     bool unite(Node *buyer_node, Node *bought_node);
-    T* find(int id); //TODO: make sure pointer architecture works
+    T find(int id);
     bool exists(int id);
     permutation_t get_partial_spirit(int id);
 };
@@ -34,11 +34,11 @@ private:
     int size;
     permutation_t product;
     permutation_t parent_product;
+    Node* parent;
 public:
-    Node* parent; //TODO: change back to private
     explicit Node(T item, const permutation_t& permutation);
 
-    T* get_content();
+    T get_content();
     int get_id();
 
     Node* set_parent(Node* new_parent);
@@ -120,7 +120,7 @@ typename UnionFind<T>::Node* UnionFind<T>::find_internal(int id) {
 }
 
 template<class T>
-T *UnionFind<T>::find(int id) {
+T UnionFind<T>::find(int id) {
     Node* container = find_internal(id);
     if(container){
         return container->get_content();
@@ -190,7 +190,7 @@ int UnionFind<T>::Node::get_id() {
 }
 
 template<class T>
-T *UnionFind<T>::Node::get_content() {
+T UnionFind<T>::Node::get_content() {
     return content;
 }
 
