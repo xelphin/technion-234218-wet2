@@ -24,6 +24,8 @@
 #include "Exception.h"
 
 // HASH
+template<class T>
+class Hash;
 
 template<class T>
 class Hash_Tests{

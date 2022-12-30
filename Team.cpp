@@ -42,3 +42,8 @@ std::ostream& operator<<(std::ostream& os, const Team& toPrint)
     os << std::to_string(toPrint.get_id());
     return os;
 }
+
+UnionFind<Player>::Node Team::set_captain_node(UnionFind<Player>::Node new_captain_node) {
+    captain_node = captain_node;
+    return captain_node;
+}
