@@ -71,9 +71,14 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
     std::shared_ptr<Team> team = teams_AVL.get_content(teamId);
     if (team && !players_UF.id_is_in_data(playerId))
     {
+        try{
         std::shared_ptr<UnionFind<Player>::Node> new_node = std::make_shared<UnionFind<Player>::Node>(
             Player(playerId, teamId, spirit, gamesPlayed, ability, cards, goalKeeper), spirit);
         players_UF.makeset(new_node, team->get_captain_node());
+        }
+        catch (std::bad_alloc& e){
+            return StatusType::ALLOCATION_ERROR;
+        }
         return StatusType::SUCCESS;
     }
     else{

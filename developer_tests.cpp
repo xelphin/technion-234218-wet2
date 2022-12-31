@@ -478,6 +478,10 @@ bool remove_test() {
     return tree1.get_amount() == 6;
 }
 
+bool UF_test(){
+
+}
+
 bool worldcup_basic()
 {
     world_cup_t worldCup;
