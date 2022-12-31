@@ -24,7 +24,10 @@ template<class T>
 class Hash_Tests{
 public:
     static bool total_elem_correct(Hash<T>& hash);
+    static void print_hash(Hash<T>& hash);
+    static void hash_elements_prints(Hash<T>& hash);
 };
+
 
 template<class T>
 bool Hash_Tests<T>::total_elem_correct(Hash<T>& hash) {
@@ -38,8 +41,15 @@ bool Hash_Tests<T>::total_elem_correct(Hash<T>& hash) {
     return true;
 }
 
+template<class T>
+void Hash_Tests<T>::print_hash(Hash<T> &hash) {
+    std::cout << hash.allLists();
+}
 
-
+template<class T>
+class UF_tests{
+    static void print_UF_subsets();
+};
 
 
 bool run_all_tests();
@@ -75,6 +85,9 @@ bool balanceAVL_LR();
 bool balanceAVL_RL();
 bool find_test();
 bool remove_test();
+
+// UF TESTS
+bool UF_test();
 
 // WORLCUP TESTS
 bool worldcup_basic();

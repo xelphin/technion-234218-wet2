@@ -4,7 +4,8 @@
 #include "Hash.h"
 #include "Exception.h"
 #include "wet2util.h"
-
+template <class T>
+class UF_tests;
 
 template <class T>
 class UnionFind{
@@ -27,6 +28,10 @@ private:
     Node* get_set_and_compress_path(Node* node);
     permutation_t path_compression_first_traversal_to_root(Node* node, Node** root);
     Node* path_compression_second_traversal_to_root(Node* node, const permutation_t& original_multiplier, Node* root);
+
+#ifndef NDEBUG
+    friend UF_tests<T>;
+#endif
 };
 
 template <class T>
