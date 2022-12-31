@@ -47,26 +47,9 @@ void Hash_Tests<T>::print_hash(Hash<T> &hash) {
 }
 
 template<class T>
-void Hash_Tests<T>::hash_elements_prints(Hash<T> &hash) {
-    std::string str = "Hash with size: " + std::to_string(hash.size) + " contains: \n";
-
-    for (int i=0; i < hash.size; i++) {
-        if(hash.arr[i].getAmount() != 0) {
-            str += "line " + std::to_string(i) + ": " + hash.arr[i].strList() + "\n";
-        }
-    }
-}
-
-
-template<class T>
 class UF_tests{
     static void print_UF_subsets();
 };
-
-template<class T>
-void UF_tests<T>::print_UF_subsets() {
-
-}
 
 
 bool run_all_tests();
