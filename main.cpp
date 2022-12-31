@@ -18,6 +18,8 @@ int main()
         a[i-1] = i;
     }
     worldCup.add_player(10, 1, permutation_t(a), 5,5,5,true);
+    worldCup.add_player(20, 1, permutation_t(a), 5,5,5,true);
+    worldCup.add_player(30, 1, permutation_t(a), 5,5,5,true);
 
 
     run_all_tests();

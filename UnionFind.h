@@ -4,7 +4,8 @@
 #include "Hash.h"
 #include "Exception.h"
 #include "wet2util.h"
-
+template <class T>
+class UF_tests;
 
 template <class T>
 class UnionFind{
@@ -16,6 +17,8 @@ public:
     T get_content(int id);
     bool id_is_in_data(int id); //returns true if the item with the id i
     permutation_t get_partial_spirit(int id);
+
+    UnionFind() = default;
 private:
     Hash<UnionFind<T>::Node> hash; //the hash contains UF nodes!
 
@@ -25,6 +28,10 @@ private:
     Node* get_set_and_compress_path(Node* node);
     permutation_t path_compression_first_traversal_to_root(Node* node, Node** root);
     Node* path_compression_second_traversal_to_root(Node* node, const permutation_t& original_multiplier, Node* root);
+
+#ifndef NDEBUG
+    friend UF_tests<T>;
+#endif
 };
 
 template <class T>
