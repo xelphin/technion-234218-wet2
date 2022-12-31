@@ -11,7 +11,7 @@ class UnionFind{
 public:
     class Node;
     bool makeset(std::shared_ptr<UnionFind<T>::Node> new_node, Node *parent);
-    bool unite(Node *buyer_node, Node *bought_node);
+    Node * unite(Node *buyer_node, Node *bought_node);
     Node* find_set_of_id(int id);
     T get_content(int id);
     bool id_is_in_data(int id); //returns true if the item with the id i
@@ -36,6 +36,7 @@ private:
     int size;
     permutation_t team_product;
     permutation_t seniors_product;
+    bool removed;
 
     T get_content();
     
@@ -45,7 +46,6 @@ private:
     int set_size(int new_size);
     int get_size();
     void set_team_product(const permutation_t& new_permutation);
-    permutation_t get_team_product();
     void set_seniors_product(const permutation_t& new_permutation);
     permutation_t get_seniors_product();
 
@@ -53,6 +53,9 @@ public:
     explicit Node(T item, const permutation_t& permutation);
     
     int get_id(); //to be used in nodelist
+    permutation_t get_team_product();
+    bool is_removed();
+    void remove();
 };
 
 
@@ -68,10 +71,15 @@ bool UnionFind<T>::makeset(std::shared_ptr<UnionFind<T>::Node> new_node, UnionFi
 }
 
 template<class T>
-bool UnionFind<T>::unite(Node* buyer_node, Node* bought_node) {
+typename UnionFind<T>::Node* UnionFind<T>::unite(Node* buyer_node, Node* bought_node) {
     //connects smaller set to larger, updates larger set's size.
-    if (buyer_node == nullptr || bought_node == nullptr || buyer_node == bought_node){
-        throw BAD_INPUT();
+    if (buyer_node == nullptr) {
+        return bought_node;}
+    if (bought_node == nullptr){
+        return buyer_node;
+    }
+    if(buyer_node == bought_node){
+    throw BAD_INPUT();
     }
     //these 2 lines should theoretically not be relevant, but i think sometimes we may want to unite 2 nodes without knowing who their root is.
     Node* buyer_set = get_set_and_compress_path(buyer_node);
@@ -83,7 +91,7 @@ bool UnionFind<T>::unite(Node* buyer_node, Node* bought_node) {
     smaller_set->set_parent(larger_set);
     update_permutations(buyer_set, bought_set, smaller_set, larger_set);
 
-    return true;
+    larger_set;
 }
 
 template<class T>
@@ -139,11 +147,9 @@ bool UnionFind<T>::id_is_in_data(int id) {
 template<class T>
 permutation_t UnionFind<T>::get_partial_spirit(int id) {
     Node* node = find_node(id);
-    if (node == nullptr){
-        throw ID_DOES_NOT_EXIST();
+    if (node == nullptr || get_set_and_compress_path(node)->is_removed()){
+        return permutation_t::invalid();
     }
-
-    get_set_and_compress_path(node);
     // after this the path is compressed, and we are left only with the node and its parent.
     permutation_t return_value = node->get_seniors_product();
     if (node->get_parent()){
@@ -202,7 +208,7 @@ typename UnionFind<T>::Node *UnionFind<T>::path_compression_second_traversal_to_
 //---------------------------------------NODE FUNCTIONS---------------------------------//
 template<class T>
 UnionFind<T>::Node::Node(T item, const permutation_t& permutation) : content(item), parent(nullptr), size(1),
-team_product(permutation), seniors_product(permutation)  //size immediately becomes 0 because we unite this with the parent.
+team_product(permutation), seniors_product(permutation), removed(false)  //size immediately becomes 0 because we unite this with the parent.
 {}
 //---------------------------------------GETTERS AND SETTERS=---------------------------//
 template<class T>
@@ -257,6 +263,16 @@ typename UnionFind<T>::Node *UnionFind<T>::Node::set_parent(Node* new_parent) {
 template<class T>
 typename UnionFind<T>::Node* UnionFind<T>::Node::get_parent() {
     return parent;
+}
+
+template<class T>
+bool UnionFind<T>::Node::is_removed() {
+    return removed;
+}
+
+template<class T>
+void UnionFind<T>::Node::remove() {
+    removed = true;
 }
 
 

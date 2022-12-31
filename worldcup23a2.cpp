@@ -43,9 +43,7 @@ StatusType world_cup_t::remove_team(int teamId)
 	try {
         Team* team = &(*(teams_AVL.get_content(teamId))); // O(log(k))
         if (team != nullptr) {
-            if (team->get_totalPlayers() > 0){
-                return StatusType::FAILURE;
-			}
+            team->remove_team_players();
             removed_avl_id = teams_AVL.remove(teamId);
             removed_avl_ability = teams_ability_AVL.remove(teamId);
         }
@@ -55,7 +53,7 @@ StatusType world_cup_t::remove_team(int teamId)
     } catch (std::bad_alloc const& ) {
         return StatusType::ALLOCATION_ERROR;
     }
-	if ((removed_avl_id && !removed_avl_ability) || (!removed_avl_id && removed_avl_ability)) {
+	if (removed_avl_id != removed_avl_ability) {
 		throw std::logic_error("Can't be that a team existed (and was removed) from only one AVL");
 	}
     return removed_avl_id ? StatusType::SUCCESS : StatusType::FAILURE;
@@ -128,11 +126,33 @@ output_t<int> world_cup_t::get_ith_pointless_ability(int i)
 
 output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)
 {
-	return players_UF.get_partial_spirit(playerId);
+    if (playerId <= 0){
+        return StatusType::INVALID_INPUT;
+    }
+
+    if (players_UF.get_partial_spirit(playerId).isvalid()){
+        return players_UF.get_partial_spirit(playerId);
+    }
+    return StatusType::FAILURE;
 }
 
 StatusType world_cup_t::buy_team(int teamId1, int teamId2)
 {
-	// TODO: Your code goes here
-	return StatusType::SUCCESS;
+    if (teamId1 <= 0 || teamId2 <= 0 || teamId1 == teamId2){
+        return StatusType::INVALID_INPUT;
+    }
+    std::shared_ptr<Team> team1 = teams_AVL.get_content(teamId1);
+    std::shared_ptr<Team> team2 = teams_AVL.get_content(teamId2);
+    if (team1 == nullptr || team2 == nullptr){
+        return StatusType::FAILURE;
+    }
+
+    team1->set_points(team1->get_points() + team2->get_points());
+    team1->set_captain_node(players_UF.unite(team1->get_captain_node(), team2->get_captain_node()));
+    //now the captain node is the root of the UF. it may be team2's captain if team2 was the bigger team. or a nullptr if no players.
+    if (team1->get_captain_node() != nullptr){
+        team1->set_team_spirit(team1->get_captain_node()->get_team_product());
+    }
+    teams_AVL.remove(teamId2);
+    return StatusType::SUCCESS;
 }
