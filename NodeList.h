@@ -3,16 +3,13 @@
 
 #include <iostream>
 #include <memory>
-#include "wet2util.h"
-#include "Player.h"
-#include "Team.h"
 
 template <class T>
 class NodeList {
 public:
     class Node;
 
-    explicit NodeList(); 
+    explicit NodeList();
     ~NodeList();
     NodeList(const NodeList &) = delete; // When re-hashing, the mod changes so current NodeList is not useful
     NodeList &operator=(NodeList &other) = delete;

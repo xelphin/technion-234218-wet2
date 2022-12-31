@@ -2,9 +2,9 @@
 #define PLAYER_H
 
 #include "Team.h"
+#include "AVL_tree.h"
 #include "wet2util.h"
 #include <memory>
-#include "AVL_tree.h"
 
 
 class Team;

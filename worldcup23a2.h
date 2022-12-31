@@ -22,6 +22,7 @@
 #include "Player.h"
 #include "Team.h"
 #include "Exception.h"
+#include "UnionFind.h"
 
 #include <iostream>
 #include <memory>
@@ -33,6 +34,7 @@ private:
 	//
 	AVL_tree<std::shared_ptr<Team>> teams_AVL;
 	AVL_tree<std::shared_ptr<Team>> teams_ability_AVL;
+    UnionFind<Player> players_UF;
 
 public:
 	// <DO-NOT-MODIFY> {

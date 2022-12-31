@@ -30,7 +30,7 @@ bool run_all_tests() {
     run_test(balanceAVL_LL, "balanceAVL_LL", success_string, success);
     run_test(balanceAVL_LR, "balanceAVL_LR", success_string, success);
     run_test(balanceAVL_RL, "balanceAVL_RL", success_string, success);
-    run_test(find_test, "find", success_string, success);
+    run_test(find_test, "get_content", success_string, success);
     run_test(remove_test, "remove", success_string, success);
     run_test(worldcup_basic, "worldcup_basic", success_string, success);
     run_test(worldcup_addTeam, "worldcup_addTeam", success_string, success);
@@ -43,6 +43,7 @@ bool run_all_tests() {
 
 void run_test(std::function<bool()> test, std::string test_name, std::string& success_string, bool& success)
 {
+    std::cout << test_name << " \n";
     if(!test()){
         printFail();
         std::cout << std::endl;
@@ -419,7 +420,7 @@ bool find_test() {
     std::string finalTree = tree1.debugging_printTree();
     std::cout << finalTree;
 
-    std::cout << "find test, id range: 1-11\n";
+    std::cout << "get_content test, id range: 1-11\n";
     for (int id = 1; id <= 11; ++id) {
         tree1.find_test_wrapper(id);
     }

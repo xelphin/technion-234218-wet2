@@ -1,7 +1,7 @@
 #include "Team.h"
 
 Team::Team(int teamId)
-: teamId(teamId), total_players(0), sum_player_abilities(0), points(0), current_accumalated_spirit(1)
+: teamId(teamId), total_players(0), sum_player_abilities(0), points(0), current_accumalated_spirit(1), captain_node(nullptr)
 {}
 
 int Team::get_id() const
@@ -55,4 +55,13 @@ std::ostream& operator<<(std::ostream& os, const Team& toPrint)
 {
     os << std::to_string(toPrint.get_id());
     return os;
+}
+
+UnionFind<Player>::Node* Team::set_captain_node(UnionFind<Player>::Node* new_captain_node) {
+    captain_node = new_captain_node;
+    return captain_node;
+}
+
+UnionFind<Player>::Node* Team::get_captain_node() {
+    return captain_node;
 }

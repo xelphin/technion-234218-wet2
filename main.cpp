@@ -12,7 +12,13 @@ using namespace std;
 int main()
 {
     world_cup_t worldCup;
-    worldCup.add_team(0);
+    worldCup.add_team(1);
+    int a[5];
+    for (int i = 1; i < 6; ++i) {
+        a[i-1] = i;
+    }
+    worldCup.add_player(10, 1, permutation_t(a), 5,5,5,true);
+
 
     run_all_tests();
 }

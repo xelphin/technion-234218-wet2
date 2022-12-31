@@ -3,14 +3,11 @@
 
 #include <iostream>
 #include <memory>
-#include "wet2util.h"
-#include "Player.h"
-#include "Team.h"
 #include "NodeList.h"
 #include "Exception.h"
-#include <math.h>  
+#include <math.h>
 
-#include "developer_tests.h" // TODO: Delete this (when done)
+//#include "developer_tests.h" // TODO: Delete this (when done)
 
 template<class T>
 class Hash_Tests;
@@ -75,7 +72,7 @@ void Hash<T>::add(std::shared_ptr<T> obj)
         this->rehash();
     }
 
-    //Hash_Tests<T>::total_elem_correct(*this);
+//    Hash_Tests<T>::total_elem_correct(*this);
 }
 
 template<class T>
@@ -107,7 +104,7 @@ void Hash<T>::rehash()
     arr = newArr;
     size = newSize;
 
-    //Hash_Tests<T>::total_elem_correct(*this);
+//    Hash_Tests<T>::total_elem_correct(*this);
 }
 
 template<class T>

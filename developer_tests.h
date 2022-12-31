@@ -15,16 +15,8 @@
 #include <cmath>
 
 #include "worldcup23a2.h"
-#include "wet2util.h"
-#include "Player.h"
-#include "Team.h"
-#include "NodeList.h"
-#include "Hash.h"
-#include "AVL_tree.h"
-#include "Exception.h"
 
 // HASH
-
 template<class T>
 class Hash;
 

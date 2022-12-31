@@ -1,6 +1,8 @@
 #include "worldcup23a2.h"
 
-world_cup_t::world_cup_t() : teams_AVL(SORT_BY_ID), teams_ability_AVL(SORT_BY_SCORE)
+#include <memory>
+
+world_cup_t::world_cup_t() : teams_AVL(SORT_BY_ID), teams_ability_AVL(SORT_BY_SCORE), players_UF()
 {
 	// TODO: Your code goes here
 }
@@ -63,8 +65,20 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
                                    const permutation_t &spirit, int gamesPlayed,
                                    int ability, int cards, bool goalKeeper)
 {
-	// TODO: Your code goes here
-	return StatusType::SUCCESS;
+    if(playerId <= 0 || teamId <=0 || gamesPlayed < 0 || cards < 0){
+        return StatusType::INVALID_INPUT;
+    }
+    std::shared_ptr<Team> team = teams_AVL.get_content(teamId);
+    if (team && !players_UF.id_is_in_data(playerId))
+    {
+        std::shared_ptr<UnionFind<Player>::Node> new_node = std::make_shared<UnionFind<Player>::Node>(
+            Player(playerId, teamId, spirit, gamesPlayed, ability, cards, goalKeeper), spirit);
+        players_UF.makeset(new_node, team->get_captain_node());
+        return StatusType::SUCCESS;
+    }
+    else{
+        return StatusType::FAILURE;
+    }
 }
 
 output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
@@ -114,8 +128,7 @@ output_t<int> world_cup_t::get_ith_pointless_ability(int i)
 
 output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)
 {
-	// TODO: Your code goes here
-	return permutation_t();
+	return players_UF.get_partial_spirit(playerId);
 }
 
 StatusType world_cup_t::buy_team(int teamId1, int teamId2)

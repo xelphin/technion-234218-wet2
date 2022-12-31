@@ -10,7 +10,7 @@
 class ID_ALREADY_EXISTS : public std::exception {
 public:
     const char* what() const noexcept override {
-        return "Id already exists in AVL tree";
+        return "Id already id_is_in_data in AVL tree";
     }
 };
 
