@@ -19,9 +19,9 @@ public:
     int get_ability() const;
     int get_cards() const;
     bool get_isGoalKeeper() const;
-
     Team* get_team() const;
 
+    void add_cards(int extra_cards);
     /*
     * Return called player ID minus argument player ID
     * @param player2 - Player object (argument player)

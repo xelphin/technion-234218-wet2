@@ -106,9 +106,7 @@ T UnionFind<T>::get_content(int id) {
     if(container){
         return container->get_content();
     }
-    else{
-        return nullptr;
-    }
+    throw std::logic_error("no item with that id");
 }
 
 template<class T>

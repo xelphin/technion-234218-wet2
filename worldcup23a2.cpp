@@ -93,14 +93,26 @@ output_t<int> world_cup_t::num_played_games_for_player(int playerId)
 
 StatusType world_cup_t::add_player_cards(int playerId, int cards)
 {
-	// TODO: Your code goes here
+    if (playerId <= 0 || cards <= 0){
+        return StatusType::INVALID_INPUT;
+    }
+    if (!players_UF.id_is_in_data(playerId) || players_UF.find_set_of_id(playerId)->is_removed())
+    {
+        return StatusType::FAILURE;
+    }
+    players_UF.get_content(playerId).add_cards(cards);
 	return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::get_player_cards(int playerId)
 {
-	// TODO: Your code goes here
-	return StatusType::SUCCESS;
+    if (playerId <= 0){
+        return StatusType::INVALID_INPUT;
+    }
+    if (!players_UF.id_is_in_data(playerId)){
+        return StatusType::FAILURE;
+    }
+    return players_UF.get_content(playerId).get_cards();
 }
 
 output_t<int> world_cup_t::get_team_points(int teamId)
