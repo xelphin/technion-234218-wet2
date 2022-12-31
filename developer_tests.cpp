@@ -1,5 +1,5 @@
 #include "developer_tests.h"
-#include "assert.h"
+#include <cassert>
 
 #ifdef NDEBUG // I DONT want to debug
 void printFail ();
@@ -10,8 +10,6 @@ void printSuccess ();
 #define printFail() (std::cout << test_name << " FAILED." << std::endl)
 #define printSuccess() (std::cout << "-------------------" << std::endl << test_name << " SUCCESS." << std::endl << "-------------------" << std::endl)
 #endif
-
-#include <cassert>
 
 
 bool run_all_tests() {

@@ -11,6 +11,5 @@ using namespace std;
 // TODO: Erase this file later and make main23a2.cpp the main file
 int main()
 {
-
     run_all_tests();
 }
