@@ -1,12 +1,16 @@
 #ifndef TEAM_H
 #define TEAM_H
 
-#include "Player.h"
+
 #include "UnionFind.h"
+#include "Player.h"
 #include "AVL_tree.h"
 #include "wet2util.h"
 #include <memory>
 
+
+//template<class T>
+//class UnionFind; 
 class Player;
 
 class Team{

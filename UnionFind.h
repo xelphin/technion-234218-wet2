@@ -30,9 +30,11 @@ private:
 template <class T>
 class UnionFind<T>::Node{
 private:
+
     friend UnionFind;
-    Node* parent;
+
     T content;
+    Node* parent;
     int size;
     permutation_t team_product;
     permutation_t seniors_product;
