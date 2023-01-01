@@ -41,6 +41,8 @@ public:
     void update_status_to_exist_goalKeeper();
     void add_team_points(int add);
     void increment_team_games();
+    void increment_total_players();
+    void add_sum_player_abilities(int add);
 
 
     // DEBUGGING

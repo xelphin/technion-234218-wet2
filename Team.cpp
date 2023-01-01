@@ -71,6 +71,14 @@ void Team::increment_team_games()
 {
     this->team_games += 1;
 }
+void Team::increment_total_players()
+{
+    this->total_players += 1;
+}
+void Team::add_sum_player_abilities(int add)
+{
+    this->sum_player_abilities += add;
+}
 // DEBUGGING
 
 std::ostream& operator<<(std::ostream& os, const Team& toPrint)

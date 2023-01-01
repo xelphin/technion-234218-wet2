@@ -87,6 +87,8 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
                 team->update_status_to_exist_goalKeeper();
                 // TODO: Make sure that when buying team, it is also updated
             }
+            team->increment_total_players();
+            team->add_sum_player_abilities(ability);
             // Set Player Stats
             new_node->get_content().set_team_games_played_when_joined(team->get_team_games());
             new_node->get_content().set_team(&*team);
