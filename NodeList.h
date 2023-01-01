@@ -4,11 +4,6 @@
 #include <iostream>
 #include <memory>
 
-#ifndef NDEBUG
-template <class T>
-class NodeList_tests;
-#endif
-
 template <class T>
 class NodeList {
 public:
@@ -33,9 +28,6 @@ public:
 
     // DEBUGGING
     std::string strList() const;
-#ifndef NDEBUG
-    friend NodeList_tests<T>;
-#endif
 private:
     NodeList::Node *start;
     NodeList::Node *end;
