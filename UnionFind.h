@@ -93,7 +93,7 @@ bool UnionFind<T>::unite(Node* buyer_node, Node* bought_node) {
     Node* smaller_set;
     compare_set_sizes(buyer_set, bought_set, &smaller_set, &larger_set);
     smaller_set->set_parent(larger_set);
-    update_permutations(buyer_set, bought_set, smaller_set, larger_set);
+    //update_permutations(buyer_set, bought_set, smaller_set, larger_set); // TODO: Fix MEMORY LEAK
 
     return true;
 }

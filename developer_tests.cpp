@@ -541,30 +541,54 @@ bool unionFind_basic()
 bool unionFindTest_show_union_find()
 {
     UnionFind<Player> uf;
-    std::shared_ptr<Team> team(new Team(1));
+    std::shared_ptr<Team> team1(new Team(1));
+    std::shared_ptr<Team> team2(new Team(2));
     permutation_t per;
 
     // Captain 1
-    std::shared_ptr<UnionFind<Player>::Node> captain = std::make_shared<UnionFind<Player>::Node>(
-            Player(1, 1, per, 2, 3, 0, true), per);
-    uf.makeset(captain, team->get_captain_node());
-    team->set_captain_node(&*captain);
+    std::shared_ptr<UnionFind<Player>::Node> captain1 = std::make_shared<UnionFind<Player>::Node>(
+            Player(11, 1, per, 2, 3, 0, true), per);
+    uf.makeset(captain1, team1->get_captain_node());
+    team1->set_captain_node(&*captain1);
 
     // Others
-    std::shared_ptr<UnionFind<Player>::Node> node2 = std::make_shared<UnionFind<Player>::Node>(
-        Player(2, 1, per, 2, 3, 0, true), per);
-    uf.makeset(node2, team->get_captain_node());
-    std::shared_ptr<UnionFind<Player>::Node> node3 = std::make_shared<UnionFind<Player>::Node>(
-        Player(3, 1, per, 2, 3, 0, true), per);
-    uf.makeset(node3, team->get_captain_node());
+    std::shared_ptr<UnionFind<Player>::Node> node12 = std::make_shared<UnionFind<Player>::Node>(
+        Player(12, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node12, team1->get_captain_node());
+    std::shared_ptr<UnionFind<Player>::Node> node13 = std::make_shared<UnionFind<Player>::Node>(
+        Player(13, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node13, team1->get_captain_node());
+    std::shared_ptr<UnionFind<Player>::Node> node14 = std::make_shared<UnionFind<Player>::Node>(
+        Player(14, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node14, team1->get_captain_node());
 
-    // Indented
-    std::shared_ptr<UnionFind<Player>::Node> node4 = std::make_shared<UnionFind<Player>::Node>(
-        Player(4, 1, per, 2, 3, 0, true), per);
-    uf.makeset(node4, &*node2); // HERE THERE IS A MEMORY LEAK
+    // Captain 2
+    std::shared_ptr<UnionFind<Player>::Node> captain2 = std::make_shared<UnionFind<Player>::Node>(
+            Player(21, 2, per, 2, 3, 0, true), per);
+    uf.makeset(captain2, team2->get_captain_node());
+    team2->set_captain_node(&*captain2);
 
+    // Others
+    std::shared_ptr<UnionFind<Player>::Node> node22 = std::make_shared<UnionFind<Player>::Node>(
+        Player(22, 2, per, 2, 3, 0, true), per);
+    uf.makeset(node22, team2->get_captain_node());
+    std::shared_ptr<UnionFind<Player>::Node> node23 = std::make_shared<UnionFind<Player>::Node>(
+        Player(23, 2, per, 2, 3, 0, true), per);
+    uf.makeset(node23, team2->get_captain_node());
     //
-    //std::cout << UnionFind_Tests<Player>::show_union_find(uf) << std::endl;
+    std::cout << UnionFind_Tests<Player>::show_union_find(uf) << std::endl;
+
+    // Unite
+    std::cout << "Uniting Teams" << std::endl;
+    uf.unite(team2->get_captain_node(), team1->get_captain_node()); // TODO: Fix permutation causes memory leak here
+    std::cout << UnionFind_Tests<Player>::show_union_find(uf) << std::endl;
+
+    // Add more players
+    std::shared_ptr<UnionFind<Player>::Node> node15 = std::make_shared<UnionFind<Player>::Node>(
+        Player(15, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node15, team1->get_captain_node());
+    std::cout << UnionFind_Tests<Player>::show_union_find(uf) << std::endl;
+
     return true;
 }
 

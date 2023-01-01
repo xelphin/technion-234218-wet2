@@ -112,9 +112,10 @@ std::string UnionFind_Tests<T>::show_union_find(UnionFind<T>& uf) {
         std::string prefix = " ";
         if ((**it).parent == nullptr){
             str_team += std::to_string((*it)->get_id());
-            show_union_find_aux(uf, lst, *it, str_team, prefix);
+            show_union_find_aux(uf, lst, *it, str_team, prefix + std::string(((*it)->get_id()) % 10, ' '));
+            str += str_team + "\n";
         }
-        str += str_team + "\n";
+        
     }
 
     return str;
@@ -132,7 +133,7 @@ std::string UnionFind_Tests<T>::show_union_find_aux(UnionFind<T>& uf,
     for (it = lst.begin(); it != lst.end(); ++it){
         if (&(*(*it)->parent) == &(*parent)){
             str += "\n"+ prefix +"---" + std::to_string((*it)->get_id());
-            show_union_find_aux(uf, lst, *it, str, prefix + "     ");
+            show_union_find_aux(uf, lst, *it, str, prefix + "     " + std::string(((*it)->get_id()) % 10, ' '));
         } 
     }
 
