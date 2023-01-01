@@ -1,7 +1,8 @@
 #include "Team.h"
 
 Team::Team(int teamId)
-: teamId(teamId), total_players(0), sum_player_abilities(0), points(0), current_accumalated_spirit(1), captain_node(nullptr)
+: teamId(teamId), total_players(0), sum_player_abilities(0), points(0),
+ current_accumalated_spirit(1), captain_node(nullptr), hasGoalKeeper(false), team_games(0)
 {}
 
 int Team::get_id() const
@@ -48,6 +49,27 @@ int Team::get_sumPlayerAbilities() const
 int Team::get_points() const
 {
     return this->points;
+}
+int Team::get_spirit_strength() const
+{
+    // TODO
+    return 0;
+}
+int Team::get_team_games() const
+{
+    return team_games;
+}
+void Team::update_status_to_exist_goalKeeper()
+{
+    this->hasGoalKeeper = true;
+}
+void Team::add_team_points(int add)
+{
+    this->points += add;
+}
+void Team::increment_team_games()
+{
+    this->team_games += 1;
 }
 // DEBUGGING
 

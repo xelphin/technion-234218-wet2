@@ -25,6 +25,7 @@ public:
 private:
     Hash<UnionFind<T>::Node> hash; //the hash contains UF nodes!
 
+
     typename UnionFind<T>::Node *find_node(int id);
     void compare_set_sizes(Node* buyer_set, Node* bought_set, Node** smaller_set, Node** larger_set);
     void update_permutations(Node* buyer_set, Node* bought_set, Node* smaller_set, Node* larger_set);
@@ -45,7 +46,7 @@ private:
     permutation_t team_product;
     permutation_t seniors_product;
 
-    T get_content();
+    
     
     //getters and setters
     Node* set_parent(Node* new_parent);
@@ -62,7 +63,7 @@ private:
 
 public:
     explicit Node(T item, const permutation_t& permutation);
-    
+    T get_content();
     int get_id(); //to be used in nodelist
 };
 
@@ -183,10 +184,11 @@ void UnionFind<T>::update_permutations(Node* buyer_set, Node* bought_set, Node* 
 
 template<class T>
 permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node, Node** root) {
+    // TODO: FIX MEMORY LEAK! Caused by permutation calculations, hence commented out
     Node* current = node;
     permutation_t multiplier = permutation_t::neutral();
     while (current->get_parent() != nullptr){ //does not multiply by the root's seniors_product!
-        multiplier = current->get_seniors_product() * multiplier;
+        //multiplier = current->get_seniors_product() * multiplier;
         current = current->get_parent();
     }
     *root = current;
@@ -196,12 +198,14 @@ permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node,
 template<class T>
 typename UnionFind<T>::Node *UnionFind<T>::path_compression_second_traversal_to_root(UnionFind::Node *node,
                                                                          const permutation_t& original_multiplier, Node* root) {
-    permutation_t multiplier = original_multiplier;
+    // TODO: FIX MEMORY LEAK! Caused by permutation calculations, hence commented out
+    //permutation_t multiplier = original_multiplier;
     Node* current = node;
     while (current->get_parent() != nullptr){ //does not iterate on the root!
-        permutation_t temp = current->get_seniors_product();
-        current->set_seniors_product(multiplier);
-        multiplier = multiplier * temp.inv(); // ABCDE * (DE)^-1 = ABCDE * E^-1 * E^-1 = ABC
+        //permutation_t temp = current->get_seniors_product();
+        //current->set_seniors_product(multiplier);
+        //multiplier = multiplier * temp.inv(); // ABCDE * (DE)^-1 = ABCDE * E^-1 * E^-1 = ABC
+        // Update nodes to point to root
         Node* current_parent = current->get_parent();
         current->set_parent(root);
         current = current_parent;

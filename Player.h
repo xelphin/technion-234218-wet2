@@ -15,12 +15,15 @@ public:
 
     int get_id() const;
     int get_teamId() const;
-    int get_gamesPlayed() const;
+    int get_gamesPlayed(int team_games) const;
     int get_ability() const;
     int get_cards() const;
     bool get_isGoalKeeper() const;
 
     Team* get_team() const;
+
+    void set_team_games_played_when_joined(int team_games);
+    void set_team(Team* team);
 
     /*
     * Return called player ID minus argument player ID
@@ -45,6 +48,7 @@ private:
     int cards;
     bool goalKeeper;
     Team* team;
+    int team_games_played_when_joined;
 };
 
 

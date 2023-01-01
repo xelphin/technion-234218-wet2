@@ -36,6 +36,11 @@ public:
     int get_totalPlayers() const;
     int get_sumPlayerAbilities() const;
     int get_points() const;
+    int get_spirit_strength() const;
+    int get_team_games() const;
+    void update_status_to_exist_goalKeeper();
+    void add_team_points(int add);
+    void increment_team_games();
 
 
     // DEBUGGING
@@ -48,9 +53,10 @@ private:
     int sum_player_abilities;
     int points;
     int current_accumalated_spirit;
-
-    // TODO: Add -> UnionFind players;
     UnionFind<Player>::Node* captain_node;
+    bool hasGoalKeeper;
+    int team_games;
+    
 };
 
 #endif // TEAM_H
