@@ -489,6 +489,17 @@ bool UF_test(){
     uf.unite(uf.find_set_of_id(3), uf.find_set_of_id(2));
     assert(uf.id_is_in_data(1) && uf.id_is_in_data(2) && uf.id_is_in_data(3));
     assert(uf.find_set_of_id(3) == uf.find_set_of_id(2) && uf.find_set_of_id(2) == uf.find_set_of_id(1));
+
+    world_cup_t wc;
+    wc.add_team(1);
+    wc.add_player(3,1,neutral,0,5,5, true);
+    wc.add_player(2,1,neutral,0,5,5, true);
+    wc.add_player(1,1,neutral,0,5,5, true);
+    wc.add_player(4,1,neutral,0,5,5, true);
+    assert(wc.get_player_cards(1).ans() == output_t<int>(5).ans());
+    wc.add_player_cards(2, 6);
+    assert(wc.get_player_cards(2).ans() == output_t<int>(5+6).ans());
+
     return true;
 }
 

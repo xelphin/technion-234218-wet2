@@ -105,7 +105,7 @@ StatusType world_cup_t::add_player_cards(int playerId, int cards)
     {
         return StatusType::FAILURE;
     }
-    players_UF.get_content(playerId).add_cards(cards);
+    players_UF.get_content(playerId)->add_cards(cards);
 	return StatusType::SUCCESS;
 }
 
@@ -117,7 +117,7 @@ output_t<int> world_cup_t::get_player_cards(int playerId)
     if (!players_UF.id_is_in_data(playerId)){
         return StatusType::FAILURE;
     }
-    return players_UF.get_content(playerId).get_cards();
+    return players_UF.get_content(playerId)->get_cards();
 }
 
 output_t<int> world_cup_t::get_team_points(int teamId)

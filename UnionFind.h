@@ -14,7 +14,7 @@ public:
     bool makeset(std::shared_ptr<UnionFind<T>::Node> new_node, Node *parent);
     Node * unite(Node *buyer_node, Node *bought_node);
     Node* find_set_of_id(int id);
-    T get_content(int id);
+    T* get_content(int id);
     bool id_is_in_data(int id); //returns true if the item with the id i
     permutation_t get_partial_spirit(int id);
 
@@ -45,7 +45,7 @@ private:
     permutation_t seniors_product;
     bool removed;
 
-    T get_content();
+    T* get_content();
     
     //getters and setters
     Node* set_parent(Node* new_parent);
@@ -108,7 +108,7 @@ typename UnionFind<T>::Node* UnionFind<T>::find_node(int id) {
 }
 
 template<class T>
-T UnionFind<T>::get_content(int id) {
+T* UnionFind<T>::get_content(int id) {
     Node* container = find_node(id);
     if(container){
         return container->get_content();
@@ -227,8 +227,8 @@ int UnionFind<T>::Node::get_id() {
 }
 
 template<class T>
-T UnionFind<T>::Node::get_content() {
-    return content;
+T* UnionFind<T>::Node::get_content() {
+    return &content;
 }
 
 template<class T>
