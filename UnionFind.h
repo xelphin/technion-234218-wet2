@@ -5,6 +5,8 @@
 #include "Exception.h"
 #include "wet2util.h"
 
+template<class T>
+class UnionFind_Tests;
 
 template <class T>
 class UnionFind{
@@ -16,6 +18,10 @@ public:
     T get_content(int id);
     bool id_is_in_data(int id); //returns true if the item with the id i
     permutation_t get_partial_spirit(int id);
+
+    // DEBUGGING - TODO: Delete
+    friend UnionFind_Tests<T>;
+
 private:
     Hash<UnionFind<T>::Node> hash; //the hash contains UF nodes!
 

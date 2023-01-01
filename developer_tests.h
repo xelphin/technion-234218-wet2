@@ -14,16 +14,23 @@
 #include <functional>
 #include <cmath>
 
+#include <list> // For debugging
+
 #include "worldcup23a2.h"
 
-// HASH
+
 template<class T>
 class Hash;
+template<class P>
+class UnionFind;
+
+// HASH
 
 template<class T>
 class Hash_Tests{
 public:
     static bool total_elem_correct(Hash<T>& hash);
+    static bool fill_list(Hash<T>& hash, std::list<std::shared_ptr<T>>& lst);
 };
 
 template<class T>
@@ -39,6 +46,33 @@ bool Hash_Tests<T>::total_elem_correct(Hash<T>& hash) {
 }
 
 
+template<class T>
+bool Hash_Tests<T>::fill_list(Hash<T>& hash, std::list<std::shared_ptr<T>>& lst) { 
+    // Fill lst with all the elements
+    for (int i=0; i< hash.size; i++) { // Iterate over each block in arr
+        // Fill lst with all its content
+        typename NodeList<T>::Node* curr = hash.arr[i].start;
+        while (curr!=nullptr) {
+            lst.push_back(curr->obj);
+            curr = curr->next;
+        }
+    }
+    return true;
+}
+
+// UNION FIND
+
+
+template<class T>
+class UnionFind_Tests{
+public:
+    // static bool fill_list(UnionFind<T>& uf);
+};
+
+// template<class T>
+// bool UnionFind_Tests<T>::fill_list(UnionFind<T>& uf, std::list<UnionFind<T>::Node> lst) {
+//     return true;
+// }
 
 
 
@@ -66,6 +100,7 @@ bool nodeList_popStart();
 bool hash_basic();
 bool hash_add();
 bool hash_find();
+bool hashTest_fillList();
 
 // AVL TESTS
 bool createAVL();

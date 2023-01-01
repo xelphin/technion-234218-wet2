@@ -35,6 +35,7 @@ bool run_all_tests() {
     run_test(worldcup_basic, "worldcup_basic", success_string, success);
     run_test(worldcup_addTeam, "worldcup_addTeam", success_string, success);
     run_test(worldcup_removeTeam_basic, "worldcup_removeTeam_basic", success_string, success);
+    run_test(hashTest_fillList, "hashTest_fillList", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -233,6 +234,38 @@ bool hash_find()
     tests += (hash.find(3) == player3);
 
     return tests == 2;
+}
+
+bool hashTest_fillList()
+{
+    Hash<Player> hash(3);
+
+    permutation_t per;
+    std::shared_ptr<Player> player1(new Player(1, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player3(new Player(3, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player4(new Player(4, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player5(new Player(5, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player6(new Player(6, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player8(new Player(8, 1, per, 1, 1, 1, false));
+
+    hash.add(player1);
+    hash.add(player3);
+    hash.add(player4);
+    hash.add(player5);
+    hash.add(player6);
+    hash.add(player8);
+    std::cout << hash.allLists();
+    //
+    std::list<std::shared_ptr<Player>> lst;
+    Hash_Tests<Player>::fill_list(hash, lst);
+    //
+    std::list<std::shared_ptr<Player>>::iterator it;
+    std::string str = "";
+    for (it = lst.begin(); it != lst.end(); ++it){
+        str += std::to_string((*it)->get_id()) + " ";
+    }
+    std::cout<< str << std::endl;
+    return (str.compare("1 8 3 4 5 6 ") == 0);
 }
 
 bool createAVL()
