@@ -38,6 +38,7 @@ bool run_all_tests() {
     run_test(hashTest_fillList, "hashTest_fillList", success_string, success);
     run_test(unionFind_basic, "unionFind_basic", success_string, success);
     run_test(unionFindTest_show_union_find, "unionFindTest_show_union_find", success_string, success);
+    run_test(worldcup_add_player, "worldcup_add_player", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -634,4 +635,34 @@ bool worldcup_removeTeam_basic()
     tests += StatusType::SUCCESS == worldCup.remove_team(4);
     tests += StatusType::FAILURE == worldCup.remove_team(3);
     return tests == 7;
+}
+
+bool worldcup_add_player()
+{
+    int test = 0;
+    world_cup_t worldCup;
+    // Teams
+    test += StatusType::SUCCESS == worldCup.add_team(1);
+    test += StatusType::SUCCESS == worldCup.add_team(2);
+    test += StatusType::SUCCESS == worldCup.add_team(3);
+    // Players
+    permutation_t per;
+    worldCup.add_player(11, 1, per, 2, 3, 4, true);
+    worldCup.add_player(21, 2, per, 2, 3, 4, true);
+    worldCup.add_player(12, 1, per, 2, 3, 4, true);
+    worldCup.add_player(13, 1, per, 2, 3, 4, true);
+    worldCup.add_player(14, 1, per, 2, 3, 4, true);
+    worldCup.add_player(22, 2, per, 2, 3, 4, true);
+    worldCup.add_player(23, 2, per, 2, 3, 4, true);
+    worldCup.add_player(24, 2, per, 2, 3, 4, true);
+    worldCup.add_player(31, 3, per, 2, 3, 4, true);
+    worldCup.add_player(32, 3, per, 2, 3, 4, true);
+
+    // Tests
+    // std::cout << UnionFind_Tests<Player>::show_union_find(worldCup.players_UF) << std::endl; // TODO: Implement like this instead
+    std::cout << worldCup.show_uf() << std::endl; // Above is better, but doesn't work even though I did friend
+    std::string res = "Union Find: \n31\n  ---32\n21\n  ---22\n  ---23\n  ---24\n11\n  ---12\n  ---13\n  ---14\n";
+    test += (worldCup.show_uf().compare(res) == 0);
+
+    return test == 4;
 }
