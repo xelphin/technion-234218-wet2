@@ -1,4 +1,5 @@
 #include "developer_tests.h"
+#include <cassert>
 
 #ifdef NDEBUG // I DONT want to debug
 void printFail ();
@@ -9,8 +10,6 @@ void printSuccess ();
 #define printFail() (std::cout << test_name << " FAILED." << std::endl)
 #define printSuccess() (std::cout << "-------------------" << std::endl << test_name << " SUCCESS." << std::endl << "-------------------" << std::endl)
 #endif
-
-#include <cassert>
 
 
 bool run_all_tests() {
@@ -35,6 +34,7 @@ bool run_all_tests() {
     run_test(worldcup_basic, "worldcup_basic", success_string, success);
     run_test(worldcup_addTeam, "worldcup_addTeam", success_string, success);
     run_test(worldcup_removeTeam_basic, "worldcup_removeTeam_basic", success_string, success);
+    run_test(UF_test, "UF_test", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -476,6 +476,20 @@ bool remove_test() {
     std::cout << finalTree;
 
     return tree1.get_amount() == 6;
+}
+
+bool UF_test(){
+    UnionFind<Player> uf;
+
+    permutation_t neutral = permutation_t::neutral();
+    uf.makeset(std::make_shared<UnionFind<Player>::Node>(Player(1,1,neutral,0,5,5, true),neutral), nullptr);
+    uf.makeset(std::make_shared<UnionFind<Player>::Node>(Player(2,1,neutral,0,5,5, true),neutral), nullptr);
+    uf.makeset(std::make_shared<UnionFind<Player>::Node>(Player(3,1,neutral,0,5,5, true),neutral), nullptr);
+    uf.unite(uf.find_set_of_id(1), uf.find_set_of_id(2));
+    uf.unite(uf.find_set_of_id(3), uf.find_set_of_id(2));
+    assert(uf.id_is_in_data(1) && uf.id_is_in_data(2) && uf.id_is_in_data(3));
+    assert(uf.find_set_of_id(3) == uf.find_set_of_id(2) && uf.find_set_of_id(2) == uf.find_set_of_id(1));
+    return true;
 }
 
 bool worldcup_basic()
