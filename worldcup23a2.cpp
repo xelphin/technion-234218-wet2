@@ -73,7 +73,13 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
     {
         std::shared_ptr<UnionFind<Player>::Node> new_node = std::make_shared<UnionFind<Player>::Node>(
             Player(playerId, teamId, spirit, gamesPlayed, ability, cards, goalKeeper), spirit);
+        if (new_node == nullptr) {
+            return StatusType::FAILURE;
+        }
         players_UF.makeset(new_node, team->get_captain_node());
+        if (team->get_captain_node() == nullptr) { // TODO: Check correct implementation
+            team->set_captain_node(&*new_node);
+        }
         return StatusType::SUCCESS;
     }
     else{

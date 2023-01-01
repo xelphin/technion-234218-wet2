@@ -31,7 +31,7 @@ public:
     int operator ID() const;
     int operator SCORE(const Team& other) const;
 
-    UnionFind<Player>::Node* set_captain_node(UnionFind<Player>::Node* new_captain_node);
+    UnionFind<Player>::Node* set_captain_node(UnionFind<Player>::Node* new_captain_node); // TODO: Shouln't this be <std::shared_ptr<Player>>?
     UnionFind<Player>::Node* get_captain_node();
     int get_totalPlayers() const;
     int get_sumPlayerAbilities() const;

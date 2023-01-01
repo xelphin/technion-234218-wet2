@@ -4,6 +4,9 @@
 #include <iostream>
 #include <memory>
 
+template<class T>
+class Hash_Tests;
+
 template <class T>
 class NodeList {
 public:
@@ -28,6 +31,7 @@ public:
 
     // DEBUGGING
     std::string strList() const;
+    friend Hash_Tests<T>;
 
 private:
     NodeList::Node *start;

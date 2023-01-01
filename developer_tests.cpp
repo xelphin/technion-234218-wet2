@@ -35,6 +35,9 @@ bool run_all_tests() {
     run_test(worldcup_basic, "worldcup_basic", success_string, success);
     run_test(worldcup_addTeam, "worldcup_addTeam", success_string, success);
     run_test(worldcup_removeTeam_basic, "worldcup_removeTeam_basic", success_string, success);
+    run_test(hashTest_fillList, "hashTest_fillList", success_string, success);
+    run_test(unionFind_basic, "unionFind_basic", success_string, success);
+    run_test(unionFindTest_show_union_find, "unionFindTest_show_union_find", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -233,6 +236,38 @@ bool hash_find()
     tests += (hash.find(3) == player3);
 
     return tests == 2;
+}
+
+bool hashTest_fillList()
+{
+    Hash<Player> hash(3);
+
+    permutation_t per;
+    std::shared_ptr<Player> player1(new Player(1, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player3(new Player(3, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player4(new Player(4, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player5(new Player(5, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player6(new Player(6, 1, per, 1, 1, 1, false));
+    std::shared_ptr<Player> player8(new Player(8, 1, per, 1, 1, 1, false));
+
+    hash.add(player1);
+    hash.add(player3);
+    hash.add(player4);
+    hash.add(player5);
+    hash.add(player6);
+    hash.add(player8);
+    std::cout << hash.allLists();
+    //
+    std::list<std::shared_ptr<Player>> lst;
+    Hash_Tests<Player>::fill_list(hash, lst);
+    //
+    std::list<std::shared_ptr<Player>>::iterator it;
+    std::string str = "";
+    for (it = lst.begin(); it != lst.end(); ++it){
+        str += std::to_string((*it)->get_id()) + " ";
+    }
+    std::cout<< str << std::endl;
+    return (str.compare("1 8 3 4 5 6 ") == 0);
 }
 
 bool createAVL()
@@ -476,6 +511,85 @@ bool remove_test() {
     std::cout << finalTree;
 
     return tree1.get_amount() == 6;
+}
+
+bool unionFind_basic()
+{
+    UnionFind<Player> uf;
+    std::shared_ptr<Team> team(new Team(1));
+    permutation_t per;
+    // Captain
+    std::shared_ptr<UnionFind<Player>::Node> captain = std::make_shared<UnionFind<Player>::Node>(
+            Player(1, 1, per, 2, 3, 0, true), per);
+    uf.makeset(captain, team->get_captain_node());
+    team->set_captain_node(&*captain);
+    // Others
+    std::shared_ptr<UnionFind<Player>::Node> node2 = std::make_shared<UnionFind<Player>::Node>(
+        Player(2, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node2, team->get_captain_node());
+    std::shared_ptr<UnionFind<Player>::Node> node3 = std::make_shared<UnionFind<Player>::Node>(
+        Player(3, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node3, team->get_captain_node());
+    //
+    std::cout << UnionFind_Tests<Player>::show_hash(uf);
+    std::cout << UnionFind_Tests<Player>::show_team_captains(uf) << std::endl;
+    std::cout << UnionFind_Tests<Player>::show_union_find(uf) << std::endl;
+    //
+    return true;
+}
+
+bool unionFindTest_show_union_find()
+{
+    UnionFind<Player> uf;
+    std::shared_ptr<Team> team1(new Team(1));
+    std::shared_ptr<Team> team2(new Team(2));
+    permutation_t per;
+
+    // Captain 1
+    std::shared_ptr<UnionFind<Player>::Node> captain1 = std::make_shared<UnionFind<Player>::Node>(
+            Player(11, 1, per, 2, 3, 0, true), per);
+    uf.makeset(captain1, team1->get_captain_node());
+    team1->set_captain_node(&*captain1);
+
+    // Others
+    std::shared_ptr<UnionFind<Player>::Node> node12 = std::make_shared<UnionFind<Player>::Node>(
+        Player(12, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node12, team1->get_captain_node());
+    std::shared_ptr<UnionFind<Player>::Node> node13 = std::make_shared<UnionFind<Player>::Node>(
+        Player(13, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node13, team1->get_captain_node());
+    std::shared_ptr<UnionFind<Player>::Node> node14 = std::make_shared<UnionFind<Player>::Node>(
+        Player(14, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node14, team1->get_captain_node());
+
+    // Captain 2
+    std::shared_ptr<UnionFind<Player>::Node> captain2 = std::make_shared<UnionFind<Player>::Node>(
+            Player(21, 2, per, 2, 3, 0, true), per);
+    uf.makeset(captain2, team2->get_captain_node());
+    team2->set_captain_node(&*captain2);
+
+    // Others
+    std::shared_ptr<UnionFind<Player>::Node> node22 = std::make_shared<UnionFind<Player>::Node>(
+        Player(22, 2, per, 2, 3, 0, true), per);
+    uf.makeset(node22, team2->get_captain_node());
+    std::shared_ptr<UnionFind<Player>::Node> node23 = std::make_shared<UnionFind<Player>::Node>(
+        Player(23, 2, per, 2, 3, 0, true), per);
+    uf.makeset(node23, team2->get_captain_node());
+    //
+    std::cout << UnionFind_Tests<Player>::show_union_find(uf) << std::endl;
+
+    // Unite
+    std::cout << "Uniting Teams" << std::endl;
+    uf.unite(team2->get_captain_node(), team1->get_captain_node()); // TODO: Fix permutation causes memory leak here
+    std::cout << UnionFind_Tests<Player>::show_union_find(uf) << std::endl;
+
+    // Add more players
+    std::shared_ptr<UnionFind<Player>::Node> node15 = std::make_shared<UnionFind<Player>::Node>(
+        Player(15, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node15, team1->get_captain_node());
+    std::cout << UnionFind_Tests<Player>::show_union_find(uf) << std::endl;
+
+    return true;
 }
 
 bool worldcup_basic()
