@@ -15,7 +15,7 @@ class Hash_Tests;
 template<class T>
 class Hash {
 public:
-    static const int init_size = 1023;
+    static const int init_size = 15;
 
     explicit Hash(int size = init_size);
     ~Hash();

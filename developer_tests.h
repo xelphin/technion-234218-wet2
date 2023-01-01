@@ -31,6 +31,7 @@ class Hash_Tests{
 public:
     static bool total_elem_correct(Hash<T>& hash);
     static bool fill_list(Hash<T>& hash, std::list<std::shared_ptr<T>>& lst);
+    // static bool fill_list(Hash<UnionFind<T>::Node>& hash, std::list<std::shared_ptr<T>>& lst);
 };
 
 template<class T>
@@ -66,15 +67,30 @@ bool Hash_Tests<T>::fill_list(Hash<T>& hash, std::list<std::shared_ptr<T>>& lst)
 template<class T>
 class UnionFind_Tests{
 public:
-    // static bool fill_list(UnionFind<T>& uf);
+    static std::string show_hash(UnionFind<T>& uf);
+    static std::string show_team_captains(UnionFind<T>& uf);
 };
 
-// template<class T>
-// bool UnionFind_Tests<T>::fill_list(UnionFind<T>& uf, std::list<UnionFind<T>::Node> lst) {
-//     return true;
-// }
+template<class T>
+std::string UnionFind_Tests<T>::show_hash(UnionFind<T>& uf) {
+    return uf.hash.allLists();
+}
 
+template<class T>
+std::string UnionFind_Tests<T>::show_team_captains(UnionFind<T>& uf) {
+    std::list<std::shared_ptr<typename UnionFind<T>::Node>> lst;
+    Hash_Tests<typename UnionFind<T>::Node>::fill_list(uf.hash, lst);
+    typename std::list<std::shared_ptr<typename UnionFind<T>::Node>>::iterator it;
+    //
+    std::string captain = "Players that are Team Captains: ";
+    for (it = lst.begin(); it != lst.end(); ++it){
+        if ((**it).parent == nullptr){
+            captain += std::to_string((*it)->get_id()) + " ";
+        }
+    }
 
+    return captain;
+}
 
 bool run_all_tests();
 void run_test(std::function<bool()> test, std::string test_name, std::string& success_string, bool& success);
@@ -110,6 +126,9 @@ bool balanceAVL_LR();
 bool balanceAVL_RL();
 bool find_test();
 bool remove_test();
+
+// UNION FIND TESTS
+bool unionFind_basic();
 
 // WORLCUP TESTS
 bool worldcup_basic();

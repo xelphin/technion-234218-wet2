@@ -36,6 +36,7 @@ bool run_all_tests() {
     run_test(worldcup_addTeam, "worldcup_addTeam", success_string, success);
     run_test(worldcup_removeTeam_basic, "worldcup_removeTeam_basic", success_string, success);
     run_test(hashTest_fillList, "hashTest_fillList", success_string, success);
+    run_test(unionFind_basic, "unionFind_basic", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -509,6 +510,30 @@ bool remove_test() {
     std::cout << finalTree;
 
     return tree1.get_amount() == 6;
+}
+
+bool unionFind_basic()
+{
+    UnionFind<Player> uf;
+    std::shared_ptr<Team> team(new Team(1));
+    permutation_t per;
+    // Captain
+    std::shared_ptr<UnionFind<Player>::Node> captain = std::make_shared<UnionFind<Player>::Node>(
+            Player(1, 1, per, 2, 3, 0, true), per);
+    uf.makeset(captain, team->get_captain_node());
+    team->set_captain_node(&*captain);
+    // Others
+    std::shared_ptr<UnionFind<Player>::Node> node2 = std::make_shared<UnionFind<Player>::Node>(
+        Player(2, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node2, team->get_captain_node());
+    std::shared_ptr<UnionFind<Player>::Node> node3 = std::make_shared<UnionFind<Player>::Node>(
+        Player(3, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node3, team->get_captain_node());
+    //
+    std::cout << UnionFind_Tests<Player>::show_hash(uf);
+    std::cout << UnionFind_Tests<Player>::show_team_captains(uf) << std::endl;
+    //
+    return true;
 }
 
 bool worldcup_basic()

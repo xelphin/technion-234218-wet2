@@ -57,6 +57,9 @@ private:
     void set_seniors_product(const permutation_t& new_permutation);
     permutation_t get_seniors_product();
 
+    // DEBUGGING
+    friend UnionFind_Tests<T>;
+
 public:
     explicit Node(T item, const permutation_t& permutation);
     
@@ -68,9 +71,10 @@ public:
 template<class T>
 bool UnionFind<T>::makeset(std::shared_ptr<UnionFind<T>::Node> new_node, UnionFind::Node *parent) {
     hash.add(new_node);
-    if (parent != nullptr)
-    {
+    if (parent != nullptr) {
         unite(parent, new_node.get());
+    } else { 
+        // TODO: Should something happen here?
     }
     return true;
 }
