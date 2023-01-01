@@ -69,6 +69,13 @@ class UnionFind_Tests{
 public:
     static std::string show_hash(UnionFind<T>& uf);
     static std::string show_team_captains(UnionFind<T>& uf);
+    static std::string show_union_find(UnionFind<T>& uf);
+private:
+    static std::string show_union_find_aux(UnionFind<T>& uf,
+                                           std::list<std::shared_ptr<typename UnionFind<T>::Node>>& lst,
+                                           std::shared_ptr<typename UnionFind<T>::Node> parent,
+                                           std::string& str,
+                                           std::string prefix);
 };
 
 template<class T>
@@ -90,6 +97,47 @@ std::string UnionFind_Tests<T>::show_team_captains(UnionFind<T>& uf) {
     }
 
     return captain;
+}
+
+template<class T>
+std::string UnionFind_Tests<T>::show_union_find(UnionFind<T>& uf) {
+    std::list<std::shared_ptr<typename UnionFind<T>::Node>> lst;
+    Hash_Tests<typename UnionFind<T>::Node>::fill_list(uf.hash, lst);
+    typename std::list<std::shared_ptr<typename UnionFind<T>::Node>>::iterator it;
+    //
+    std::string str = "Union Find: \n";
+    // Find Captains
+    for (it = lst.begin(); it != lst.end(); ++it){
+        std::string str_team = "";
+        std::string prefix = " ";
+        if ((**it).parent == nullptr){
+            str_team += std::to_string((*it)->get_id());
+            show_union_find_aux(uf, lst, *it, str_team, prefix);
+        }
+        str += str_team + "\n";
+    }
+
+    return str;
+}
+
+template<class T>
+std::string UnionFind_Tests<T>::show_union_find_aux(UnionFind<T>& uf,
+                                                    std::list<std::shared_ptr<typename UnionFind<T>::Node>>& lst,
+                                                    std::shared_ptr<typename UnionFind<T>::Node> parent,
+                                                    std::string& str,
+                                                    std::string prefix)
+{
+    //
+    typename std::list<std::shared_ptr<typename UnionFind<T>::Node>>::iterator it;
+    for (it = lst.begin(); it != lst.end(); ++it){
+        if (&(*(*it)->parent) == &(*parent)){
+            str += "\n"+ prefix +"---" + std::to_string((*it)->get_id());
+            show_union_find_aux(uf, lst, *it, str, prefix + "     ");
+        } 
+    }
+
+    //
+    return str;
 }
 
 bool run_all_tests();
@@ -129,6 +177,7 @@ bool remove_test();
 
 // UNION FIND TESTS
 bool unionFind_basic();
+bool unionFindTest_show_union_find();
 
 // WORLCUP TESTS
 bool worldcup_basic();

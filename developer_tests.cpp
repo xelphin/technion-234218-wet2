@@ -37,6 +37,7 @@ bool run_all_tests() {
     run_test(worldcup_removeTeam_basic, "worldcup_removeTeam_basic", success_string, success);
     run_test(hashTest_fillList, "hashTest_fillList", success_string, success);
     run_test(unionFind_basic, "unionFind_basic", success_string, success);
+    run_test(unionFindTest_show_union_find, "unionFindTest_show_union_find", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -532,7 +533,38 @@ bool unionFind_basic()
     //
     std::cout << UnionFind_Tests<Player>::show_hash(uf);
     std::cout << UnionFind_Tests<Player>::show_team_captains(uf) << std::endl;
+    std::cout << UnionFind_Tests<Player>::show_union_find(uf) << std::endl;
     //
+    return true;
+}
+
+bool unionFindTest_show_union_find()
+{
+    UnionFind<Player> uf;
+    std::shared_ptr<Team> team(new Team(1));
+    permutation_t per;
+
+    // Captain 1
+    std::shared_ptr<UnionFind<Player>::Node> captain = std::make_shared<UnionFind<Player>::Node>(
+            Player(1, 1, per, 2, 3, 0, true), per);
+    uf.makeset(captain, team->get_captain_node());
+    team->set_captain_node(&*captain);
+
+    // Others
+    std::shared_ptr<UnionFind<Player>::Node> node2 = std::make_shared<UnionFind<Player>::Node>(
+        Player(2, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node2, team->get_captain_node());
+    std::shared_ptr<UnionFind<Player>::Node> node3 = std::make_shared<UnionFind<Player>::Node>(
+        Player(3, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node3, team->get_captain_node());
+
+    // Indented
+    std::shared_ptr<UnionFind<Player>::Node> node4 = std::make_shared<UnionFind<Player>::Node>(
+        Player(4, 1, per, 2, 3, 0, true), per);
+    uf.makeset(node4, &*node2); // HERE THERE IS A MEMORY LEAK
+
+    //
+    //std::cout << UnionFind_Tests<Player>::show_union_find(uf) << std::endl;
     return true;
 }
 
