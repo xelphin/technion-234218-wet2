@@ -34,7 +34,7 @@ bool run_all_tests() {
     run_test(worldcup_basic, "worldcup_basic", success_string, success);
     run_test(worldcup_addTeam, "worldcup_addTeam", success_string, success);
     run_test(worldcup_removeTeam_basic, "worldcup_removeTeam_basic", success_string, success);
-    run_test(first_UF_test_by_matan, "first_UF_test_by_matan", success_string, success);
+    run_test(basic_cards_and_UF, "basic_cards_and_UF", success_string, success);
     run_test(hashTest_fillList, "hashTest_fillList", success_string, success);
     run_test(unionFind_basic, "unionFind_basic", success_string, success);
     run_test(unionFindTest_show_union_find, "unionFindTest_show_union_find", success_string, success);
@@ -594,7 +594,7 @@ bool unionFindTest_show_union_find()
     return true;
 }
 
-bool first_UF_test_by_matan(){
+bool basic_cards_and_UF(){
     UnionFind<Player> uf;
 
     permutation_t neutral = permutation_t::neutral();
