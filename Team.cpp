@@ -1,7 +1,8 @@
 #include "Team.h"
 
 Team::Team(int teamId)
-: teamId(teamId), total_players(0), sum_player_abilities(0), points(0), captain_node(nullptr), team_spirit(permutation_t::neutral()), hasGoalKeeper(false), team_games(0)
+: teamId(teamId), total_players(0), sum_player_abilities(0), points(0),
+ captain_node(nullptr), team_spirit(permutation_t::neutral()), hasGoalKeeper(false), team_games(0)
 {}
 
 int Team::get_id() const
