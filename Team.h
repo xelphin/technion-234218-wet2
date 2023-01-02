@@ -57,7 +57,6 @@ private:
     int total_players;
     int sum_player_abilities;
     int points;
-    int current_accumalated_spirit;
     permutation_t team_spirit;
     UnionFind<Player>::Node* captain_node;
     bool hasGoalKeeper;

@@ -1,7 +1,7 @@
 #include "Team.h"
 
 Team::Team(int teamId)
-: teamId(teamId), total_players(0), sum_player_abilities(0), points(0),current_accumalated_spirit(1),
+: teamId(teamId), total_players(0), sum_player_abilities(0), points(0),
   team_spirit(permutation_t::neutral()),captain_node(nullptr), hasGoalKeeper(false), team_games(0)
 {}
 
@@ -107,8 +107,8 @@ int Team::get_spirit_strength() {
 }
 
 void Team::remove_team_players() {
-    if (get_captain_node() != nullptr)
-    {
+    // Change Captain Status of 'removed' to be true
+    if (get_captain_node() != nullptr) {
         get_captain_node()->remove();
     }
 }

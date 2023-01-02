@@ -14,15 +14,17 @@ world_cup_t::~world_cup_t()
 
 StatusType world_cup_t::add_team(int teamId) // O(log(k))
 {
-
+    // Check Input
 	if (teamId <= 0){
         return StatusType::INVALID_INPUT;
 	}
     try {
+        // Check if Team already exists
         std::shared_ptr<Team> team(new Team(teamId));
         if (team == nullptr){
             throw std::logic_error("If an allocation error wasn't thrown, then it shouldn't be nullptr");
         }
+        // Add Team to AVLs
         teams_AVL.add(team);
 		teams_ability_AVL.add(team);
 	} catch (std::bad_alloc const&){
@@ -37,12 +39,15 @@ StatusType world_cup_t::remove_team(int teamId)
 {
     bool removed_avl_id = false;
 	bool removed_avl_ability = false;
+    // Check Input
     if (teamId <=0) {
         return StatusType::INVALID_INPUT;
     }
 	try {
+        // Find Team
         Team* team = &(*(teams_AVL.get_content(teamId))); // O(log(k))
         if (team != nullptr) {
+            // Remove Team
             team->remove_team_players();
             removed_avl_id = teams_AVL.remove(teamId);
             removed_avl_ability = teams_ability_AVL.remove(teamId);
