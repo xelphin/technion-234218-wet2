@@ -91,7 +91,7 @@ typename UnionFind<T>::Node* UnionFind<T>::unite(Node* buyer_node, Node* bought_
     smaller_set->set_parent(larger_set);
     update_permutations(buyer_set, bought_set, smaller_set, larger_set);
 
-    larger_set;
+    return larger_set;
 }
 
 template<class T>
