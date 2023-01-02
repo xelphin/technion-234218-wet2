@@ -1,7 +1,7 @@
 #include "Team.h"
 
 Team::Team(int teamId)
-: teamId(teamId), total_players(0), sum_player_abilities(0), points(0), captain_node(nullptr), team_spirit(permutation_t::neutral()), captain_node(nullptr), hasGoalKeeper(false), team_games(0)
+: teamId(teamId), total_players(0), sum_player_abilities(0), points(0), captain_node(nullptr), team_spirit(permutation_t::neutral()), hasGoalKeeper(false), team_games(0)
 {}
 
 int Team::get_id() const
@@ -93,4 +93,28 @@ UnionFind<Player>::Node* Team::set_captain_node(UnionFind<Player>::Node* new_cap
 
 UnionFind<Player>::Node* Team::get_captain_node() {
     return captain_node;
+}
+
+int Team::set_points(int new_points) {
+    points = new_points;
+    return points;
+}
+
+permutation_t Team::get_team_spirit() {
+    return team_spirit;
+}
+
+void Team::set_team_spirit(const permutation_t &spirit) {
+    team_spirit = spirit;
+}
+
+int Team::get_spirit_strength() {
+    return team_spirit.strength();
+}
+
+void Team::remove_team_players() {
+    if (get_captain_node() != nullptr)
+    {
+        get_captain_node()->remove();
+    }
 }
