@@ -8,9 +8,6 @@
 #include "wet2util.h"
 #include <memory>
 
-
-//template<class T>
-//class UnionFind; 
 class Player;
 
 class Team{

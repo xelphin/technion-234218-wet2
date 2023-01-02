@@ -78,13 +78,6 @@ void Team::add_sum_player_abilities(int add)
 {
     this->sum_player_abilities += add;
 }
-// DEBUGGING
-
-std::ostream& operator<<(std::ostream& os, const Team& toPrint)
-{
-    os << std::to_string(toPrint.get_id());
-    return os;
-}
 
 UnionFind<Player>::Node* Team::set_captain_node(UnionFind<Player>::Node* new_captain_node) {
     captain_node = new_captain_node;
@@ -117,4 +110,12 @@ void Team::remove_team_players() {
     {
         get_captain_node()->remove();
     }
+}
+
+// DEBUGGING
+
+std::ostream& operator<<(std::ostream& os, const Team& toPrint)
+{
+    os << std::to_string(toPrint.get_id());
+    return os;
 }
