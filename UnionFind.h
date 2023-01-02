@@ -5,6 +5,8 @@
 #include "Exception.h"
 #include "wet2util.h"
 
+template<class T>
+class UnionFind_Tests;
 
 template <class T>
 class UnionFind{
@@ -16,6 +18,10 @@ public:
     T get_content(int id);
     bool id_is_in_data(int id); //returns true if the item with the id i
     permutation_t get_partial_spirit(int id);
+
+    // DEBUGGING - TODO: Delete
+    friend UnionFind_Tests<T>;
+
 private:
     Hash<UnionFind<T>::Node> hash; //the hash contains UF nodes!
 
@@ -30,9 +36,11 @@ private:
 template <class T>
 class UnionFind<T>::Node{
 private:
+
     friend UnionFind;
-    Node* parent;
+
     T content;
+    Node* parent;
     int size;
     permutation_t team_product;
     permutation_t seniors_product;
@@ -49,6 +57,9 @@ private:
     void set_seniors_product(const permutation_t& new_permutation);
     permutation_t get_seniors_product();
 
+    // DEBUGGING
+    friend UnionFind_Tests<T>;
+
 public:
     explicit Node(T item, const permutation_t& permutation);
     
@@ -63,9 +74,10 @@ public:
 template<class T>
 bool UnionFind<T>::makeset(std::shared_ptr<UnionFind<T>::Node> new_node, UnionFind::Node *parent) {
     hash.add(new_node);
-    if (parent != nullptr)
-    {
+    if (parent != nullptr) {
         unite(parent, new_node.get());
+    } else { 
+        // TODO: Should something happen here?
     }
     return true;
 }
@@ -89,7 +101,7 @@ typename UnionFind<T>::Node* UnionFind<T>::unite(Node* buyer_node, Node* bought_
     Node* smaller_set;
     compare_set_sizes(buyer_set, bought_set, &smaller_set, &larger_set);
     smaller_set->set_parent(larger_set);
-    update_permutations(buyer_set, bought_set, smaller_set, larger_set);
+    //update_permutations(buyer_set, bought_set, smaller_set, larger_set); // TODO: Fix MEMORY LEAK
 
     return larger_set;
 }
