@@ -88,8 +88,8 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
             team->increment_total_players();
             team->add_sum_player_abilities(ability);
             // Set Player Stats
-            new_node->get_content().set_team_games_played_when_joined(team->get_team_games());
-            new_node->get_content().set_team(&*team);
+            new_node->get_content()->set_team_games_played_when_joined(team->get_team_games());
+            new_node->get_content()->set_team(&*team);
             // Completed Successfully
             return StatusType::SUCCESS;
         } catch (std::bad_alloc const&) {

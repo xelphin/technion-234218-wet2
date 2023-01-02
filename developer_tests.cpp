@@ -34,7 +34,7 @@ bool run_all_tests() {
     run_test(worldcup_basic, "worldcup_basic", success_string, success);
     run_test(worldcup_addTeam, "worldcup_addTeam", success_string, success);
     run_test(worldcup_removeTeam_basic, "worldcup_removeTeam_basic", success_string, success);
-    run_test(UF_test, "UF_test", success_string, success);
+    run_test(first_UF_test_by_matan, "first_UF_test_by_matan", success_string, success);
     run_test(hashTest_fillList, "hashTest_fillList", success_string, success);
     run_test(unionFind_basic, "unionFind_basic", success_string, success);
     run_test(unionFindTest_show_union_find, "unionFindTest_show_union_find", success_string, success);
@@ -545,7 +545,7 @@ bool unionFindTest_show_union_find()
     UnionFind<Player> uf;
     std::shared_ptr<Team> team1(new Team(1));
     std::shared_ptr<Team> team2(new Team(2));
-    permutation_t per;
+    permutation_t per = permutation_t::neutral();
 
     // Captain 1
     std::shared_ptr<UnionFind<Player>::Node> captain1 = std::make_shared<UnionFind<Player>::Node>(
@@ -594,7 +594,7 @@ bool unionFindTest_show_union_find()
     return true;
 }
 
-bool UF_test(){
+bool first_UF_test_by_matan(){
     UnionFind<Player> uf;
 
     permutation_t neutral = permutation_t::neutral();

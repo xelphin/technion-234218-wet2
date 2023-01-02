@@ -177,6 +177,7 @@ bool find_test();
 bool remove_test();
 
 // UNION FIND TESTS
+bool first_UF_test_by_matan();
 bool unionFind_basic();
 bool unionFindTest_show_union_find();
 
