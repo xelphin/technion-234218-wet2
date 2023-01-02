@@ -31,11 +31,10 @@ public:
     int operator ID() const;
     int operator SCORE(const Team& other) const;
 
-    UnionFind<Player>::Node* set_captain_node(UnionFind<Player>::Node* new_captain_node); // TODO: Shouln't this be <std::shared_ptr<Player>>?
-    UnionFind<Player>::Node* get_captain_node();
     int get_totalPlayers() const;
     int get_sumPlayerAbilities() const;
     int get_points() const;
+    int set_points(int new_points);
     int get_spirit_strength() const;
     int get_team_games() const;
     void update_status_to_exist_goalKeeper();
@@ -44,6 +43,13 @@ public:
     void increment_total_players();
     void add_sum_player_abilities(int add);
 
+    //players and permutations
+    UnionFind<Player>::Node* set_captain_node(UnionFind<Player>::Node* new_captain_node);
+    UnionFind<Player>::Node* get_captain_node();
+    permutation_t get_team_spirit();
+    void set_team_spirit(const permutation_t& spirit);
+    int get_spirit_strength();
+    void remove_team_players();
 
     // DEBUGGING
     friend std::ostream& operator<<(std::ostream& os, const Team& team);
@@ -54,11 +60,11 @@ private:
     int total_players;
     int sum_player_abilities;
     int points;
-    int current_accumalated_spirit;
+    permutation_t team_spirit;
     UnionFind<Player>::Node* captain_node;
     bool hasGoalKeeper;
     int team_games;
-    
+
 };
 
 #endif // TEAM_H
