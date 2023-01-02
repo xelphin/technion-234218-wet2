@@ -32,6 +32,13 @@ public:
     int get_sumPlayerAbilities() const;
     int get_points() const;
     int set_points(int new_points);
+    int get_spirit_strength() const;
+    int get_team_games() const;
+    void update_status_to_exist_goalKeeper();
+    void add_team_points(int add);
+    void increment_team_games();
+    void increment_total_players();
+    void add_sum_player_abilities(int add);
 
     //players and permutations
     UnionFind<Player>::Node* set_captain_node(UnionFind<Player>::Node* new_captain_node);
@@ -52,6 +59,9 @@ private:
     int points;
     permutation_t team_spirit;
     UnionFind<Player>::Node* captain_node;
+    bool hasGoalKeeper;
+    int team_games;
+
 };
 
 #endif // TEAM_H
