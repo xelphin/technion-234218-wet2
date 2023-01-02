@@ -1,7 +1,7 @@
 #include "Team.h"
 
 Team::Team(int teamId)
-: teamId(teamId), total_players(0), sum_player_abilities(0), points(0), captain_node(nullptr), team_spirit(permutation_t::neutral())
+: teamId(teamId), total_players(0), sum_player_abilities(0), points(0), captain_node(nullptr), team_spirit(permutation_t::neutral()), hasGoalKeeper(false), team_games(0)
 {}
 
 int Team::get_id() const
@@ -49,12 +49,34 @@ int Team::get_points() const
 {
     return this->points;
 }
-// DEBUGGING
-
-std::ostream& operator<<(std::ostream& os, const Team& toPrint)
+int Team::get_spirit_strength() const
 {
-    os << std::to_string(toPrint.get_id());
-    return os;
+    // TODO
+    return 0;
+}
+int Team::get_team_games() const
+{
+    return team_games;
+}
+void Team::update_status_to_exist_goalKeeper()
+{
+    this->hasGoalKeeper = true;
+}
+void Team::add_team_points(int add)
+{
+    this->points += add;
+}
+void Team::increment_team_games()
+{
+    this->team_games += 1;
+}
+void Team::increment_total_players()
+{
+    this->total_players += 1;
+}
+void Team::add_sum_player_abilities(int add)
+{
+    this->sum_player_abilities += add;
 }
 
 UnionFind<Player>::Node* Team::set_captain_node(UnionFind<Player>::Node* new_captain_node) {
@@ -88,4 +110,12 @@ void Team::remove_team_players() {
     {
         get_captain_node()->remove();
     }
+}
+
+// DEBUGGING
+
+std::ostream& operator<<(std::ostream& os, const Team& toPrint)
+{
+    os << std::to_string(toPrint.get_id());
+    return os;
 }

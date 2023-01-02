@@ -63,21 +63,38 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
                                    const permutation_t &spirit, int gamesPlayed,
                                    int ability, int cards, bool goalKeeper)
 {
+    // Check Input
     if(playerId <= 0 || teamId <=0 || gamesPlayed < 0 || cards < 0){
         return StatusType::INVALID_INPUT;
     }
+    // Get Team
     std::shared_ptr<Team> team = teams_AVL.get_content(teamId);
     if (team && !players_UF.id_is_in_data(playerId))
     {
-        try{
-        std::shared_ptr<UnionFind<Player>::Node> new_node = std::make_shared<UnionFind<Player>::Node>(
-            Player(playerId, teamId, spirit, gamesPlayed, ability, cards, goalKeeper), spirit);
-        players_UF.makeset(new_node, team->get_captain_node());
-        }
-        catch (std::bad_alloc& e){
+        try {
+            // Create Player
+            std::shared_ptr<UnionFind<Player>::Node> new_node = std::make_shared<UnionFind<Player>::Node>(
+                Player(playerId, teamId, spirit, gamesPlayed, ability, cards, goalKeeper), spirit);
+            // Add Player to players_UF
+            players_UF.makeset(new_node, team->get_captain_node());
+            // Update Team
+            if (team->get_captain_node() == nullptr) {
+                team->set_captain_node(&*new_node);
+            }
+            if (goalKeeper) {
+                team->update_status_to_exist_goalKeeper();
+                // TODO: Make sure that when buying team, it is also updated
+            }
+            team->increment_total_players();
+            team->add_sum_player_abilities(ability);
+            // Set Player Stats
+            new_node->get_content().set_team_games_played_when_joined(team->get_team_games());
+            new_node->get_content().set_team(&*team);
+            // Completed Successfully
+            return StatusType::SUCCESS;
+        } catch (std::bad_alloc const&) {
             return StatusType::ALLOCATION_ERROR;
         }
-        return StatusType::SUCCESS;
     }
     else{
         return StatusType::FAILURE;
@@ -86,8 +103,39 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
 
 output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
 {
-	// TODO: Your code goes here
-	return StatusType::SUCCESS;
+    // Check Input O(1)
+    if(teamId1 <= 0 || teamId2 <=0 || teamId1 == teamId2){
+        return StatusType::INVALID_INPUT;
+    }
+    // Get Teams O(log(k))
+    std::shared_ptr<Team> team1 = teams_AVL.get_content(teamId1);
+    std::shared_ptr<Team> team2 = teams_AVL.get_content(teamId2);
+    if (team1 == nullptr || team2 == nullptr) {
+        return StatusType::FAILURE;
+    }
+    // Get Stats,Compare and Update O(1)
+    int score1 = team1->get_sumPlayerAbilities() + team1->get_points();
+    int score2 = team2->get_sumPlayerAbilities() + team2->get_points();
+    if (score1 < 0 || score2 < 0) {
+        throw std::logic_error("Team scores should not be negative");
+    }
+    if (score1 > score2) {
+        team1->add_team_points(3);
+    } else if (score1 < score2) {
+        team2->add_team_points(3);
+    } else if (team1->get_spirit_strength() > team2->get_spirit_strength()) {
+        team1->add_team_points(3);
+    } else if (team1->get_spirit_strength() < team2->get_spirit_strength()) {
+        team2->add_team_points(3);
+    } else {
+        team1->add_team_points(1);
+        team2->add_team_points(1);
+    }
+    // Update Games Played O(1)
+    team1->increment_team_games();
+    team2->increment_team_games();
+
+    return StatusType::SUCCESS;
 }
 
 output_t<int> world_cup_t::num_played_games_for_player(int playerId)
@@ -172,4 +220,11 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     }
     teams_AVL.remove(teamId2);
     return StatusType::SUCCESS;
+}
+
+// DEBUGGING - TODO: DELETE in the end
+// Obviously 'friend' is optimal, but it doesn't work for some reason :/
+std::string world_cup_t::show_uf()
+{
+    return UnionFind_Tests<Player>::show_union_find(this->players_UF);
 }

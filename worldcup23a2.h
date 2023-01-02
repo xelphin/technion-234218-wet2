@@ -23,9 +23,11 @@
 #include "Team.h"
 #include "Exception.h"
 #include "UnionFind.h"
+#include "developer_tests.h"
 
 #include <iostream>
 #include <memory>
+
 
 class world_cup_t {
 private:
@@ -36,7 +38,13 @@ private:
 	AVL_tree<std::shared_ptr<Team>> teams_ability_AVL;
     UnionFind<Player> players_UF;
 
+	// DEBUGGING - TODO: DELETE in the end
+	friend UnionFind_Tests<Player>; // TODO: This doesn't give me access for some reason :/
+
 public:
+	// DEBUGGING - TODO: DELETE in the end
+	std::string show_uf(); // Friend is better obviously, but it doesn't work...
+
 	// <DO-NOT-MODIFY> {
 	
 	world_cup_t();

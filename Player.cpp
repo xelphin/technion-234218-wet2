@@ -21,9 +21,10 @@ int Player::get_teamId() const
 {
     return this->teamId;
 }
-int Player::get_gamesPlayed() const
+int Player::get_gamesPlayed(int team_games) const
 {
-    return this->gamesPlayed;
+    // TODO
+    return this->gamesPlayed + team_games - team_games_played_when_joined;
 }
 int Player::get_ability() const
 {
@@ -58,6 +59,18 @@ int Player::compare(const Player& player2, bool sort_by_score) const
     {
         return Player::get_id() - player2.get_id();
     }
+}
+void Player::set_team_games_played_when_joined(int team_games)
+{
+    // Happens only when a player is added to a Team (can also be used when bought)
+    if (team_games < 0) {
+        throw std::logic_error("Invalid input of team_games");
+    }
+    this->team_games_played_when_joined = team_games;
+}
+void Player::set_team(Team* team)
+{
+    this->team = team;
 }
 
 // DEBUGGING FUNCTIONS

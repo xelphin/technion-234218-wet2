@@ -4,8 +4,9 @@
 #include "Hash.h"
 #include "Exception.h"
 #include "wet2util.h"
-template <class T>
-class UF_tests;
+
+template<class T>
+class UnionFind_Tests;
 
 template <class T>
 class UnionFind{
@@ -19,6 +20,10 @@ public:
     permutation_t get_partial_spirit(int id);
 
     UnionFind() = default;
+
+    // DEBUGGING - TODO: Delete
+    friend UnionFind_Tests<T>;
+
 private:
     Hash<UnionFind<T>::Node> hash; //the hash contains UF nodes!
 
@@ -28,25 +33,22 @@ private:
     Node* get_set_and_compress_path(Node* node);
     permutation_t path_compression_first_traversal_to_root(Node* node, Node** root);
     Node* path_compression_second_traversal_to_root(Node* node, const permutation_t& original_multiplier, Node* root);
-
-#ifndef NDEBUG
-    friend UF_tests<T>;
-#endif
 };
 
 template <class T>
 class UnionFind<T>::Node{
 private:
+
     friend UnionFind;
-    Node* parent;
+
     T content;
+    Node* parent;
     int size;
     permutation_t team_product;
     permutation_t seniors_product;
     bool removed;
 
-    T* get_content();
-    
+
     //getters and setters
     Node* set_parent(Node* new_parent);
     Node* get_parent();
@@ -56,9 +58,14 @@ private:
     void set_seniors_product(const permutation_t& new_permutation);
     permutation_t get_seniors_product();
 
+    // DEBUGGING
+    friend UnionFind_Tests<T>;
+
 public:
     explicit Node(T item, const permutation_t& permutation);
-    
+
+    T* get_content();
+
     int get_id(); //to be used in nodelist
     permutation_t get_team_product();
     bool is_removed();
@@ -70,9 +77,10 @@ public:
 template<class T>
 bool UnionFind<T>::makeset(std::shared_ptr<UnionFind<T>::Node> new_node, UnionFind::Node *parent) {
     hash.add(new_node);
-    if (parent != nullptr)
-    {
+    if (parent != nullptr) {
         unite(parent, new_node.get());
+    } else {
+        // TODO: Should something happen here?
     }
     return true;
 }
@@ -98,7 +106,7 @@ typename UnionFind<T>::Node* UnionFind<T>::unite(Node* buyer_node, Node* bought_
     smaller_set->set_parent(larger_set);
     update_permutations(buyer_set, bought_set, smaller_set, larger_set);
 
-    larger_set;
+    return larger_set;
 }
 
 template<class T>
@@ -113,7 +121,9 @@ T* UnionFind<T>::get_content(int id) {
     if(container){
         return container->get_content();
     }
-    throw std::logic_error("no item with that id");
+    else{
+        return nullptr;
+    }
 }
 
 template<class T>
@@ -182,6 +192,7 @@ void UnionFind<T>::update_permutations(Node* buyer_set, Node* bought_set, Node* 
 
 template<class T>
 permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node, Node** root) {
+    // TODO: FIX MEMORY LEAK! Caused by permutation calculations, hence commented out
     Node* current = node;
     permutation_t multiplier = permutation_t::neutral();
     while (current->get_parent() != nullptr){ //does not multiply by the root's seniors_product!
@@ -194,7 +205,9 @@ permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node,
 
 template<class T>
 typename UnionFind<T>::Node *UnionFind<T>::path_compression_second_traversal_to_root(UnionFind::Node *node,
+
                                                                          const permutation_t& original_multiplier, Node* root) {
+    // TODO: FIX MEMORY LEAK! Caused by permutation calculations, hence commented out
     // updates permutations while climbing up to the root.
     // at the end every node on the way points to the root.
     permutation_t multiplier = original_multiplier; // got from the first traversal to the root. all of the parent products on the way.
