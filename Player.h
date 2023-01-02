@@ -19,9 +19,9 @@ public:
     int get_ability() const;
     int get_cards() const;
     bool get_isGoalKeeper() const;
-
     Team* get_team() const;
 
+    void add_cards(int extra_cards);
     void set_team_games_played_when_joined(int team_games);
     void set_team(Team* team);
 

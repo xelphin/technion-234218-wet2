@@ -15,16 +15,17 @@ public:
     bool makeset(std::shared_ptr<UnionFind<T>::Node> new_node, Node *parent);
     Node * unite(Node *buyer_node, Node *bought_node);
     Node* find_set_of_id(int id);
-    T get_content(int id);
+    T* get_content(int id);
     bool id_is_in_data(int id); //returns true if the item with the id i
     permutation_t get_partial_spirit(int id);
+
+    UnionFind() = default;
 
     // DEBUGGING - TODO: Delete
     friend UnionFind_Tests<T>;
 
 private:
     Hash<UnionFind<T>::Node> hash; //the hash contains UF nodes!
-
 
     typename UnionFind<T>::Node *find_node(int id);
     void compare_set_sizes(Node* buyer_set, Node* bought_set, Node** smaller_set, Node** larger_set);
@@ -47,8 +48,7 @@ private:
     permutation_t seniors_product;
     bool removed;
 
-    
-    
+
     //getters and setters
     Node* set_parent(Node* new_parent);
     Node* get_parent();
@@ -63,7 +63,9 @@ private:
 
 public:
     explicit Node(T item, const permutation_t& permutation);
-    T get_content();
+
+    T* get_content();
+
     int get_id(); //to be used in nodelist
     permutation_t get_team_product();
     bool is_removed();
@@ -77,7 +79,7 @@ bool UnionFind<T>::makeset(std::shared_ptr<UnionFind<T>::Node> new_node, UnionFi
     hash.add(new_node);
     if (parent != nullptr) {
         unite(parent, new_node.get());
-    } else { 
+    } else {
         // TODO: Should something happen here?
     }
     return true;
@@ -102,7 +104,7 @@ typename UnionFind<T>::Node* UnionFind<T>::unite(Node* buyer_node, Node* bought_
     Node* smaller_set;
     compare_set_sizes(buyer_set, bought_set, &smaller_set, &larger_set);
     smaller_set->set_parent(larger_set);
-    //update_permutations(buyer_set, bought_set, smaller_set, larger_set); // TODO: Fix MEMORY LEAK
+    update_permutations(buyer_set, bought_set, smaller_set, larger_set);
 
     return larger_set;
 }
@@ -114,7 +116,7 @@ typename UnionFind<T>::Node* UnionFind<T>::find_node(int id) {
 }
 
 template<class T>
-T UnionFind<T>::get_content(int id) {
+T* UnionFind<T>::get_content(int id) {
     Node* container = find_node(id);
     if(container){
         return container->get_content();
@@ -194,7 +196,7 @@ permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node,
     Node* current = node;
     permutation_t multiplier = permutation_t::neutral();
     while (current->get_parent() != nullptr){ //does not multiply by the root's seniors_product!
-        //multiplier = current->get_seniors_product() * multiplier;
+        multiplier = current->get_seniors_product() * multiplier;
         current = current->get_parent();
     }
     *root = current;
@@ -203,15 +205,20 @@ permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node,
 
 template<class T>
 typename UnionFind<T>::Node *UnionFind<T>::path_compression_second_traversal_to_root(UnionFind::Node *node,
+
                                                                          const permutation_t& original_multiplier, Node* root) {
     // TODO: FIX MEMORY LEAK! Caused by permutation calculations, hence commented out
-    //permutation_t multiplier = original_multiplier;
+    // updates permutations while climbing up to the root.
+    // at the end every node on the way points to the root.
+    permutation_t multiplier = original_multiplier; // got from the first traversal to the root. all of the parent products on the way.
     Node* current = node;
     while (current->get_parent() != nullptr){ //does not iterate on the root!
-        //permutation_t temp = current->get_seniors_product();
-        //current->set_seniors_product(multiplier);
-        //multiplier = multiplier * temp.inv(); // ABCDE * (DE)^-1 = ABCDE * E^-1 * E^-1 = ABC
-        // Update nodes to point to root
+        //permutation changes to take into account all the ancestors on the way to the root:
+        permutation_t multiplier_reduction = current->get_seniors_product();
+        current->set_seniors_product(multiplier);
+        multiplier = multiplier * multiplier_reduction.inv(); // ABCDE * (DE)^-1 = ABCDE * E^-1 * E^-1 = ABC
+
+        //  Updating node's parent to be the root
         Node* current_parent = current->get_parent();
         current->set_parent(root);
         current = current_parent;
@@ -233,8 +240,8 @@ int UnionFind<T>::Node::get_id() {
 }
 
 template<class T>
-T UnionFind<T>::Node::get_content() {
-    return content;
+T* UnionFind<T>::Node::get_content() {
+    return &content;
 }
 
 template<class T>

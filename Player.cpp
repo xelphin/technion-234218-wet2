@@ -80,3 +80,7 @@ std::ostream& operator<<(std::ostream& os, const Player& toPrint)
     os << std::to_string(toPrint.get_id());
     return os;
 }
+
+void Player::add_cards(int extra_cards) {
+    cards += extra_cards;
+}

@@ -48,7 +48,7 @@ bool Hash_Tests<T>::total_elem_correct(Hash<T>& hash) {
 
 
 template<class T>
-bool Hash_Tests<T>::fill_list(Hash<T>& hash, std::list<std::shared_ptr<T>>& lst) { 
+bool Hash_Tests<T>::fill_list(Hash<T>& hash, std::list<std::shared_ptr<T>>& lst) {
     // Fill lst with all the elements
     for (int i=0; i< hash.size; i++) { // Iterate over each block in arr
         // Fill lst with all its content
@@ -115,7 +115,7 @@ std::string UnionFind_Tests<T>::show_union_find(UnionFind<T>& uf) {
             show_union_find_aux(uf, lst, *it, str_team, prefix + std::string(((*it)->get_id()) % 10, ' '));
             str += str_team + "\n";
         }
-        
+
     }
 
     return str;
@@ -134,7 +134,7 @@ std::string UnionFind_Tests<T>::show_union_find_aux(UnionFind<T>& uf,
         if (&(*(*it)->parent) == &(*parent)){
             str += "\n"+ prefix +"---" + std::to_string((*it)->get_id());
             show_union_find_aux(uf, lst, *it, str, prefix + "     " + std::string(((*it)->get_id()) % 10, ' '));
-        } 
+        }
     }
 
     //
@@ -177,6 +177,7 @@ bool find_test();
 bool remove_test();
 
 // UNION FIND TESTS
+bool basic_cards_and_UF();
 bool unionFind_basic();
 bool unionFindTest_show_union_find();
 

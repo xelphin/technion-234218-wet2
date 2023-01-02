@@ -1,4 +1,5 @@
 #include "developer_tests.h"
+#include <cassert>
 
 #ifdef NDEBUG // I DONT want to debug
 void printFail ();
@@ -9,8 +10,6 @@ void printSuccess ();
 #define printFail() (std::cout << test_name << " FAILED." << std::endl)
 #define printSuccess() (std::cout << "-------------------" << std::endl << test_name << " SUCCESS." << std::endl << "-------------------" << std::endl)
 #endif
-
-#include <cassert>
 
 
 bool run_all_tests() {
@@ -35,6 +34,7 @@ bool run_all_tests() {
     run_test(worldcup_basic, "worldcup_basic", success_string, success);
     run_test(worldcup_addTeam, "worldcup_addTeam", success_string, success);
     run_test(worldcup_removeTeam_basic, "worldcup_removeTeam_basic", success_string, success);
+    run_test(basic_cards_and_UF, "basic_cards_and_UF", success_string, success);
     run_test(hashTest_fillList, "hashTest_fillList", success_string, success);
     run_test(unionFind_basic, "unionFind_basic", success_string, success);
     run_test(unionFindTest_show_union_find, "unionFindTest_show_union_find", success_string, success);
@@ -545,7 +545,7 @@ bool unionFindTest_show_union_find()
     UnionFind<Player> uf;
     std::shared_ptr<Team> team1(new Team(1));
     std::shared_ptr<Team> team2(new Team(2));
-    permutation_t per;
+    permutation_t per = permutation_t::neutral();
 
     // Captain 1
     std::shared_ptr<UnionFind<Player>::Node> captain1 = std::make_shared<UnionFind<Player>::Node>(
@@ -590,6 +590,31 @@ bool unionFindTest_show_union_find()
         Player(15, 1, per, 2, 3, 0, true), per);
     uf.makeset(node15, team1->get_captain_node());
     std::cout << UnionFind_Tests<Player>::show_union_find(uf) << std::endl;
+
+    return true;
+}
+
+bool basic_cards_and_UF(){
+    UnionFind<Player> uf;
+
+    permutation_t neutral = permutation_t::neutral();
+    uf.makeset(std::make_shared<UnionFind<Player>::Node>(Player(1,1,neutral,0,5,5, true),neutral), nullptr);
+    uf.makeset(std::make_shared<UnionFind<Player>::Node>(Player(2,1,neutral,0,5,5, true),neutral), nullptr);
+    uf.makeset(std::make_shared<UnionFind<Player>::Node>(Player(3,1,neutral,0,5,5, true),neutral), nullptr);
+    uf.unite(uf.find_set_of_id(1), uf.find_set_of_id(2));
+    uf.unite(uf.find_set_of_id(3), uf.find_set_of_id(2));
+    assert(uf.id_is_in_data(1) && uf.id_is_in_data(2) && uf.id_is_in_data(3));
+    assert(uf.find_set_of_id(3) == uf.find_set_of_id(2) && uf.find_set_of_id(2) == uf.find_set_of_id(1));
+
+    world_cup_t wc;
+    wc.add_team(1);
+    wc.add_player(3,1,neutral,0,5,5, true);
+    wc.add_player(2,1,neutral,0,5,5, true);
+    wc.add_player(1,1,neutral,0,5,5, true);
+    wc.add_player(4,1,neutral,0,5,5, true);
+    assert(wc.get_player_cards(1).ans() == output_t<int>(5).ans());
+    wc.add_player_cards(2, 6);
+    assert(wc.get_player_cards(2).ans() == output_t<int>(5+6).ans());
 
     return true;
 }
