@@ -40,6 +40,7 @@ bool run_all_tests() {
     run_test(unionFindTest_show_union_find, "unionFindTest_show_union_find", success_string, success);
     run_test(worldcup_add_player, "worldcup_add_player", success_string, success);
     run_test(worldcup_play_match_noPermutation, "worldcup_play_match_noPermutation", success_string, success);
+    run_test(worldcup_get_partial_spirit, "worldcup_get_partial_spirit", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -727,6 +728,45 @@ bool worldcup_play_match_noPermutation()
     worldCup.play_match(2,3);
     assert(worldCup.get_team_points(2).ans() == 6);
     assert(worldCup.get_team_points(3).ans() == 0);
+
+    return true;
+}
+
+bool worldcup_get_partial_spirit()
+{
+    permutation_t per1 = permutation_t::neutral();
+    int arr2[] = { 2, 3, 4, 5, 1};
+    permutation_t per2(arr2);
+    //
+    world_cup_t worldCup;
+
+    // Teams
+    worldCup.add_team(1);
+    worldCup.add_team(2);
+
+    // Players + Tests
+
+    worldCup.add_player(11, 1, per1, 2, 3, 4, true); // player11
+    std::cout << worldCup.get_partial_spirit(11).ans() << std::endl;
+    std::cout << std::to_string(worldCup.get_partial_spirit(11).ans().strength()) << std::endl;
+    assert(worldCup.get_partial_spirit(11).ans().strength() == 55);
+
+    worldCup.add_player(12, 1, per1, 2, 0, 4, true); // player12
+    std::cout << worldCup.get_partial_spirit(12).ans() << std::endl;
+    std::cout << std::to_string(worldCup.get_partial_spirit(12).ans().strength()) << std::endl;
+    // TODO: Assert
+
+    worldCup.add_player(13, 1, per2, 2, 0, 4, true); // player13 (uses per2)
+    //std::cout << worldCup.get_partial_spirit(13).ans() << std::endl;
+    //std::cout << std::to_string(worldCup.get_partial_spirit(13).ans().strength()) << std::endl;
+    // TODO: Assert
+
+    worldCup.add_player(14, 1, per1, 2, 0, 4, true);
+
+    worldCup.add_player(21, 2, per1, 2, 5, 4, true); 
+    worldCup.add_player(22, 2, per1, 2, 0, 4, true);
+    worldCup.add_player(23, 2, per1, 2, 0, 4, true);
+    worldCup.add_player(24, 2, per1, 2, 0, 4, true);
 
     return true;
 }
