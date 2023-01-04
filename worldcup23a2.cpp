@@ -204,7 +204,7 @@ output_t<int> world_cup_t::get_team_points(int teamId)
 
 output_t<int> world_cup_t::get_ith_pointless_ability(int i)
 {
-	if (i<0 || i>this->teams_ability_AVL.get_amount()) {
+	if (i<0 || i >= this->teams_ability_AVL.get_amount()) {
         return StatusType::FAILURE;
     }
     return this->teams_ability_AVL.find_ith_rank_id(i);
