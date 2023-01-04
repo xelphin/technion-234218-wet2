@@ -86,7 +86,6 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
             }
             team->increment_total_players();
             team->add_sum_player_abilities(ability);
-            team->set_team_spirit(team->get_team_spirit()*spirit);
             // Set Player Stats
             new_node->get_content()->set_team_games_played_when_joined(team->get_team_games());
             new_node->get_content()->set_team(&*team);
@@ -116,10 +115,8 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
     // Get Stats,Compare and Update O(1)
     int score1 = team1->get_sumPlayerAbilities() + team1->get_points();
     int score2 = team2->get_sumPlayerAbilities() + team2->get_points();
-    int strength1 = team1->get_captain_node()->get_team_product().strength();
-    int strength2 = team2->get_captain_node()->get_team_product().strength();
-    //std::cout << "spirit for... team" << (teamId1) << " is " << team1->get_captain_node()->get_team_product().strength() << std::endl;
-    //std::cout << "spirit for... team" << (teamId2) << " is " << team2->get_captain_node()->get_team_product().strength() << std::endl;
+    int strength1 = team1->get_spirit_strength();
+    int strength2 = team2->get_spirit_strength();
     if (score1 < 0 || score2 < 0) {
         throw std::logic_error("Team scores should not be negative");
     }
@@ -232,9 +229,7 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     // Merge Teams
     team1->set_captain_node(players_UF.unite(team1->get_captain_node(), team2->get_captain_node()));
     //now the captain node is the root of the UF. it may be team2's captain if team2 was the bigger team. or a nullptr if no players.
-    if (team1->get_captain_node() != nullptr){
-        team1->set_team_spirit(team1->get_captain_node()->get_team_product());
-    }
+
     // Remove team2 from AVLs
     teams_AVL.remove(teamId2);
     //

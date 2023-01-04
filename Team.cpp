@@ -100,14 +100,6 @@ int Team::set_points(int new_points) {
     return points;
 }
 
-permutation_t Team::get_team_spirit() {
-    return team_spirit;
-}
-
-void Team::set_team_spirit(const permutation_t &spirit) {
-    team_spirit = spirit;
-}
-
 void Team::remove_team_players() {
     if (get_captain_node() != nullptr)
     {
