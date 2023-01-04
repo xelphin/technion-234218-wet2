@@ -128,27 +128,33 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
     if (score1 < 0 || score2 < 0) {
         throw std::logic_error("Team scores should not be negative");
     }
+    int winningValue = 0;
     if (score1 > score2) {
         //std::cout << "team 1 won"<< std::endl;
         team1->add_team_points(3);
+        winningValue = 1;
     } else if (score1 < score2) {
         //std::cout << "team 2 won"<< std::endl;
         team2->add_team_points(3);
+        winningValue = 3;
     } else if (strength1 > strength2) {
         //std::cout << "team 1 won"<< std::endl;
         team1->add_team_points(3);
+        winningValue = 2;
     } else if (strength1 < strength2) {
         //std::cout << "team 2 won"<< std::endl;
         team2->add_team_points(3);
+        winningValue = 4;
     } else {
         team1->add_team_points(1);
         team2->add_team_points(1);
+        winningValue = 0;
     }
     // Update Games Played O(1)
     team1->increment_team_games();
     team2->increment_team_games();
 
-    return StatusType::SUCCESS;
+    return winningValue;
 }
 
 output_t<int> world_cup_t::num_played_games_for_player(int playerId)
