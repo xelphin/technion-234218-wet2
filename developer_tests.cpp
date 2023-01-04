@@ -78,7 +78,7 @@ bool system_basic()
 
 bool player_basic()
 {
-    permutation_t per;
+    permutation_t per = permutation_t::neutral();
     Player player1(1, 1, per, 1, 1, 1, false);
     return true;
 
@@ -92,7 +92,7 @@ bool team_basic()
 
 bool nodeList_basic()
 {
-    permutation_t per;
+    permutation_t per = permutation_t::neutral();
     std::shared_ptr<Player> player1(new Player(1, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player2(new Player(2, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player3(new Player(3, 1, per, 1, 1, 1, false));
@@ -115,7 +115,7 @@ bool nodeList_basic()
 bool nodeList_find()
 {
     int tests = 0;
-    permutation_t per;
+    permutation_t per = permutation_t::neutral();
     std::shared_ptr<Player> player1(new Player(1, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player2(new Player(2, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player3(new Player(3, 1, per, 1, 1, 1, false));
@@ -144,7 +144,7 @@ bool nodeList_popStart()
 {
 
     int tests = 0;
-    permutation_t per;
+    permutation_t per = permutation_t::neutral();
     std::shared_ptr<Player> player1(new Player(1, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player2(new Player(2, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player3(new Player(3, 1, per, 1, 1, 1, false));
@@ -183,7 +183,7 @@ bool hash_add()
 {
     Hash<Player> hash(3);
 
-    permutation_t per;
+    permutation_t per = permutation_t::neutral();
     std::shared_ptr<Player> player1(new Player(1, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player3(new Player(3, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player4(new Player(4, 1, per, 1, 1, 1, false));
@@ -218,7 +218,7 @@ bool hash_find()
     int tests = 0;
     Hash<Player> hash(3);
 
-    permutation_t per;
+    permutation_t per = permutation_t::neutral();
     std::shared_ptr<Player> player1(new Player(1, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player3(new Player(3, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player4(new Player(4, 1, per, 1, 1, 1, false));
@@ -245,7 +245,7 @@ bool hashTest_fillList()
 {
     Hash<Player> hash(3);
 
-    permutation_t per;
+    permutation_t per = permutation_t::neutral();
     std::shared_ptr<Player> player1(new Player(1, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player3(new Player(3, 1, per, 1, 1, 1, false));
     std::shared_ptr<Player> player4(new Player(4, 1, per, 1, 1, 1, false));
@@ -277,7 +277,7 @@ bool createAVL()
 {
     int tests = 0;
     AVL_tree<Player*> tree1(false); // sort by ID
-    permutation_t per;
+        permutation_t per = permutation_t::neutral();
     Player player1(4, 1, per, 1, 1, 1, false); // id: 4
     Player player2(1, 1, per, 1, 1, 1, false); // id: 1
     Player player3(7, 1, per, 1, 1, 1, false); // id: 7
@@ -304,7 +304,7 @@ bool createAVL()
 bool balanceAVL_LL()
 {
     AVL_tree<Player*> tree1(false); // sort by ID
-    permutation_t per;
+        permutation_t per = permutation_t::neutral();
     Player player1(8, 1, per, 1, 1, 1, false); // id: 8
     Player player2(5, 1, per, 1, 1, 1, false); // id: 5
     Player player3(3, 1, per, 1, 1, 1, false); // id: 3
@@ -326,7 +326,7 @@ bool balanceAVL_LL()
 bool balanceAVL_RR()
 {
     AVL_tree<Player*> tree1(false); // sort by ID
-    permutation_t per;
+        permutation_t per = permutation_t::neutral();
     Player player1(1, 1, per, 1, 1, 1, false); // id: 1
     Player player2(2, 1, per, 1, 1, 1, false); // id: 2
     Player player3(3, 1, per, 1, 1, 1, false); // id: 3
@@ -352,7 +352,7 @@ bool balanceAVL_RR()
 bool balanceAVL_LR()
 {
     AVL_tree<Player*> tree1(false); // sort by ID
-    permutation_t per;
+        permutation_t per = permutation_t::neutral();
     Player player2(2, 1, per, 1, 1, 1, false); // id: 2
     Player player3(3, 1, per, 1, 1, 1, false); // id: 3
     Player player4(4, 1, per, 1, 1, 1, false); // id: 4
@@ -387,7 +387,7 @@ bool balanceAVL_LR()
 bool balanceAVL_RL()
 {
     AVL_tree<Player*> tree1(false); // sort by ID
-    permutation_t per;
+        permutation_t per = permutation_t::neutral();
     Player player10(10, 1, per, 1, 1, 1, false);
     Player player5(5, 1, per, 1, 1, 1, false);
     Player player20(20, 1, per, 1, 1, 1, false);
@@ -427,7 +427,7 @@ bool balanceAVL_RL()
 
 bool find_test() {
     AVL_tree<Player*> tree1(false); // sort by ID
-    permutation_t per;
+        permutation_t per = permutation_t::neutral();
     Player player10(10, 1, per, 1, 1, 1, false);
     Player player5(5, 1, per, 1, 1, 1, false);
     Player player20(20, 1, per, 1, 1, 1, false);
@@ -468,7 +468,7 @@ bool find_test() {
 
 bool remove_test() {
     AVL_tree<Player*> tree1(false); // sort by ID
-    permutation_t per;
+        permutation_t per = permutation_t::neutral();
     Player player10(10, 1, per, 1, 1, 1, false);
     Player player5(5, 1, per, 1, 1, 1, false);
     Player player20(20, 1, per, 1, 1, 1, false);
@@ -520,7 +520,7 @@ bool unionFind_basic()
 {
     UnionFind<Player> uf;
     std::shared_ptr<Team> team(new Team(1));
-    permutation_t per;
+    permutation_t per = permutation_t::neutral();
     // Captain
     std::shared_ptr<UnionFind<Player>::Node> captain = std::make_shared<UnionFind<Player>::Node>(
             Player(1, 1, per, 2, 3, 0, true), per);
@@ -673,7 +673,7 @@ bool worldcup_add_player()
     test += StatusType::SUCCESS == worldCup.add_team(2);
     test += StatusType::SUCCESS == worldCup.add_team(3);
     // Players
-    permutation_t per;
+    permutation_t per = permutation_t::neutral();
     worldCup.add_player(11, 1, per, 2, 3, 4, true);
     worldCup.add_player(21, 2, per, 2, 3, 4, true);
     worldCup.add_player(12, 1, per, 2, 3, 4, true);
@@ -705,7 +705,7 @@ bool worldcup_play_match_noPermutation()
     assert(worldCup.get_team_points(2).ans() == 0);
     assert(worldCup.get_team_points(3).ans() == 0);
     // Players
-    permutation_t per;
+    permutation_t per = permutation_t::neutral();
     worldCup.add_player(11, 1, per, 2, 3, 4, true); // Sum ability = 3
     worldCup.add_player(12, 1, per, 2, 0, 4, true);
     worldCup.add_player(13, 1, per, 2, 0, 4, true);
@@ -750,21 +750,26 @@ bool worldcup_get_partial_spirit()
     std::cout << "player 11: " << worldCup.get_partial_spirit(11).ans() << std::endl; // 1, 2, 3, 4, 5
     std::cout << "player 11: " << std::to_string(worldCup.get_partial_spirit(11).ans().strength()) << std::endl;
     assert(worldCup.get_partial_spirit(11).ans().strength() == 55);
+    std::cout << worldCup.show_uf() << std::endl;
 
     worldCup.add_player(12, 1, per1, 2, 0, 4, true); // player12
     std::cout << "player 12: " << worldCup.get_partial_spirit(12).ans() << std::endl; // 1, 2, 3, 4, 5
     std::cout << "player 12: " << std::to_string(worldCup.get_partial_spirit(12).ans().strength()) << std::endl;
     assert(worldCup.get_partial_spirit(12).ans().strength() == 55);
+    std::cout << worldCup.show_uf() << std::endl;
 
     worldCup.add_player(13, 1, per2, 2, 0, 4, true); // player13 (uses per2)
     std::cout << "player 13: " << worldCup.get_partial_spirit(13).ans() << std::endl; // 3, 4, 5, 1, 2
     std::cout << "player 13: " << std::to_string(worldCup.get_partial_spirit(13).ans().strength()) << std::endl;
     assert(worldCup.get_partial_spirit(13).ans().strength() == 40);
+    std::cout << worldCup.show_uf() << std::endl;
 
     worldCup.add_player(14, 1, per2, 2, 0, 4, true); // player14 (uses per2)
     std::cout << "player 14: " << worldCup.get_partial_spirit(14).ans() << std::endl; // 5, 1, 2, 3, 4 !!!
     std::cout << "player 14: " << std::to_string(worldCup.get_partial_spirit(14).ans().strength()) << std::endl;
-    // assert(worldCup.get_partial_spirit(14).ans().strength() == 45);
+     assert(worldCup.get_partial_spirit(14).ans().strength() == 45);
+    std::cout << worldCup.show_uf() << std::endl;
+
 
     worldCup.add_player(21, 2, per1, 2, 5, 4, true); 
     worldCup.add_player(22, 2, per1, 2, 0, 4, true);

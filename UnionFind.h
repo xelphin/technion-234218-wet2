@@ -184,7 +184,7 @@ void UnionFind<T>::update_permutations(Node* buyer_set, Node* bought_set, Node* 
         //in get_partial the returned value is parent*child. so having the child hold: child -> parent^-1 * child cancels perfectly.
     }
     else if (bought_set == smaller_set){
-        bought_set->set_seniors_product(buyer_set->get_seniors_product().inv() * bought_set->get_team_product());
+        bought_set->set_seniors_product(buyer_set->get_seniors_product().inv() * bought_set->get_seniors_product());
         //so as to not count the larger set's seniors_product twice, since it is already represented in its team_product.
     }
     larger_set->set_team_product(team_final_product);
