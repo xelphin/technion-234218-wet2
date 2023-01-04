@@ -187,6 +187,7 @@ bool worldcup_addTeam();
 bool worldcup_removeTeam_basic(); // TODO: Make one that's more updated when add/remove player gets implemented
 bool worldcup_add_player();
 bool worldcup_play_match_noPermutation();
+bool worldcup_play_match();
 bool worldcup_get_partial_spirit();
 
 #endif
