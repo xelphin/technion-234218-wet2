@@ -200,6 +200,7 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     if (team1 == nullptr || team2 == nullptr){
         return StatusType::FAILURE;
     }
+    teams_ability_AVL.remove(teamId2); //should be done before doing other stuff so we can find it in the AVL.
     // Update Team Stats
     team1->set_points(team1->get_points() + team2->get_points());
     if (team2->get_has_goalKeeper()) {
@@ -215,7 +216,6 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     }
     // Remove team2 from AVLs
     teams_AVL.remove(teamId2);
-    teams_ability_AVL.remove(teamId2); // TODO: Right? I'm not too certain about this ability AVL
     //
     return StatusType::SUCCESS;
 }
