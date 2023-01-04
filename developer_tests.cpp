@@ -41,6 +41,7 @@ bool run_all_tests() {
     run_test(worldcup_add_player, "worldcup_add_player", success_string, success);
     run_test(worldcup_play_match_noPermutation, "worldcup_play_match_noPermutation", success_string, success);
     run_test(worldcup_get_partial_spirit, "worldcup_get_partial_spirit", success_string, success);
+    run_test(worldcup_play_match, "worldcup_play_match", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -728,6 +729,50 @@ bool worldcup_play_match_noPermutation()
     worldCup.play_match(2,3);
     assert(worldCup.get_team_points(2).ans() == 6);
     assert(worldCup.get_team_points(3).ans() == 0);
+
+    return true;
+}
+
+bool worldcup_play_match()
+{
+    world_cup_t worldCup;
+    // Teams
+    worldCup.add_team(1);
+    worldCup.add_team(2);
+    worldCup.add_team(3);
+    assert(worldCup.get_team_points(1).ans() == 0);
+    assert(worldCup.get_team_points(2).ans() == 0);
+    assert(worldCup.get_team_points(3).ans() == 0);
+    // Permutation
+    int arr1[] = { 1, 2, 3, 4, 0};
+    int arr2[] = { 2, 4, 1, 3, 0};
+    int arr3[] = { 4, 3, 1, 2, 0};
+    int arr4[] = { 0, 3, 2, 4, 1};
+    // permutation_t per0 = permutation_t::neutral();
+    permutation_t per1(arr1);
+    permutation_t per2(arr2);
+    permutation_t per3(arr3);
+    permutation_t per4(arr4);
+
+    // Team 1 - Sum Ability: 5
+    worldCup.add_player(11, 1, per1, 2, 3, 4, true);
+    worldCup.add_player(12, 1, per3, 2, 2, 4, true);
+    std::cout << "Team1 Spirit Should be: " << (per1*per3).strength() << std::endl;
+
+    // Team 1 - Sum Ability: 5
+    worldCup.add_player(21, 2, per3, 2, 5, 4, true); 
+    worldCup.add_player(22, 2, per4, 2, 0, 4, true);
+    std::cout << "Team2 Spirit Should be: " << (per3*per4).strength() << std::endl;
+
+    // Play Match
+    worldCup.play_match(1,2);
+    assert(worldCup.get_team_points(1).ans() == 3);
+
+    // Team3
+    worldCup.add_player(31, 3, per1, 2, 4, 4, true);
+    worldCup.add_player(32, 3, per3, 2, 2, 4, true);
+    worldCup.play_match(1,3);
+    assert(worldCup.get_team_points(1).ans() == 6);
 
     return true;
 }

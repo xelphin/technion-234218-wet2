@@ -52,8 +52,10 @@ int Team::get_points() const
 }
 int Team::get_spirit_strength() const
 {
-    // TODO
-    return 0;
+    if (captain_node == nullptr) {
+        throw std::logic_error("Captain node is nullptr");
+    }
+    return captain_node->get_team_product().strength();
 }
 int Team::get_team_games() const
 {
@@ -104,10 +106,6 @@ permutation_t Team::get_team_spirit() {
 
 void Team::set_team_spirit(const permutation_t &spirit) {
     team_spirit = spirit;
-}
-
-int Team::get_spirit_strength() {
-    return team_spirit.strength();
 }
 
 void Team::remove_team_players() {
