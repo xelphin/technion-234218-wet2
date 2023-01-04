@@ -25,6 +25,12 @@ StatusType world_cup_t::add_team(int teamId) // O(log(k))
         }
         teams_AVL.add(team);
 		teams_ability_AVL.add(team);
+        
+        std::cout << "Teams" << std::endl;
+        std::cout << teams_AVL.debugging_printTree_new() << std::endl;
+        std::cout << "Teams ability" << std::endl;
+        std::cout << teams_ability_AVL.debugging_printTree_new() << std::endl;
+
 	} catch (std::bad_alloc const&){
         return StatusType::ALLOCATION_ERROR;
 	} catch (const ID_ALREADY_EXISTS& e) {
@@ -78,6 +84,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
             // Add Player to players_UF
             players_UF.makeset(new_node, team->get_captain_node());
             // Update Team
+            teams_ability_AVL.remove_by_item(team); // Later add again
             if (team->get_captain_node() == nullptr) {
                 team->set_captain_node(&*new_node);
             }
@@ -86,6 +93,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
             }
             team->increment_total_players();
             team->add_sum_player_abilities(ability);
+            teams_ability_AVL.add(team); // Added again
             // Set Player Stats
             new_node->get_content()->set_team_games_played_when_joined(team->get_team_games());
             new_node->get_content()->set_team(&*team);
@@ -190,8 +198,10 @@ output_t<int> world_cup_t::get_team_points(int teamId)
 
 output_t<int> world_cup_t::get_ith_pointless_ability(int i)
 {
-	// TODO: Your code goes here
-	return 12345;
+	if (i<0 || i>this->teams_ability_AVL.get_amount()) {
+        return StatusType::FAILURE;
+    }
+    return this->teams_ability_AVL.find_ith_rank_id(i);
 }
 
 output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)
@@ -241,4 +251,8 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
 std::string world_cup_t::show_uf()
 {
     return UnionFind_Tests<Player>::show_union_find(this->players_UF);
+}
+std::string world_cup_t::show_ability_avl()
+{
+    return this->teams_ability_AVL.debugging_printTree_new();
 }

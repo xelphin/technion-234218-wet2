@@ -43,6 +43,8 @@ bool run_all_tests() {
     run_test(worldcup_get_partial_spirit, "worldcup_get_partial_spirit", success_string, success);
     run_test(worldcup_play_match, "worldcup_play_match", success_string, success);
 
+    run_test(worldcup_removeTeam_basic, "worldcup_removeTeam_basic", success_string, success);
+
     std::cout << success_string << std::endl;
     return success;
 }
@@ -641,19 +643,31 @@ bool worldcup_addTeam()
 bool worldcup_removeTeam_basic()
 {
     // AVL tests for remove are assumed to be correct
+    permutation_t per = permutation_t::neutral();
     int tests = 0;
     world_cup_t worldCup;
     worldCup.add_team(1);
+
+    worldCup.add_player(11, 1, per, 2, 1, 4, true);
+    worldCup.add_player(12, 1, per, 2, 1, 4, true);
+    worldCup.add_player(13, 1, per, 2, 1, 4, true);
+
     worldCup.add_team(2);
     worldCup.add_team(3);
+    tests += StatusType::SUCCESS == worldCup.remove_team(3);
     worldCup.add_team(4);
     worldCup.add_team(5);
+    worldCup.add_player(151, 5, per, 2, 100, 4, true);
     worldCup.add_team(6);
     worldCup.add_team(7);
     worldCup.add_team(8);
+
+    worldCup.add_player(61, 6, per, 2, 1, 4, true);
+    worldCup.add_player(62, 6, per, 2, 1, 4, true);
+
     worldCup.add_team(9);
     //
-    tests += StatusType::SUCCESS == worldCup.remove_team(3);
+    
     tests += StatusType::SUCCESS == worldCup.remove_team(2);
     tests += StatusType::FAILURE == worldCup.remove_team(3);
     tests += StatusType::INVALID_INPUT == worldCup.remove_team(-2);
@@ -662,6 +676,9 @@ bool worldcup_removeTeam_basic()
     tests += StatusType::SUCCESS == worldCup.remove_team(3);
     tests += StatusType::SUCCESS == worldCup.remove_team(4);
     tests += StatusType::FAILURE == worldCup.remove_team(3);
+
+
+
     return tests == 7;
 }
 

@@ -805,10 +805,10 @@ void AVL_tree<T>::print_node(AVL_tree<T>::Node* node){
 
 template<class T>
 int AVL_tree<T>::find_ith_rank_id(int i) {
-    if (i < 1 || i > get_amount()){ //e.g. tree has 1 node ⇒ amount = 1, node's rank is 1. so i=1 is the only valid number.
+    if (i < 0 || i > get_amount()){ //e.g. tree has 1 node ⇒ amount = 1, node's rank is 1. so i=1 is the only valid number.
         return I_OUT_OF_RANGE;
     }
-    return select(root, i) - 1; //segel asked for index, starting from 0. while rank starts from 1. so we subtract 1.
+    return select(root, i+1);
 }
 
 template<class T>
@@ -830,10 +830,10 @@ int AVL_tree<T>::select(Node* node, int i) {
             return node->content->get_id();
         }
         if (difference > 0)  { //proceed to left branch.
-            return find_ith_rank_id(node->left, i);
+            return select(node->left, i);
         }
         else{ //proceed to right branch
-            return find_ith_rank_id(node->right, i - get_weight(node->left) - 1);
+            return select(node->right, i - get_weight(node->left) - 1);
         }
     }
 }
