@@ -120,6 +120,9 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
     if (team1 == nullptr || team2 == nullptr) {
         return StatusType::FAILURE;
     }
+    if (team1->get_has_goalKeeper() != true || team2->get_has_goalKeeper() != true) {
+        return StatusType::FAILURE;
+    }
     // Get Stats,Compare and Update O(1)
     int score1 = team1->get_sumPlayerAbilities() + team1->get_points();
     int score2 = team2->get_sumPlayerAbilities() + team2->get_points();
