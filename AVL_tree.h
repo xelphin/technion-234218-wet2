@@ -812,30 +812,28 @@ int AVL_tree<T>::find_ith_rank_id(int i) {
 }
 
 template<class T>
-int AVL_tree<T>::select(Node* node, int i) {
+int AVL_tree<T>::select(Node* node, int k) {
     if (sort_by_score != SORT_BY_SCORE){
         throw std::logic_error("getting rank from the id tree. wrong tree.");
     }
     if (node == nullptr){
         throw std::logic_error("nullptr in rank finding. rank outside of tree range or tree not sorted well");
     }
-    if (i < 1){
+    if (k < 1){
         throw std::logic_error("looking for too small rank");
     }
 
-    //code copied from find()
-    while(true){ //while true loop ok because in every case we either return or go down tree.
-        int difference = get_weight(node->left) - (i - 1);
-        if (difference == 0){
-            return node->content->get_id();
-        }
-        if (difference > 0)  { //proceed to left branch.
-            return select(node->left, i);
-        }
-        else{ //proceed to right branch
-            return select(node->right, i - get_weight(node->left) - 1);
-        }
+    int left_weight = get_weight(node->left);
+    if (left_weight == k-1){
+        return node->content->get_id();
     }
+    if (left_weight < k-1)  { 
+        return select(node->right, k-left_weight-1);
+    }
+    else{
+        return select(node->left, k);
+    }
+
 }
 
 // ----------------------------------

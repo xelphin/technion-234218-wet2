@@ -26,10 +26,10 @@ StatusType world_cup_t::add_team(int teamId) // O(log(k))
         teams_AVL.add(team);
 		teams_ability_AVL.add(team);
         
-        std::cout << "Teams" << std::endl;
-        std::cout << teams_AVL.debugging_printTree_new() << std::endl;
-        std::cout << "Teams ability" << std::endl;
-        std::cout << teams_ability_AVL.debugging_printTree_new() << std::endl;
+        //std::cout << "Teams" << std::endl;
+        //std::cout << teams_AVL.debugging_printTree_new() << std::endl;
+        //std::cout << "Teams ability" << std::endl;
+        //std::cout << teams_ability_AVL.debugging_printTree_new() << std::endl;
 
 	} catch (std::bad_alloc const&){
         return StatusType::ALLOCATION_ERROR;
@@ -129,16 +129,16 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
         throw std::logic_error("Team scores should not be negative");
     }
     if (score1 > score2) {
-        std::cout << "team 1 won"<< std::endl;
+        //std::cout << "team 1 won"<< std::endl;
         team1->add_team_points(3);
     } else if (score1 < score2) {
-        std::cout << "team 2 won"<< std::endl;
+        //std::cout << "team 2 won"<< std::endl;
         team2->add_team_points(3);
     } else if (strength1 > strength2) {
-        std::cout << "team 1 won"<< std::endl;
+        //std::cout << "team 1 won"<< std::endl;
         team1->add_team_points(3);
     } else if (strength1 < strength2) {
-        std::cout << "team 2 won"<< std::endl;
+        //std::cout << "team 2 won"<< std::endl;
         team2->add_team_points(3);
     } else {
         team1->add_team_points(1);
@@ -228,7 +228,8 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     if (team1 == nullptr || team2 == nullptr){
         return StatusType::FAILURE;
     }
-    teams_ability_AVL.remove(teamId2); //should be done before doing other stuff so we can find it in the AVL.
+    teams_ability_AVL.remove_by_item(team1); //should be done before doing other stuff so we can find it in the AVL.
+    teams_ability_AVL.remove_by_item(team2);
     // Update Team Stats
     team1->set_points(team1->get_points() + team2->get_points());
     if (team2->get_has_goalKeeper()) {
@@ -242,7 +243,8 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
 
     // Remove team2 from AVLs
     teams_AVL.remove(teamId2);
-    //
+    // Re add team2 to teams_ability
+    teams_ability_AVL.add(team1);
     return StatusType::SUCCESS;
 }
 

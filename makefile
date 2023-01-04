@@ -1,5 +1,5 @@
 COMPILER = g++
-EXE = WorldCupUnitTester
+EXE = InOutTester
 FLAGS = -std=c++14 -Wall -Werror -pedantic-errors
 G_FLAG = -g
 

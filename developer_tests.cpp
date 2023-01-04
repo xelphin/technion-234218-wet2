@@ -42,8 +42,7 @@ bool run_all_tests() {
     run_test(worldcup_play_match_noPermutation, "worldcup_play_match_noPermutation", success_string, success);
     run_test(worldcup_get_partial_spirit, "worldcup_get_partial_spirit", success_string, success);
     run_test(worldcup_play_match, "worldcup_play_match", success_string, success);
-
-    run_test(worldcup_removeTeam_basic, "worldcup_removeTeam_basic", success_string, success);
+    run_test(worldcup_get_ith, "worldcup_get_ith", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -871,6 +870,62 @@ bool worldcup_get_partial_spirit()
     std::cout << "player 22: " << worldCup.get_partial_spirit(22).ans() << std::endl;
     assert(worldCup.get_partial_spirit(22).ans().strength() == 38);
     // std::cout << "Should be: " << (per2*per1*per1*per2*per2*per3*per5*per5).strength() << std::endl;
+
+    return true;
+}
+
+bool worldcup_get_ith()
+{
+    permutation_t per = permutation_t::neutral();
+    world_cup_t worldCup;
+
+    // Basic Teams
+    worldCup.add_team(1);
+    worldCup.add_player(11, 1, per, 2, 1, 4, true);
+    worldCup.add_player(12, 1, per, 2, 0, 4, true);
+    worldCup.add_player(13, 1, per, 2, 0, 4, true);
+    worldCup.add_team(2);
+    worldCup.add_player(21, 2, per, 2, 10, 4, true);
+    worldCup.add_player(21, 2, per, 2, 0, 4, true);
+    worldCup.add_team(3);
+    worldCup.add_player(31, 3, per, 2, 5, 4, true);
+    // 1, 3, 2
+    //std::cout << worldCup.show_ability_avl() << std::endl;
+    //assert(worldCup.show_ability_avl().compare("└──3\n    ├──2\n    └──1\n\n"));
+    assert(((worldCup.get_ith_pointless_ability(0)).ans()) == 1);
+    assert(((worldCup.get_ith_pointless_ability(1)).ans()) == 3);
+    assert(((worldCup.get_ith_pointless_ability(2)).ans()) == 2);
+
+    worldCup.add_player(32, 3, per, 2, 10, 4, true);
+    // 1 , 2 , 3
+    std::cout << worldCup.show_ability_avl() << std::endl;
+    assert(((worldCup.get_ith_pointless_ability(0)).ans()) == 1);
+    assert(((worldCup.get_ith_pointless_ability(1)).ans()) == 2);
+    assert(((worldCup.get_ith_pointless_ability(2)).ans()) == 3);
+
+    // 
+    worldCup.add_team(4);
+    //
+    std::cout << worldCup.show_ability_avl() << std::endl;
+    assert(((worldCup.get_ith_pointless_ability(0)).ans()) == 4);
+    assert(((worldCup.get_ith_pointless_ability(1)).ans()) == 1);
+
+    worldCup.add_player(41, 4, per, 2, 100, 4, true);
+    assert(((worldCup.get_ith_pointless_ability(3)).ans()) == 4);
+    //
+    worldCup.remove_team(3);
+    std::cout << worldCup.show_ability_avl() << std::endl;
+    assert(((worldCup.get_ith_pointless_ability(0)).ans()) == 1);
+    assert(((worldCup.get_ith_pointless_ability(1)).ans()) == 2);
+    assert(((worldCup.get_ith_pointless_ability(2)).ans()) == 4);
+    //
+    // Buy team
+    worldCup.buy_team(1,4);
+    std::cout << worldCup.show_ability_avl() << std::endl;
+    assert(((worldCup.get_ith_pointless_ability(0)).ans()) == 2);
+    assert(((worldCup.get_ith_pointless_ability(1)).ans()) == 1);
+
+
 
     return true;
 }
