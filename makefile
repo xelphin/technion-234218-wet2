@@ -3,7 +3,7 @@ EXE = WorldCupUnitTester
 FLAGS = -std=c++14 -Wall -Werror -pedantic-errors
 G_FLAG = -g
 
-MAIN = main
+MAIN = main23a2
 WORLD_CUP= worldcup23a2
 UTIL= wet2util
 PLAYER = Player
