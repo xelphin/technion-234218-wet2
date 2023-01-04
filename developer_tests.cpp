@@ -737,10 +737,12 @@ bool worldcup_get_partial_spirit()
     permutation_t per1 = permutation_t::neutral();
     int arr2[] = { 2, 3, 4, 0, 1};
     int arr3[] = { 1, 2, 3, 4, 0};
-    int arr4[] = { 1, 2, 3, 4, 5};
+    int arr4_bad[] = { 1, 2, 3, 4, 5};
+    int arr5[] = {4, 0, 3, 1, 2};
     permutation_t per2(arr2);
     permutation_t per3(arr3);
-    permutation_t per_bad(arr4);
+    permutation_t per_bad(arr4_bad);
+    permutation_t per5(arr5);
     //
     world_cup_t worldCup;
 
@@ -752,42 +754,61 @@ bool worldcup_get_partial_spirit()
 
     worldCup.add_player(11, 1, per1, 2, 3, 4, true); // player11
     std::cout << "player 11: " << worldCup.get_partial_spirit(11).ans() << std::endl; // 1, 2, 3, 4, 5
-    std::cout << "player 11: " << std::to_string(worldCup.get_partial_spirit(11).ans().strength()) << std::endl;
-    assert(worldCup.get_partial_spirit(11).ans().strength() == 55);
-    std::cout << worldCup.show_uf() << std::endl;
 
     worldCup.add_player(12, 1, per1, 2, 0, 4, true); // player12
     std::cout << "player 12: " << worldCup.get_partial_spirit(12).ans() << std::endl; // 1, 2, 3, 4, 5
-    std::cout << "player 12: " << std::to_string(worldCup.get_partial_spirit(12).ans().strength()) << std::endl;
     assert(worldCup.get_partial_spirit(12).ans().strength() == 55);
-    std::cout << worldCup.show_uf() << std::endl;
 
     worldCup.add_player(13, 1, per2, 2, 0, 4, true); // player13 (uses per2)
     std::cout << "player 13: " << worldCup.get_partial_spirit(13).ans() << std::endl; // 3, 4, 5, 1, 2
-    std::cout << "player 13: " << std::to_string(worldCup.get_partial_spirit(13).ans().strength()) << std::endl;
     assert(worldCup.get_partial_spirit(13).ans().strength() == 40);
-    std::cout << worldCup.show_uf() << std::endl;
 
     worldCup.add_player(14, 1, per2, 2, 0, 4, true); // player14 (uses per2)
     std::cout << "player 14: " << worldCup.get_partial_spirit(14).ans() << std::endl; // 5, 1, 2, 3, 4 
-    std::cout << "player 14: " << std::to_string(worldCup.get_partial_spirit(14).ans().strength()) << std::endl;
-     assert(worldCup.get_partial_spirit(14).ans().strength() == 45);
-    std::cout << worldCup.show_uf() << std::endl;
+    assert(worldCup.get_partial_spirit(14).ans().strength() == 45);
 
     worldCup.add_player(15, 1, per3, 2, 0, 4, true); // player15 (uses per2)
     std::cout << "player 15: " << worldCup.get_partial_spirit(15).ans() << std::endl; // 1, 2, 3, 4, 5
-    std::cout << "player 15: " << std::to_string(worldCup.get_partial_spirit(15).ans().strength()) << std::endl;
-    std::cout << "Should be: " << (((per2*per2)*per3) )<< std::endl;
     assert(worldCup.get_partial_spirit(15).ans().strength() == 55);
 
     assert(StatusType::INVALID_INPUT == worldCup.add_player(16, 1, per_bad, 2, 0, 4, true));
 
+    assert(StatusType::SUCCESS == worldCup.add_player(16, 1, per5, 2, 0, 4, true)); // player15 (uses per2)
+    std::cout << "player 16: " << worldCup.get_partial_spirit(16).ans() << std::endl; // 1, 2, 3, 4, 5
+    std::cout << "player 16: " << std::to_string(worldCup.get_partial_spirit(16).ans().strength()) << std::endl;
+    assert(worldCup.get_partial_spirit(16).ans().strength() == 42);
 
-    worldCup.add_player(21, 2, per1, 2, 5, 4, true); 
-    worldCup.add_player(22, 2, per1, 2, 0, 4, true);
-    worldCup.add_player(23, 2, per1, 2, 0, 4, true);
-    worldCup.add_player(24, 2, per1, 2, 0, 4, true);
+    assert(worldCup.get_partial_spirit(11).ans().strength() == 55);
+    assert(worldCup.get_partial_spirit(12).ans().strength() == 55);
+    assert(worldCup.get_partial_spirit(13).ans().strength() == 40);
+    assert(worldCup.get_partial_spirit(14).ans().strength() == 45);
+    assert(worldCup.get_partial_spirit(15).ans().strength() == 55);
+    assert(worldCup.get_partial_spirit(16).ans().strength() == 42);
 
-    // TODO: Check that an invalid permutation given to player will make worldcup act accordingly
+    // Team2
+
+    worldCup.add_player(21, 2, per2, 2, 5, 4, true);
+    std::cout << "player 21: " << worldCup.get_partial_spirit(21).ans() << std::endl; // 3, 4, 5, 1, 2
+    assert(worldCup.get_partial_spirit(21).ans().strength() == 40);
+
+    // Team2 Buys Team1 (Smaller Team buys bigger Team)
+    std::cout << "TEAM 2 BUYS TEAM 1" << std::endl;
+    worldCup.buy_team(2,1);
+
+    // Test
+    assert(worldCup.get_partial_spirit(21).ans().strength() == 40);
+    assert(worldCup.get_partial_spirit(11).ans().strength() == 40);
+    assert(worldCup.get_partial_spirit(12).ans().strength() == 40);
+    assert(worldCup.get_partial_spirit(13).ans().strength() == 45);
+    assert(worldCup.get_partial_spirit(14).ans().strength() == 45);
+    assert(worldCup.get_partial_spirit(15).ans().strength() == 40);
+    assert(worldCup.get_partial_spirit(16).ans().strength() == 52);
+
+    // Add to Team2
+    worldCup.add_player(22, 2, per5, 2, 5, 4, true);
+    std::cout << "player 22: " << worldCup.get_partial_spirit(22).ans() << std::endl;
+    assert(worldCup.get_partial_spirit(22).ans().strength() == 38);
+    // std::cout << "Should be: " << (per2*per1*per1*per2*per2*per3*per5*per5).strength() << std::endl;
+
     return true;
 }
