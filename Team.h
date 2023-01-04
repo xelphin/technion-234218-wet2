@@ -45,9 +45,6 @@ public:
     //players and permutations
     UnionFind<Player>::Node* set_captain_node(UnionFind<Player>::Node* new_captain_node);
     UnionFind<Player>::Node* get_captain_node();
-    permutation_t get_team_spirit();
-    void set_team_spirit(const permutation_t& spirit);
-    int get_spirit_strength();
     void remove_team_players();
 
     // DEBUGGING
@@ -63,7 +60,6 @@ private:
     permutation_t team_spirit;
     bool hasGoalKeeper;
     int team_games;
-
 };
 
 #endif // TEAM_H
