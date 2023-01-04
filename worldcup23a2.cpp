@@ -83,7 +83,6 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
             }
             if (goalKeeper) {
                 team->update_status_to_exist_goalKeeper();
-                // TODO: Make sure that when buying team, it is also updated
             }
             team->increment_total_players();
             team->add_sum_player_abilities(ability);
@@ -203,22 +202,33 @@ output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)
 
 StatusType world_cup_t::buy_team(int teamId1, int teamId2)
 {
+    // Check Input
     if (teamId1 <= 0 || teamId2 <= 0 || teamId1 == teamId2){
         return StatusType::INVALID_INPUT;
     }
+    // Find Teams
     std::shared_ptr<Team> team1 = teams_AVL.get_content(teamId1);
     std::shared_ptr<Team> team2 = teams_AVL.get_content(teamId2);
     if (team1 == nullptr || team2 == nullptr){
         return StatusType::FAILURE;
     }
-
+    teams_ability_AVL.remove(teamId2); //should be done before doing other stuff so we can find it in the AVL.
+    // Update Team Stats
     team1->set_points(team1->get_points() + team2->get_points());
+    if (team2->get_has_goalKeeper()) {
+        team1->update_status_to_exist_goalKeeper();
+    }
+    team1->add_total_players(team2->get_totalPlayers());
+    team1->add_sum_player_abilities(team2->get_sumPlayerAbilities());
+    // Merge Teams
     team1->set_captain_node(players_UF.unite(team1->get_captain_node(), team2->get_captain_node()));
     //now the captain node is the root of the UF. it may be team2's captain if team2 was the bigger team. or a nullptr if no players.
     if (team1->get_captain_node() != nullptr){
         team1->set_team_spirit(team1->get_captain_node()->get_team_product());
     }
+    // Remove team2 from AVLs
     teams_AVL.remove(teamId2);
+    //
     return StatusType::SUCCESS;
 }
 

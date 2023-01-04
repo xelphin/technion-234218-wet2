@@ -59,6 +59,10 @@ int Team::get_team_games() const
 {
     return team_games;
 }
+bool Team::get_has_goalKeeper() const
+{
+    return this->hasGoalKeeper;
+}
 void Team::update_status_to_exist_goalKeeper()
 {
     this->hasGoalKeeper = true;
@@ -111,6 +115,10 @@ void Team::remove_team_players() {
     {
         get_captain_node()->remove();
     }
+}
+void Team::add_total_players(int add)
+{
+    this->total_players += add;
 }
 
 // DEBUGGING
