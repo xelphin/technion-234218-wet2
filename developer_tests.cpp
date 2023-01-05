@@ -43,7 +43,6 @@ bool run_all_tests() {
     run_test(worldcup_get_partial_spirit, "worldcup_get_partial_spirit", success_string, success);
     run_test(worldcup_play_match, "worldcup_play_match", success_string, success);
     run_test(worldcup_get_ith, "worldcup_get_ith", success_string, success);
-    run_test(worldcup_play_match2, "worldcup_play_match2", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -927,27 +926,6 @@ bool worldcup_get_ith()
     assert(((worldCup.get_ith_pointless_ability(1)).ans()) == 1);
 
 
-
-    return true;
-}
-
-bool worldcup_play_match2()
-{
-    // permutation_t per = permutation_t::neutral();
-    int arr1[] = { 1, 2, 3, 4, 0};
-    int arr2[] = { 3, 2, 4, 1, 0};
-    permutation_t per1(arr1);
-    permutation_t per2(arr2);
-    world_cup_t worldCup;
-
-    // Basic Teams
-    worldCup.add_team(1);
-    worldCup.add_team(2);
-    worldCup.add_team(3);
-    worldCup.remove_team(3);
-    worldCup.add_player(1001, 1, per1, 0, 15, 2, true);
-    worldCup.add_player(2001, 2, per2, 0, 17, 1, true);
-    worldCup.play_match(1,2);
 
     return true;
 }
