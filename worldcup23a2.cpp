@@ -158,8 +158,26 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
 
 output_t<int> world_cup_t::num_played_games_for_player(int playerId)
 {
-	// TODO: Your code goes here
-	return 22;
+    if (playerId <= 0){
+        return StatusType::INVALID_INPUT;
+    }
+    if (!players_UF.id_is_in_data(playerId)){
+        return StatusType::FAILURE;
+    }
+    
+    UnionFind<Player>::Node* player = players_UF.find_set_of_id(playerId);
+    // (now surely player is pointing directly to the captain)
+    int games_of_captain_when_joined = player->get_games_of_captain_when_joined();
+    // IF player is Captain
+    int captain_games = player->get_captain_games();
+    int ans_games_played = captain_games;
+    // IF player is NOT Captain
+    if (player->get_isCaptain() == false) {
+        captain_games = player->get_captain_games_when_captain_is_my_parent(); // surely player parent is Captain after find()
+        ans_games_played = captain_games - games_of_captain_when_joined; 
+    }
+    // Return
+	return players_UF.get_content(playerId)->get_gamesPlayed_when_initialized() + ans_games_played;
 }
 
 StatusType world_cup_t::add_player_cards(int playerId, int cards)

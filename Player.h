@@ -15,7 +15,7 @@ public:
 
     int get_id() const;
     int get_teamId() const;
-    int get_gamesPlayed(int team_games) const;
+    int get_gamesPlayed_when_initialized() const;
     int get_ability() const;
     int get_cards() const;
     bool get_isGoalKeeper() const;

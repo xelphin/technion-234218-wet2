@@ -87,6 +87,7 @@ public:
     bool get_isRetired() const;
     int get_captain_games() const;
     int get_games_of_captain_when_joined() const;
+    int get_captain_games_when_captain_is_my_parent() const;
 };
 
 
@@ -388,6 +389,17 @@ template<class T>
 int UnionFind<T>::Node::get_games_of_captain_when_joined() const
 {
     return this->games_of_captain_when_joined;
+}
+template<class T>
+int UnionFind<T>::Node::get_captain_games_when_captain_is_my_parent() const
+{
+    if (this->parent == nullptr) {
+        throw std::logic_error("I am the captain, you should ask from me directly in num_played_games_for_player");
+    }
+    if (this->parent->get_isCaptain() != true) {
+        throw std::logic_error("Parent is not captain as requested");
+    }
+    return this->parent->get_captain_games();
 }
 
 #endif //UNION_FIND_UNION_FIND_H
