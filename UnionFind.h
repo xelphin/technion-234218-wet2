@@ -18,6 +18,7 @@ public:
     T* get_content(int id);
     bool id_is_in_data(int id); //returns true if the item with the id i
     permutation_t get_partial_spirit(int id);
+    typename UnionFind<T>::Node *find_node(int id);
 
     UnionFind() = default;
 
@@ -27,7 +28,7 @@ public:
 private:
     Hash<UnionFind<T>::Node> hash; //the hash contains UF nodes!
 
-    typename UnionFind<T>::Node *find_node(int id);
+    
     void compare_set_sizes(Node* buyer_set, Node* bought_set, Node** smaller_set, Node** larger_set);
     void update_permutations(Node* buyer_set, Node* bought_set, Node* smaller_set, Node* larger_set);
     Node* get_set_and_compress_path(Node* node);

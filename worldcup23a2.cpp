@@ -165,7 +165,7 @@ output_t<int> world_cup_t::num_played_games_for_player(int playerId)
         return StatusType::FAILURE;
     }
     
-    UnionFind<Player>::Node* player = players_UF.find_set_of_id(playerId);
+    UnionFind<Player>::Node* player = players_UF.find_node(playerId);
     if (playerId != player->get_id()) {
         throw std::logic_error("The id of the player given does not match our required playerId");
     }

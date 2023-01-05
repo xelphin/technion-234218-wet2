@@ -953,19 +953,18 @@ bool worldcup_num_played_games_for_player()
     worldCup.get_partial_spirit(1001);
     worldCup.buy_team(1,2);
     assert((worldCup.num_played_games_for_player(1001).ans())==1);
-    //assert((worldCup.num_played_games_for_player(2001).ans())==3);
+    assert((worldCup.num_played_games_for_player(2001).ans())==3);
     // More complex
     worldCup.add_team(3);
     worldCup.add_player(3001, 3, per, 2, 15, 2, true);
     worldCup.play_match(1,3);
-    //assert((worldCup.num_played_games_for_player(1001).ans())==2);
-    //assert((worldCup.num_played_games_for_player(2001).ans())==4);
-    //assert((worldCup.num_played_games_for_player(3001).ans())==3);
+    assert((worldCup.num_played_games_for_player(1001).ans())==2);
+    assert((worldCup.num_played_games_for_player(2001).ans())==4);
+    assert((worldCup.num_played_games_for_player(3001).ans())==3);
 
     worldCup.add_player(1002, 1, per, 0, 15, 2, true);
     std::cout << worldCup.show_uf() << std::endl;
-    // assert((worldCup.num_played_games_for_player(1002).ans())==0);
-    // std::cout << "1002 played: " << worldCup.num_played_games_for_player(1002).ans() << std::endl;
+    assert((worldCup.num_played_games_for_player(1002).ans())==0);
     
 
     return true;
