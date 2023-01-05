@@ -25,12 +25,6 @@ StatusType world_cup_t::add_team(int teamId) // O(log(k))
         }
         teams_AVL.add(team);
 		teams_ability_AVL.add(team);
-        
-        //std::cout << "Teams" << std::endl;
-        //std::cout << teams_AVL.debugging_printTree_new() << std::endl;
-        //std::cout << "Teams ability" << std::endl;
-        //std::cout << teams_ability_AVL.debugging_printTree_new() << std::endl;
-
 	} catch (std::bad_alloc const&){
         return StatusType::ALLOCATION_ERROR;
 	} catch (const ID_ALREADY_EXISTS& e) {
@@ -60,8 +54,6 @@ StatusType world_cup_t::remove_team(int teamId)
         return StatusType::ALLOCATION_ERROR;
     }
 	if (removed_avl_id != removed_avl_ability) {
-        std::cout << teams_AVL.debugging_printTree_new() << std::endl;
-        std::cout << teams_ability_AVL.debugging_printTree_new() << std::endl;
 		throw std::logic_error("Can't be that a team existed (and was removed) from only one AVL");
 	}
     return removed_avl_id ? StatusType::SUCCESS : StatusType::FAILURE;
@@ -87,8 +79,12 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
             players_UF.makeset(new_node, team->get_captain_node());
             // Update Team
             teams_ability_AVL.remove_by_item(team); // Later add again
-            if (team->get_captain_node() == nullptr) {
+            if (team->get_captain_node() == nullptr) { // Team is empty
                 team->set_captain_node(&*new_node);
+                new_node->setIsCaptain();
+            } else { // Team is not empty (already has a captain)
+                int games_of_captain = team->get_captain_node()->get_captain_games();
+                new_node->set_games_of_captain_when_joined(games_of_captain);
             }
             if (goalKeeper) {
                 team->update_status_to_exist_goalKeeper();
@@ -137,19 +133,15 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
     }
     int winningValue = 0;
     if (score1 > score2) {
-        //std::cout << "team 1 won"<< std::endl;
         team1->add_team_points(3);
         winningValue = 1;
     } else if (score1 < score2) {
-        //std::cout << "team 2 won"<< std::endl;
         team2->add_team_points(3);
         winningValue = 3;
     } else if (strength1 > strength2) {
-        //std::cout << "team 1 won"<< std::endl;
         team1->add_team_points(3);
         winningValue = 2;
     } else if (strength1 < strength2) {
-        //std::cout << "team 2 won"<< std::endl;
         team2->add_team_points(3);
         winningValue = 4;
     } else {
@@ -158,8 +150,8 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
         winningValue = 0;
     }
     // Update Games Played O(1)
-    team1->increment_team_games();
-    team2->increment_team_games();
+    team1->get_captain_node()->increment_captain_games();
+    team2->get_captain_node()->increment_captain_games();
 
     return winningValue;
 }
@@ -251,8 +243,24 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     team1->add_total_players(team2->get_totalPlayers());
     team1->add_sum_player_abilities(team2->get_sumPlayerAbilities());
     // Merge Teams
-    team1->set_captain_node(players_UF.unite(team1->get_captain_node(), team2->get_captain_node()));
+    UnionFind<Player>::Node* team1_captain = team1->get_captain_node();
+    UnionFind<Player>::Node* team2_captain = team2->get_captain_node();
+    team1->set_captain_node(players_UF.unite(team1_captain, team2_captain));
     //now the captain node is the root of the UF. it may be team2's captain if team2 was the bigger team. or a nullptr if no players.
+
+    // Update Retired Captain 
+    UnionFind<Player>::Node* new_captain = team1->get_captain_node();
+    if (new_captain->get_id() == team1_captain->get_id()) {
+        team2_captain->setIsRetired();
+        team2_captain->set_games_of_captain_when_joined(new_captain->get_captain_games() - team2_captain->get_captain_games());
+        team2_captain->reset_captain_games();
+    } else if(new_captain->get_id() == team2_captain->get_id()) {
+        team1_captain->setIsRetired();
+        team1_captain->set_games_of_captain_when_joined(new_captain->get_captain_games() - team1_captain->get_captain_games());
+        team1_captain->reset_captain_games();    
+    } else {
+        throw std::logic_error("One of the two has to be the new team captain");
+    }
 
     // Remove team2 from AVLs
     teams_AVL.remove_by_item(team2);

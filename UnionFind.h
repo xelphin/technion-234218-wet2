@@ -31,8 +31,8 @@ private:
     void compare_set_sizes(Node* buyer_set, Node* bought_set, Node** smaller_set, Node** larger_set);
     void update_permutations(Node* buyer_set, Node* bought_set, Node* smaller_set, Node* larger_set);
     Node* get_set_and_compress_path(Node* node);
-    permutation_t path_compression_first_traversal_to_root(Node* node, Node** root);
-    Node* path_compression_second_traversal_to_root(Node* node, const permutation_t& original_multiplier, Node* root);
+    permutation_t path_compression_first_traversal_to_root(Node* node, Node** root, int& sum_of_retired);
+    Node* path_compression_second_traversal_to_root(Node* node, const permutation_t& original_multiplier, Node* root, int& sum_of_retired);
 };
 
 template <class T>
@@ -80,7 +80,8 @@ public:
     // Num Played Games
     void setIsCaptain();
     void setIsRetired();
-    void set_captain_games(int num);
+    void increment_captain_games();
+    void reset_captain_games();
     void set_games_of_captain_when_joined(int num);
     bool get_isCaptain() const;
     bool get_isRetired() const;
@@ -154,8 +155,9 @@ typename UnionFind<T>::Node *UnionFind<T>::get_set_and_compress_path(Node *node)
         return nullptr;
     }
     Node* root;
-    permutation_t multiplier = path_compression_first_traversal_to_root(node, &root);
-    return path_compression_second_traversal_to_root(node, multiplier, root);
+    int sum_of_retired = 0;
+    permutation_t multiplier = path_compression_first_traversal_to_root(node, &root, sum_of_retired);
+    return path_compression_second_traversal_to_root(node, multiplier, root, sum_of_retired);
 }
 
 template<class T>
@@ -207,12 +209,20 @@ void UnionFind<T>::update_permutations(Node* buyer_set, Node* bought_set, Node* 
 }
 
 template<class T>
-permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node, Node** root) {
-    // TODO: FIX MEMORY LEAK! Caused by permutation calculations, hence commented out
+permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node, Node** root, int& sum_of_retired) {
     Node* current = node;
     permutation_t multiplier = permutation_t::neutral();
     while (current->get_parent() != nullptr){ //does not multiply by the root's seniors_product!
+        // Update multiplier
         multiplier = current->get_seniors_product() * multiplier;
+        // Update Sum of Retired Captains
+        if (current->get_isRetired() == true) {
+            if (current->get_isCaptain() == true) {
+                throw std::logic_error("A retired player can't be a captain");
+            }
+            sum_of_retired += current->get_games_of_captain_when_joined();
+        }
+        // Update Current
         current = current->get_parent();
     }
     *root = current;
@@ -221,9 +231,8 @@ permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node,
 
 template<class T>
 typename UnionFind<T>::Node *UnionFind<T>::path_compression_second_traversal_to_root(UnionFind::Node *node,
-
-                                                                         const permutation_t& original_multiplier, Node* root) {
-    // TODO: FIX MEMORY LEAK! Caused by permutation calculations, hence commented out
+    const permutation_t& original_multiplier, Node* root , int& sum_of_retired) 
+{
     // updates permutations while climbing up to the root.
     // at the end every node on the way points to the root.
     permutation_t multiplier = original_multiplier; // got from the first traversal to the root. all of the parent products on the way.
@@ -233,6 +242,17 @@ typename UnionFind<T>::Node *UnionFind<T>::path_compression_second_traversal_to_
         permutation_t multiplier_reduction = current->get_seniors_product();
         current->set_seniors_product(multiplier);
         multiplier = multiplier * multiplier_reduction.inv(); // ABCDE * (DE)^-1 = ABCDE * E^-1 * E^-1 = ABC
+
+        // Update set_games_of_captain_when_joined for each Player on path now that its going to point at a new captain 
+        if (current->get_isCaptain() == true) {
+            throw std::logic_error("We don't iterate over the root, and no one but the root can be a captain");
+        }
+        int original_games_of_captain_when_joined = current->get_games_of_captain_when_joined();
+        if (current->get_isRetired() == true) {
+            sum_of_retired -= original_games_of_captain_when_joined;
+        }
+        current->set_games_of_captain_when_joined(original_games_of_captain_when_joined - sum_of_retired);
+        
 
         //  Updating node's parent to be the root
         Node* current_parent = current->get_parent();
@@ -331,12 +351,18 @@ void UnionFind<T>::Node::setIsRetired()
     if (isCaptain == false) {
         throw std::logic_error("Can't retire a player who is not a captain");
     }
-    this->isCaptain = true;
+    this->isCaptain = false;
+    this->isRetired = true;
 }
 template<class T>
-void UnionFind<T>::Node::set_captain_games(int num)
+void UnionFind<T>::Node::increment_captain_games()
 {
-    this->captain_games = num;
+    this->captain_games+=1;
+}
+template<class T>
+void UnionFind<T>::Node::reset_captain_games()
+{
+    this->captain_games = 0; 
 }
 template<class T>
 void UnionFind<T>::Node::set_games_of_captain_when_joined(int num)
