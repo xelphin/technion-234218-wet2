@@ -181,8 +181,6 @@ output_t<int> world_cup_t::num_played_games_for_player(int playerId)
         int games_of_captain_when_joined = player->get_games_of_captain_when_joined();
         captain_games = captain->get_captain_games();
         ans_games_played = captain_games - games_of_captain_when_joined; 
-        //std::cout << "Captain games: " << (captain_games) << std::endl;
-        //std::cout << "games_of_captain_when_joined: " << (games_of_captain_when_joined) << std::endl;
     }
     // Return
 	return players_UF.get_content(playerId)->get_gamesPlayed_when_initialized() + ans_games_played;
@@ -278,8 +276,6 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     UnionFind<Player>::Node* new_captain = team1->get_captain_node();
     if (team1_captain != nullptr && team2_captain != nullptr && new_captain->get_id() == team1_captain->get_id()) {
         team2_captain->setIsRetired();
-        //std::cout << "new_captain->get_captain_games() " << (new_captain->get_captain_games() ) << std::endl;
-        //std::cout << "team2_captain->get_captain_games() " << (team2_captain->get_captain_games() ) << std::endl;
         team2_captain->set_games_of_captain_when_joined(new_captain->get_captain_games() - team2_captain->get_captain_games());
         team2_captain->reset_captain_games();
     } else if(team1_captain != nullptr && team2_captain != nullptr && new_captain->get_id() == team2_captain->get_id()) {
