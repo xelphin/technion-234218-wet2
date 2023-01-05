@@ -963,8 +963,28 @@ bool worldcup_num_played_games_for_player()
     assert((worldCup.num_played_games_for_player(3001).ans())==3);
 
     worldCup.add_player(1002, 1, per, 0, 15, 2, true);
+    worldCup.add_player(1003, 1, per, 0, 15, 2, true);
     std::cout << worldCup.show_uf() << std::endl;
     assert((worldCup.num_played_games_for_player(1002).ans())==0);
+    assert((worldCup.num_played_games_for_player(1003).ans())==0);
+    worldCup.play_match(1,3);
+    assert((worldCup.num_played_games_for_player(1002).ans())==1);
+    assert((worldCup.num_played_games_for_player(1003).ans())==1);
+    assert((worldCup.num_played_games_for_player(2001).ans())==5);
+    assert((worldCup.num_played_games_for_player(3001).ans())==4);
+    worldCup.add_player(3002, 3, per, 0, 15, 2, true);
+    assert((worldCup.num_played_games_for_player(3002).ans())==0);
+    assert((worldCup.num_played_games_for_player(2001).ans())==5);
+    assert((worldCup.num_played_games_for_player(3001).ans())==4);
+    // Team 1 Buy Team 3
+    std::cout << worldCup.show_uf() << std::endl;
+    worldCup.buy_team(1,3);
+    assert((worldCup.num_played_games_for_player(1001).ans())==3);
+    assert((worldCup.num_played_games_for_player(3001).ans())==4);
+    std::cout << worldCup.show_uf() << std::endl;
+    std::cout << "HERE" << std::endl;
+    std::cout << (worldCup.num_played_games_for_player(3002).ans()) << std::endl;
+    assert((worldCup.num_played_games_for_player(3002).ans())==0);
     
 
     return true;

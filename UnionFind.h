@@ -14,7 +14,7 @@ public:
     class Node;
     bool makeset(std::shared_ptr<UnionFind<T>::Node> new_node, Node *parent);
     Node * unite(Node *buyer_node, Node *bought_node);
-    Node* find_set_of_id(int id);
+    Node* find_set_of_id(int id); // Returns Captain of Team
     T* get_content(int id);
     bool id_is_in_data(int id); //returns true if the item with the id i
     permutation_t get_partial_spirit(int id);
@@ -214,6 +214,7 @@ template<class T>
 permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node, Node** root, int& sum_of_retired) {
     Node* current = node;
     permutation_t multiplier = permutation_t::neutral();
+    std::cout << "Our node before has j of: " << (current->get_games_of_captain_when_joined()) << std::endl;
     while (current->get_parent() != nullptr){ //does not multiply by the root's seniors_product!
         // Update multiplier
         multiplier = current->get_seniors_product() * multiplier;
@@ -223,6 +224,7 @@ permutation_t UnionFind<T>::path_compression_first_traversal_to_root(Node* node,
                 throw std::logic_error("A retired player can't be a captain");
             }
             sum_of_retired += current->get_games_of_captain_when_joined();
+            std::cout << "Summing: " << (sum_of_retired) << std::endl;
         }
         // Update Current
         current = current->get_parent();
@@ -251,9 +253,12 @@ typename UnionFind<T>::Node *UnionFind<T>::path_compression_second_traversal_to_
         }
         int original_games_of_captain_when_joined = current->get_games_of_captain_when_joined();
         if (current->get_isRetired() == true) {
+            std::cout << "Sum of retired (in): " << (sum_of_retired) << std::endl;
             sum_of_retired -= original_games_of_captain_when_joined;
         }
-        current->set_games_of_captain_when_joined(original_games_of_captain_when_joined - sum_of_retired);
+        std::cout << "Sum of retired (out): " << (sum_of_retired) << " for "<< (current->get_id()) << std::endl;
+        std::cout << "original_games_of_captain_when_joined + sum_of_retired: " << (original_games_of_captain_when_joined + sum_of_retired) << " for "<< (current->get_id()) << std::endl;
+        current->set_games_of_captain_when_joined(original_games_of_captain_when_joined + sum_of_retired);
         
 
         //  Updating node's parent to be the root
