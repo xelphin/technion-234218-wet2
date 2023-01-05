@@ -48,6 +48,12 @@ private:
     permutation_t seniors_product;
     bool removed;
 
+    // Num Played Games
+    bool isCaptain;
+    bool isRetired;
+    int captain_games;
+    int games_of_captain_when_joined;
+
 
     //getters and setters
     Node* set_parent(Node* new_parent);
@@ -70,6 +76,16 @@ public:
     permutation_t get_team_product();
     bool is_removed();
     void remove();
+
+    // Num Played Games
+    void setIsCaptain();
+    void setIsRetired();
+    void set_captain_games(int num);
+    void set_games_of_captain_when_joined(int num);
+    bool get_isCaptain() const;
+    bool get_isRetired() const;
+    int get_captain_games() const;
+    int get_games_of_captain_when_joined() const;
 };
 
 
@@ -231,7 +247,8 @@ typename UnionFind<T>::Node *UnionFind<T>::path_compression_second_traversal_to_
 //---------------------------------------NODE FUNCTIONS---------------------------------//
 template<class T>
 UnionFind<T>::Node::Node(T item, const permutation_t& permutation) : content(item), parent(nullptr), size(1),
-team_product(permutation), seniors_product(permutation), removed(false)  //size immediately becomes 0 because we unite this with the parent.
+team_product(permutation), seniors_product(permutation), removed(false),  //size immediately becomes 0 because we unite this with the parent.
+isCaptain(false), isRetired(false), captain_games(0), games_of_captain_when_joined(0)
 {}
 //---------------------------------------GETTERS AND SETTERS=---------------------------//
 template<class T>
@@ -298,5 +315,53 @@ void UnionFind<T>::Node::remove() {
     removed = true;
 }
 
+
+// Num Played Games
+template<class T>
+void UnionFind<T>::Node::setIsCaptain()
+{
+    if (isRetired == true) {
+        throw std::logic_error("A retired captain can't become an active captain again");
+    }
+    this->isCaptain = true;
+}
+template<class T>
+void UnionFind<T>::Node::setIsRetired()
+{
+    if (isCaptain == false) {
+        throw std::logic_error("Can't retire a player who is not a captain");
+    }
+    this->isCaptain = true;
+}
+template<class T>
+void UnionFind<T>::Node::set_captain_games(int num)
+{
+    this->captain_games = num;
+}
+template<class T>
+void UnionFind<T>::Node::set_games_of_captain_when_joined(int num)
+{
+    this->games_of_captain_when_joined = num;
+}
+template<class T>
+bool UnionFind<T>::Node::get_isCaptain() const
+{
+    return this->isCaptain;
+}
+template<class T>
+bool UnionFind<T>::Node::get_isRetired() const
+{
+    return this->isRetired;
+}
+template<class T>
+int UnionFind<T>::Node::get_captain_games() const
+{
+    return this->captain_games;
+}
+template<class T>
+int UnionFind<T>::Node::get_games_of_captain_when_joined() const
+{
+    return this->games_of_captain_when_joined;
+}
 
 #endif //UNION_FIND_UNION_FIND_H
