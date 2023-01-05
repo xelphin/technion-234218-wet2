@@ -47,11 +47,11 @@ StatusType world_cup_t::remove_team(int teamId)
         return StatusType::INVALID_INPUT;
     }
 	try {
-        Team* team = &(*(teams_AVL.get_content(teamId))); // O(log(k))
+        std::shared_ptr<Team> team = teams_AVL.get_content(teamId); // O(log(k))
         if (team != nullptr) {
             team->remove_team_players();
-            removed_avl_id = teams_AVL.remove(teamId);
-            removed_avl_ability = teams_ability_AVL.remove(teamId);
+            removed_avl_id = teams_AVL.remove_by_item(team);
+            removed_avl_ability = teams_ability_AVL.remove_by_item(team);
         }
         else{
             return StatusType::FAILURE;
@@ -60,6 +60,8 @@ StatusType world_cup_t::remove_team(int teamId)
         return StatusType::ALLOCATION_ERROR;
     }
 	if (removed_avl_id != removed_avl_ability) {
+        std::cout << teams_AVL.debugging_printTree_new() << std::endl;
+        std::cout << teams_ability_AVL.debugging_printTree_new() << std::endl;
 		throw std::logic_error("Can't be that a team existed (and was removed) from only one AVL");
 	}
     return removed_avl_id ? StatusType::SUCCESS : StatusType::FAILURE;
@@ -93,7 +95,9 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
             }
             team->increment_total_players();
             team->add_sum_player_abilities(ability);
-            teams_ability_AVL.add(team); // Added again
+            if (teams_ability_AVL.add(team) == nullptr){ // Added again
+                throw std::logic_error("Team should have been re-added to teams_ability_AVL");
+            }
             // Set Player Stats
             new_node->get_content()->set_team_games_played_when_joined(team->get_team_games());
             new_node->get_content()->set_team(&*team);
@@ -251,9 +255,11 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     //now the captain node is the root of the UF. it may be team2's captain if team2 was the bigger team. or a nullptr if no players.
 
     // Remove team2 from AVLs
-    teams_AVL.remove(teamId2);
+    teams_AVL.remove_by_item(team2);
     // Re add team2 to teams_ability
-    teams_ability_AVL.add(team1);
+    if(teams_ability_AVL.add(team1) == nullptr) {
+        throw std::logic_error("Should have added the buying team back to ability_AVL");
+    }
     return StatusType::SUCCESS;
 }
 
