@@ -270,7 +270,7 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     team1->set_captain_node(players_UF.unite(team1_captain, team2_captain));
     //now the captain node is the root of the UF. it may be team2's captain if team2 was the bigger team. or a nullptr if no players.
 
-    // Update Status of Captains 
+    // Update Status of Captains
     UnionFind<Player>::Node* new_captain = team1->get_captain_node();
     if (team1_captain != nullptr && team2_captain != nullptr && new_captain->get_id() == team1_captain->get_id()) {
         team2_captain->setIsRetired();
@@ -280,10 +280,7 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
         team1_captain->setIsRetired();
         team1_captain->set_games_of_captain_when_joined(new_captain->get_captain_games() - team1_captain->get_captain_games());
         team1_captain->reset_captain_games();    
-    } else {
-        // Both can be empty
-        // throw std::logic_error("One of the two has to be the new team captain");
-    }
+    } 
 
     // Remove team2 from AVLs
     teams_AVL.remove_by_item(team2);
