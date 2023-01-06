@@ -128,9 +128,7 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
     int score2 = team2->get_sumPlayerAbilities() + team2->get_points();
     int strength1 = team1->get_spirit_strength();
     int strength2 = team2->get_spirit_strength();
-    if (score1 < 0 || score2 < 0) {
-        throw std::logic_error("Team scores should not be negative");
-    }
+
     int winningValue = 0;
     if (score1 > score2) {
         team1->add_team_points(3);
@@ -166,9 +164,9 @@ output_t<int> world_cup_t::num_played_games_for_player(int playerId)
     }
     
     UnionFind<Player>::Node* player = players_UF.find_node(playerId);
-    if (playerId != player->get_id()) {
-        throw std::logic_error("The id of the player given does not match our required playerId");
-    }
+    // if (playerId != player->get_id()) {
+    //     throw std::logic_error("The id of the player given does not match our required playerId");
+    // }
     // IF player is Captain
     int captain_games = player->get_captain_games();
     int ans_games_played = captain_games;
@@ -272,7 +270,7 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     team1->set_captain_node(players_UF.unite(team1_captain, team2_captain));
     //now the captain node is the root of the UF. it may be team2's captain if team2 was the bigger team. or a nullptr if no players.
 
-    // Update Retired Captain 
+    // Update Status of Captains
     UnionFind<Player>::Node* new_captain = team1->get_captain_node();
     if (team1_captain != nullptr && team2_captain != nullptr && new_captain->get_id() == team1_captain->get_id()) {
         team2_captain->setIsRetired();
@@ -282,10 +280,7 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
         team1_captain->setIsRetired();
         team1_captain->set_games_of_captain_when_joined(new_captain->get_captain_games() - team1_captain->get_captain_games());
         team1_captain->reset_captain_games();    
-    } else {
-        // Both can be empty
-        // throw std::logic_error("One of the two has to be the new team captain");
-    }
+    } 
 
     // Remove team2 from AVLs
     teams_AVL.remove_by_item(team2);
