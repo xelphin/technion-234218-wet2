@@ -36,9 +36,6 @@ public:
     int operator SCORE(const Player&) const;
     int operator ID() const;
 
-    // DEBUGGING FUNCTIONS
-    friend std::ostream& operator<<(std::ostream& os, const Player& player);
-
 private:
     int playerId;
     int teamId;

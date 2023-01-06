@@ -25,12 +25,6 @@ public:
     void add(std::shared_ptr<T> obj);
     std::shared_ptr<T> find(int id) const;
 
-    
-
-    // DEBUGGING // TODO: Delete when done
-    std::string allLists() const;
-    friend Hash_Tests<T>;
-
 
 private:
     NodeList<T>* arr;
@@ -115,19 +109,6 @@ std::shared_ptr<T> Hash<T>::find(int id) const
     }
     int index = calcIndex(id, this->size);
     return arr[index].find(id);
-}
-
-template<class T>
-std::string Hash<T>::allLists() const
-{
-    std::string str = "Hash with size: " + std::to_string(size) + " contains: \n";
-
-    for (int i=0; i < size; i++) {
-        if(arr[i].getAmount() != 0) {
-            str += "line " + std::to_string(i) + ": " + arr[i].strList() + "\n";
-        }
-    }
-    return str;
 }
 
 template<class T>

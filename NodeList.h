@@ -29,10 +29,6 @@ public:
     // Get amount of nodes in list (length)
     int getAmount() const;
 
-    // DEBUGGING
-    std::string strList() const;
-    friend Hash_Tests<T>;
-
 private:
     NodeList::Node *start;
     NodeList::Node *end;
@@ -132,20 +128,6 @@ template <class T>
 int NodeList<T>::getAmount() const
 {
     return this->amount;
-}
-
-template <class T>
-std::string NodeList<T>::strList() const
-{
-    std::string str = "";
-    NodeList::Node* currentNode = this->start; // initialize current node to start
-    while (currentNode)
-    {
-        NodeList::Node* nextNode = currentNode->next;
-        str += std::to_string(currentNode->obj->get_id()) + " ";
-        currentNode = nextNode;
-    }
-    return str;
 }
 
 template <class T>
