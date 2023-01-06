@@ -43,6 +43,7 @@ bool run_all_tests() {
     run_test(worldcup_get_partial_spirit, "worldcup_get_partial_spirit", success_string, success);
     run_test(worldcup_play_match, "worldcup_play_match", success_string, success);
     run_test(worldcup_get_ith, "worldcup_get_ith", success_string, success);
+    run_test(worldcup_num_played_games_for_player, "worldcup_num_played_games_for_player", success_string, success);
 
     std::cout << success_string << std::endl;
     return success;
@@ -926,6 +927,66 @@ bool worldcup_get_ith()
     assert(((worldCup.get_ith_pointless_ability(1)).ans()) == 1);
 
 
+
+    return true;
+}
+
+bool worldcup_num_played_games_for_player()
+{
+    permutation_t per = permutation_t::neutral();
+    world_cup_t worldCup;
+
+    // Basic (test0)
+    worldCup.add_team(1);
+    worldCup.add_team(2);
+    worldCup.add_team(3);
+    worldCup.remove_team(3);
+    worldCup.add_player(1001, 1, per, 0, 15, 2, true);
+    worldCup.add_player(2001, 2, per, 2, 17, 1, true);
+    worldCup.play_match(1,2);
+    assert((worldCup.num_played_games_for_player(1001).ans())==1);
+    assert((worldCup.num_played_games_for_player(2001).ans())==3);
+    worldCup.add_player_cards(2001,2);
+    worldCup.get_player_cards(2001);
+    worldCup.get_team_points(1);
+    worldCup.get_ith_pointless_ability(0);
+    worldCup.get_partial_spirit(1001);
+    worldCup.buy_team(1,2);
+    assert((worldCup.num_played_games_for_player(1001).ans())==1);
+    assert((worldCup.num_played_games_for_player(2001).ans())==3);
+    // More complex
+    worldCup.add_team(3);
+    worldCup.add_player(3001, 3, per, 2, 15, 2, true);
+    worldCup.play_match(1,3);
+    assert((worldCup.num_played_games_for_player(1001).ans())==2);
+    assert((worldCup.num_played_games_for_player(2001).ans())==4);
+    assert((worldCup.num_played_games_for_player(3001).ans())==3);
+
+    worldCup.add_player(1002, 1, per, 0, 15, 2, true);
+    worldCup.add_player(1003, 1, per, 0, 15, 2, true);
+    std::cout << worldCup.show_uf() << std::endl;
+    assert((worldCup.num_played_games_for_player(1002).ans())==0);
+    assert((worldCup.num_played_games_for_player(1003).ans())==0);
+    worldCup.play_match(1,3);
+    assert((worldCup.num_played_games_for_player(1002).ans())==1);
+    assert((worldCup.num_played_games_for_player(1003).ans())==1);
+    assert((worldCup.num_played_games_for_player(2001).ans())==5);
+    assert((worldCup.num_played_games_for_player(3001).ans())==4);
+    worldCup.add_player(3002, 3, per, 0, 15, 2, true);
+    assert((worldCup.num_played_games_for_player(3002).ans())==0);
+    assert((worldCup.num_played_games_for_player(2001).ans())==5);
+    assert((worldCup.num_played_games_for_player(3001).ans())==4);
+    // Team 1 Buy Team 3
+    std::cout << worldCup.show_uf() << std::endl;
+    worldCup.buy_team(1,3);
+    worldCup.add_player(1004, 1, per, 1, 15, 2, true);
+    assert((worldCup.num_played_games_for_player(1001).ans())==3);
+    assert((worldCup.num_played_games_for_player(3001).ans())==4);
+    assert((worldCup.num_played_games_for_player(3002).ans())==0);
+    assert((worldCup.num_played_games_for_player(2001).ans())==5);
+    assert((worldCup.num_played_games_for_player(3001).ans())==4);
+    assert((worldCup.num_played_games_for_player(1004).ans())==1);
+    
 
     return true;
 }

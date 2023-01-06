@@ -21,10 +21,9 @@ int Player::get_teamId() const
 {
     return this->teamId;
 }
-int Player::get_gamesPlayed(int team_games) const
+int Player::get_gamesPlayed_when_initialized() const
 {
-    // TODO
-    return this->gamesPlayed + team_games - team_games_played_when_joined;
+    return this->gamesPlayed;
 }
 int Player::get_ability() const
 {
