@@ -805,37 +805,35 @@ void AVL_tree<T>::print_node(AVL_tree<T>::Node* node){
 
 template<class T>
 int AVL_tree<T>::find_ith_rank_id(int i) {
-    if (i < 1 || i > get_amount()){ //e.g. tree has 1 node ⇒ amount = 1, node's rank is 1. so i=1 is the only valid number.
+    if (i < 0 || i > get_amount()){ //e.g. tree has 1 node ⇒ amount = 1, node's rank is 1. so i=1 is the only valid number.
         return I_OUT_OF_RANGE;
     }
-    return select(root, i) - 1; //segel asked for index, starting from 0. while rank starts from 1. so we subtract 1.
+    return select(root, i+1);
 }
 
 template<class T>
-int AVL_tree<T>::select(Node* node, int i) {
+int AVL_tree<T>::select(Node* node, int k) {
     if (sort_by_score != SORT_BY_SCORE){
         throw std::logic_error("getting rank from the id tree. wrong tree.");
     }
     if (node == nullptr){
         throw std::logic_error("nullptr in rank finding. rank outside of tree range or tree not sorted well");
     }
-    if (i < 1){
+    if (k < 1){
         throw std::logic_error("looking for too small rank");
     }
 
-    //code copied from find()
-    while(true){ //while true loop ok because in every case we either return or go down tree.
-        int difference = get_weight(node->left) - (i - 1);
-        if (difference == 0){
-            return node->content->get_id();
-        }
-        if (difference > 0)  { //proceed to left branch.
-            return find_ith_rank_id(node->left, i);
-        }
-        else{ //proceed to right branch
-            return find_ith_rank_id(node->right, i - get_weight(node->left) - 1);
-        }
+    int left_weight = get_weight(node->left);
+    if (left_weight == k-1){
+        return node->content->get_id();
     }
+    if (left_weight < k-1)  { 
+        return select(node->right, k-left_weight-1);
+    }
+    else{
+        return select(node->left, k);
+    }
+
 }
 
 // ----------------------------------

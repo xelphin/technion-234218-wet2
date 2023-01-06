@@ -189,5 +189,6 @@ bool worldcup_add_player();
 bool worldcup_play_match_noPermutation();
 bool worldcup_play_match();
 bool worldcup_get_partial_spirit();
+bool worldcup_get_ith();
 
 #endif

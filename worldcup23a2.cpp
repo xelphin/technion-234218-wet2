@@ -25,6 +25,12 @@ StatusType world_cup_t::add_team(int teamId) // O(log(k))
         }
         teams_AVL.add(team);
 		teams_ability_AVL.add(team);
+        
+        //std::cout << "Teams" << std::endl;
+        //std::cout << teams_AVL.debugging_printTree_new() << std::endl;
+        //std::cout << "Teams ability" << std::endl;
+        //std::cout << teams_ability_AVL.debugging_printTree_new() << std::endl;
+
 	} catch (std::bad_alloc const&){
         return StatusType::ALLOCATION_ERROR;
 	} catch (const ID_ALREADY_EXISTS& e) {
@@ -41,11 +47,11 @@ StatusType world_cup_t::remove_team(int teamId)
         return StatusType::INVALID_INPUT;
     }
 	try {
-        Team* team = &(*(teams_AVL.get_content(teamId))); // O(log(k))
+        std::shared_ptr<Team> team = teams_AVL.get_content(teamId); // O(log(k))
         if (team != nullptr) {
             team->remove_team_players();
-            removed_avl_id = teams_AVL.remove(teamId);
-            removed_avl_ability = teams_ability_AVL.remove(teamId);
+            removed_avl_id = teams_AVL.remove_by_item(team);
+            removed_avl_ability = teams_ability_AVL.remove_by_item(team);
         }
         else{
             return StatusType::FAILURE;
@@ -54,6 +60,8 @@ StatusType world_cup_t::remove_team(int teamId)
         return StatusType::ALLOCATION_ERROR;
     }
 	if (removed_avl_id != removed_avl_ability) {
+        std::cout << teams_AVL.debugging_printTree_new() << std::endl;
+        std::cout << teams_ability_AVL.debugging_printTree_new() << std::endl;
 		throw std::logic_error("Can't be that a team existed (and was removed) from only one AVL");
 	}
     return removed_avl_id ? StatusType::SUCCESS : StatusType::FAILURE;
@@ -78,6 +86,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
             // Add Player to players_UF
             players_UF.makeset(new_node, team->get_captain_node());
             // Update Team
+            teams_ability_AVL.remove_by_item(team); // Later add again
             if (team->get_captain_node() == nullptr) {
                 team->set_captain_node(&*new_node);
             }
@@ -86,6 +95,9 @@ StatusType world_cup_t::add_player(int playerId, int teamId,
             }
             team->increment_total_players();
             team->add_sum_player_abilities(ability);
+            if (teams_ability_AVL.add(team) == nullptr){ // Added again
+                throw std::logic_error("Team should have been re-added to teams_ability_AVL");
+            }
             // Set Player Stats
             new_node->get_content()->set_team_games_played_when_joined(team->get_team_games());
             new_node->get_content()->set_team(&*team);
@@ -112,6 +124,9 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
     if (team1 == nullptr || team2 == nullptr) {
         return StatusType::FAILURE;
     }
+    if (team1->get_has_goalKeeper() != true || team2->get_has_goalKeeper() != true) {
+        return StatusType::FAILURE;
+    }
     // Get Stats,Compare and Update O(1)
     int score1 = team1->get_sumPlayerAbilities() + team1->get_points();
     int score2 = team2->get_sumPlayerAbilities() + team2->get_points();
@@ -120,27 +135,33 @@ output_t<int> world_cup_t::play_match(int teamId1, int teamId2)
     if (score1 < 0 || score2 < 0) {
         throw std::logic_error("Team scores should not be negative");
     }
+    int winningValue = 0;
     if (score1 > score2) {
-        std::cout << "team 1 won"<< std::endl;
+        //std::cout << "team 1 won"<< std::endl;
         team1->add_team_points(3);
+        winningValue = 1;
     } else if (score1 < score2) {
-        std::cout << "team 2 won"<< std::endl;
+        //std::cout << "team 2 won"<< std::endl;
         team2->add_team_points(3);
+        winningValue = 3;
     } else if (strength1 > strength2) {
-        std::cout << "team 1 won"<< std::endl;
+        //std::cout << "team 1 won"<< std::endl;
         team1->add_team_points(3);
+        winningValue = 2;
     } else if (strength1 < strength2) {
-        std::cout << "team 2 won"<< std::endl;
+        //std::cout << "team 2 won"<< std::endl;
         team2->add_team_points(3);
+        winningValue = 4;
     } else {
         team1->add_team_points(1);
         team2->add_team_points(1);
+        winningValue = 0;
     }
     // Update Games Played O(1)
     team1->increment_team_games();
     team2->increment_team_games();
 
-    return StatusType::SUCCESS;
+    return winningValue;
 }
 
 output_t<int> world_cup_t::num_played_games_for_player(int playerId)
@@ -190,8 +211,10 @@ output_t<int> world_cup_t::get_team_points(int teamId)
 
 output_t<int> world_cup_t::get_ith_pointless_ability(int i)
 {
-	// TODO: Your code goes here
-	return 12345;
+	if (i<0 || i >= this->teams_ability_AVL.get_amount()) {
+        return StatusType::FAILURE;
+    }
+    return this->teams_ability_AVL.find_ith_rank_id(i);
 }
 
 output_t<permutation_t> world_cup_t::get_partial_spirit(int playerId)
@@ -218,7 +241,8 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     if (team1 == nullptr || team2 == nullptr){
         return StatusType::FAILURE;
     }
-    teams_ability_AVL.remove(teamId2); //should be done before doing other stuff so we can find it in the AVL.
+    teams_ability_AVL.remove_by_item(team1); //should be done before doing other stuff so we can find it in the AVL.
+    teams_ability_AVL.remove_by_item(team2);
     // Update Team Stats
     team1->set_points(team1->get_points() + team2->get_points());
     if (team2->get_has_goalKeeper()) {
@@ -231,8 +255,11 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     //now the captain node is the root of the UF. it may be team2's captain if team2 was the bigger team. or a nullptr if no players.
 
     // Remove team2 from AVLs
-    teams_AVL.remove(teamId2);
-    //
+    teams_AVL.remove_by_item(team2);
+    // Re add team2 to teams_ability
+    if(teams_ability_AVL.add(team1) == nullptr) {
+        throw std::logic_error("Should have added the buying team back to ability_AVL");
+    }
     return StatusType::SUCCESS;
 }
 
@@ -241,4 +268,8 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
 std::string world_cup_t::show_uf()
 {
     return UnionFind_Tests<Player>::show_union_find(this->players_UF);
+}
+std::string world_cup_t::show_ability_avl()
+{
+    return this->teams_ability_AVL.debugging_printTree_new();
 }

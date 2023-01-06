@@ -4,7 +4,7 @@
 
 ```
 make
-valgrind --leak-check=full ./WorldCupUnitTester
+valgrind --leak-check=full ./InOutTester
 ```
 
 ### Clean

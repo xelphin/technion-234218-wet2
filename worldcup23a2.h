@@ -44,6 +44,7 @@ private:
 public:
 	// DEBUGGING - TODO: DELETE in the end
 	std::string show_uf(); // Friend is better obviously, but it doesn't work...
+	std::string show_ability_avl();
 
 	// <DO-NOT-MODIFY> {
 	
