@@ -11,7 +11,6 @@
 // 
 
 #include "worldcup23a2.h"
-#include "developer_tests.h" // TODO: Delete
 #include <string>
 #include <iostream>
 
@@ -35,7 +34,6 @@ void print(string cmd, output_t<T> res);
 
 int main()
 {
-    //run_all_tests();
 	cin >> std::boolalpha;
 	
 	int pid, tid, tid2;

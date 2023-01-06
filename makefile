@@ -14,20 +14,18 @@ AVL_TREE = AVL_tree
 EXCEPTION = Exception
 UNION_FIND = UnionFind
 
-TESTS = developer_tests
+
 
 ALL_SRC_FILES =  $(WORLD_CUP).h $(PLAYER).h $(TEAM).h $(NODELIST).h $(HASH).h $(AVL_TREE).h $(UTIL).h $(EXCEPTION).h $(UNION_FIND).h
 ALL_SRC_OBJ = $(WORLD_CUP).o $(PLAYER).o $(TEAM).o
-ALL_TEST_FILES = $(TESTS).h
-ALL_TEST_OBJ = $(TESTS).o
 
-OBJ_FILES = $(ALL_SRC_OBJ) $(ALL_TEST_OBJ) $(MAIN).o
+OBJ_FILES = $(ALL_SRC_OBJ)  $(MAIN).o
 
 $(EXE): $(OBJ_FILES)
 	$(COMPILER) $(G_FLAG) $(FLAGS) $(OBJ_FILES) -o $(EXE)
 
 
-$(MAIN).o: $(MAIN).cpp  $(ALL_SRC_FILES) $(ALL_TEST_FILES)
+$(MAIN).o: $(MAIN).cpp  $(ALL_SRC_FILES) 
 	$(COMPILER) $(FLAGS) $(G_FLAG) -c $(MAIN).cpp -o $(MAIN).o
 
 
@@ -42,9 +40,6 @@ $(PLAYER).o: $(PLAYER).cpp $(PLAYER).h $(TEAM).h $(UTIL).h $(AVL_TREE).h
 
 $(TEAM).o: $(TEAM).cpp $(TEAM).h $(PLAYER).h $(UTIL).h $(AVL_TREE).h $(UNION_FIND).h
 	$(COMPILER) $(FLAGS) $(G_FLAG) -c $(TEAM).cpp -o $(TEAM).o
-
-$(TESTS).o: $(TESTS).cpp $(TESTS).h $(UTIL).h $(WORLD_CUP).h $(PLAYER).h $(TEAM).h $(NODELIST).h $(HASH).h $(AVL_TREE).h $(UNION_FIND).h $(EXCEPTION).h
-	$(COMPILER) $(FLAGS) $(G_FLAG) -c $(TESTS).cpp -o $(TESTS).o
 
 
 

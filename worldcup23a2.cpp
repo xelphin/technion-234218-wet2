@@ -290,14 +290,3 @@ StatusType world_cup_t::buy_team(int teamId1, int teamId2)
     }
     return StatusType::SUCCESS;
 }
-
-// DEBUGGING - TODO: DELETE in the end
-// Obviously 'friend' is optimal, but it doesn't work for some reason :/
-std::string world_cup_t::show_uf()
-{
-    return UnionFind_Tests<Player>::show_union_find(this->players_UF);
-}
-std::string world_cup_t::show_ability_avl()
-{
-    return this->teams_ability_AVL.debugging_printTree_new();
-}
